@@ -5,23 +5,12 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Volume2, MessageSquare } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
-import { cn } from '@/lib/utils'
+import { cn, speak as speakText } from '@/lib/utils'
 
 export function PhrasesSection({ language }: { language: Language }) {
   const isRtl = language.direction === 'rtl'
 
-  const speak = (text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.8
-      utterance.lang = language.id === 'russian' ? 'ru-RU'
-        : language.id === 'chinese' ? 'zh-CN'
-        : language.id === 'english' ? 'en-US'
-        : language.id === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
-  }
+  const speak = (text: string) => speakText(text, language.id)
 
   return (
     <div className="space-y-6">

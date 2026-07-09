@@ -14,7 +14,7 @@ import Link from 'next/link'
 import { useProgressStore, PersonalWord } from '@/lib/store'
 import { languages } from '@/lib/languages-data'
 import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/lib/utils'
+import { cn, speak as speakText } from '@/lib/utils'
 
 type ReviewQuality = 'again' | 'hard' | 'good' | 'easy'
 
@@ -83,18 +83,7 @@ export default function PracticePage() {
     })
   }, [dueCards])
 
-  const speak = (text: string, langId: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.8
-      utterance.lang = langId === 'russian' ? 'ru-RU'
-        : langId === 'chinese' ? 'zh-CN'
-        : langId === 'english' ? 'en-US'
-        : langId === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
-  }
+  const speak = (text: string, langId: string) => speakText(text, langId)
 
   const handleReview = (quality: ReviewQuality) => {
     if (!session) return

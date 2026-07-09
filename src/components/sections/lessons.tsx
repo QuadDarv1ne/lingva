@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { BookOpen, CheckCircle2, GraduationCap, Lightbulb, Volume2 } from 'lucide-react'
 import { Language, Lesson } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
-import { cn } from '@/lib/utils'
+import { cn, speak as speakText } from '@/lib/utils'
 
 const levelColors: Record<string, string> = {
   'Начальный': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -101,18 +101,7 @@ function LessonContent({
   isRtl: boolean
   languageId: string
 }) {
-  const speak = (text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.8
-      utterance.lang = languageId === 'russian' ? 'ru-RU'
-        : languageId === 'chinese' ? 'zh-CN'
-        : languageId === 'english' ? 'en-US'
-        : languageId === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
-  }
+  const speak = (text: string) => speakText(text, languageId)
 
   return (
     <div className="space-y-5">

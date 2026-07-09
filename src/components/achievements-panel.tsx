@@ -22,7 +22,7 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
           setNewlyUnlocked((prev) => prev.filter((id) => !unlocked.some((u) => u.id === id)))
         }, 5000)
       }
-    }, 2000)
+    }, 5000)
     return () => clearInterval(interval)
   }, [checkAchievements])
 
@@ -34,7 +34,7 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date()
     d.setDate(d.getDate() - (6 - i))
-    const key = d.toISOString().split('T')[0]
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
     return {
       date: d,
       count: activityLog[key] || 0,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -36,7 +36,7 @@ export function NotificationBell() {
   const [loading, setLoading] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
     try {
       const res = await fetch('/api/notifications?limit=10')
       const data = await res.json()
@@ -45,14 +45,14 @@ export function NotificationBell() {
     } catch {
       // ignore
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadNotifications()
     // Poll every 30 seconds for new notifications
     const interval = setInterval(loadNotifications, 30000)
     return () => clearInterval(interval)
-  }, [])
+  }, [loadNotifications])
 
   // Close on outside click
   useEffect(() => {

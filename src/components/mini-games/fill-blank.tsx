@@ -10,7 +10,7 @@ import { Check, X, RotateCcw, Trophy, Volume2, Wand2 } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/lib/utils'
+import { cn, speak as speakText } from '@/lib/utils'
 
 interface FillBlankQuestion {
   sentence: string // with ___ for the blank
@@ -74,16 +74,7 @@ export function FillInTheBlank({ language }: { language: Language }) {
   const current = questions[currentIdx]
 
   const speak = useCallback((text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.8
-      utterance.lang = language.id === 'russian' ? 'ru-RU'
-        : language.id === 'chinese' ? 'zh-CN'
-        : language.id === 'english' ? 'en-US'
-        : language.id === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
+    speakText(text, language.id)
   }, [language.id])
 
   const handleSelect = (option: string) => {

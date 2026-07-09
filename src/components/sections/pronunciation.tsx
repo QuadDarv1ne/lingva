@@ -12,7 +12,7 @@ import {
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/lib/utils'
+import { cn, speak as speakText } from '@/lib/utils'
 
 interface PracticeWord {
   word: string
@@ -76,15 +76,8 @@ export function PronunciationSection({ language }: { language: Language }) {
   const speak = useCallback((text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel()
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.7
-      utterance.lang = language.id === 'russian' ? 'ru-RU'
-        : language.id === 'chinese' ? 'zh-CN'
-        : language.id === 'english' ? 'en-US'
-        : language.id === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
     }
+    speakText(text, language.id, 0.7)
   }, [language.id])
 
   const startRecording = async () => {

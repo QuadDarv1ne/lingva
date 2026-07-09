@@ -12,6 +12,7 @@ import {
 import { Language, ReadingText } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'
+import { speak as speakText } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 const levelColors: Record<string, string> = {
@@ -30,18 +31,7 @@ export function ReadingSection({ language }: { language: Language }) {
   const [score, setScore] = useState(0)
   const isRtl = language.direction === 'rtl'
 
-  const speak = (text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.7
-      utterance.lang = language.id === 'russian' ? 'ru-RU'
-        : language.id === 'chinese' ? 'zh-CN'
-        : language.id === 'english' ? 'en-US'
-        : language.id === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
-  }
+  const speak = (text: string) => speakText(text, language.id, 0.7)
 
   const handleSelectAnswer = (qIdx: number, optIdx: number) => {
     if (submitted) return

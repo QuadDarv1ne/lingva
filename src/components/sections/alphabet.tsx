@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Check, Volume2, X } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
-import { cn } from '@/lib/utils'
+import { cn, speak as speakText } from '@/lib/utils'
 
 export function AlphabetSection({ language }: { language: Language }) {
   const [selected, setSelected] = useState<number | null>(null)
@@ -27,19 +27,7 @@ export function AlphabetSection({ language }: { language: Language }) {
     }
   }
 
-  // Try to speak the letter using Web Speech API
-  const speak = (text: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.7
-      utterance.lang = language.id === 'russian' ? 'ru-RU'
-        : language.id === 'chinese' ? 'zh-CN'
-        : language.id === 'english' ? 'en-US'
-        : language.id === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
-  }
+  const speak = (text: string) => speakText(text, language.id, 0.7)
 
   const letter = selected !== null ? language.alphabet[selected] : null
   const learnedCount = progress.learnedLetters.length

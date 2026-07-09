@@ -138,8 +138,24 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-function parseDeck(deck: any) {
-  let cards: any[] = []
+interface DeckCard {
+  front: string
+  back: string
+  transcription?: string
+}
+
+function parseDeck(deck: {
+  id: string
+  userId: string
+  title: string
+  description: string | null
+  languageId: string
+  isPublic: boolean
+  cards: string
+  createdAt: Date
+  updatedAt: Date
+}) {
+  let cards: DeckCard[] = []
   try {
     cards = JSON.parse(deck.cards)
   } catch {

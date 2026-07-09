@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sparkles, Volume2, ArrowRight, Calendar } from 'lucide-react'
 import { languages } from '@/lib/languages-data'
+import { speak as speakText } from '@/lib/utils'
 
 // Deterministic daily selection based on date
 function getDailyIndex(max: number): number {
@@ -49,19 +50,6 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
     const idx = getDailyIndex(pool.length)
     return pool[idx] || null
   }, [])
-
-  const speak = (text: string, langId: string) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.rate = 0.8
-      utterance.lang = langId === 'russian' ? 'ru-RU'
-        : langId === 'chinese' ? 'zh-CN'
-        : langId === 'english' ? 'en-US'
-        : langId === 'greek' ? 'el-GR'
-        : 'ru-RU'
-      window.speechSynthesis.speak(utterance)
-    }
-  }
 
   if (!wordOfDay) return null
 
@@ -122,7 +110,7 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
                 <Button
                   size="icon"
                   variant="outline"
-                  onClick={() => speak(wordOfDay.word, wordOfDay.languageId)}
+                  onClick={() => speakText(wordOfDay.word, wordOfDay.languageId)}
                   className="h-10 w-10"
                 >
                   <Volume2 className="w-4 h-4" />
