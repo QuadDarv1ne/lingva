@@ -6,10 +6,9 @@ import { useProgressStore } from '@/lib/store'
 // Hook to sync user progress with server when logged in
 // Loads progress on mount, saves on changes (debounced)
 export function useProgressSync(isAuthenticated: boolean) {
-  const { progress, favorites, achievements, streak, activityLog, xp, dailyChallenges, resetProgress } = useProgressStore()
+  const { progress, favorites, achievements, streak, activityLog, xp, dailyChallenges } = useProgressStore()
   const initialLoadRef = useRef(false)
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const hasChangesRef = useRef(false)
 
   // Load progress from server on mount if authenticated
   useEffect(() => {
@@ -37,16 +36,12 @@ export function useProgressSync(isAuthenticated: boolean) {
   // Save progress to server on changes (debounced 3s)
   useEffect(() => {
     if (!isAuthenticated || !initialLoadRef.current) return
-    hasChangesRef.current = true
 
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current)
     }
 
     saveTimerRef.current = setTimeout(() => {
-      if (!hasChangesRef.current) return
-      hasChangesRef.current = false
-
       const state = useProgressStore.getState()
       const payload = {
         progress: state.progress,

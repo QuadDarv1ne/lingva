@@ -17,28 +17,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ users: [] })
     }
 
-    // Search by name or email (case-insensitive), excluding self
+    // Search by name only (email search disabled for privacy)
     const users = await db.user.findMany({
       where: {
         AND: [
           { id: { not: user.id } },
           { isPublic: true },
-          {
-            OR: [
-              { name: { contains: q } },
-              { email: { contains: q } },
-            ],
-          },
+          { name: { contains: q } },
         ],
       },
       select: {
         id: true,
         name: true,
-        email: true,
         avatar: true,
         bio: true,
         progressData: true,
-        isPublic: true,
       },
       take: 20,
     })
@@ -78,7 +71,6 @@ export async function GET(req: NextRequest) {
       return {
         id: u.id,
         name: u.name,
-        email: u.email,
         avatar: u.avatar,
         bio: u.bio,
         xp,

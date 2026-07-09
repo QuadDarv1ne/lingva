@@ -202,7 +202,7 @@ export function WritingSection({ language }: { language: Language }) {
           <div className="text-sm text-muted-foreground">
             <p className="font-medium text-foreground mb-1">Совет по практике</p>
             <p>
-              Для {language.name}特别注意:
+              Для {language.name} обратите особое внимание:
               {language.id === 'chinese' && ' соблюдайте порядок черт: сверху вниз, слева направо, горизонтальные перед вертикальными.'}
               {language.id === 'russian' && ' прописные буквы пишутся с наклоном вправо ~75°.'}
               {language.id === 'greek' && ' обращайте внимание на различия Γ/Γ, Ρ/Р, Η/Н — греческие буквы отличаются от кириллицы.'}

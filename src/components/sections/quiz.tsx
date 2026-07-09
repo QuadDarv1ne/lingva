@@ -22,7 +22,8 @@ export function QuizSection({ language }: { language: Language }) {
 
   const total = language.quiz.length
   const question = language.quiz[current]
-  const bestScore = progress.completedQuizzes[language.id] || 0
+  const quizId = `${language.id}-quiz-${total}`
+  const bestScore = progress.completedQuizzes[quizId] || 0
 
   const handleSelect = (i: number) => {
     if (showResult) return
@@ -37,7 +38,7 @@ export function QuizSection({ language }: { language: Language }) {
   const handleNext = () => {
     if (current + 1 >= total) {
       const finalScore = Math.round((score / total) * 100)
-      recordQuizScore(language.id, language.id, finalScore)
+      recordQuizScore(language.id, quizId, finalScore)
       if (finalScore >= 80) {
         updateDailyChallenge('quiz', 1)
       }

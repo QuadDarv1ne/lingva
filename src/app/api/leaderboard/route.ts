@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
     // Get current user's rank
     const currentUser = await getCurrentUser()
     let myRank: number | null = null
-    let myData: any = null
+    let myData: { id: string; name: string; xp: number; level: number; streak: number; achievementsCount: number; languagesCount: number; rank?: number } | null = null
 
     if (currentUser) {
       const me = ranked.find((u) => u.id === currentUser.id)

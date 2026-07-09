@@ -1,19 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ZAI from 'z-ai-web-dev-sdk'
 import { languages } from '@/lib/languages-data'
+import { getCurrentUser } from '@/lib/auth'
 
 // Simple in-memory conversation store (per server instance)
 const conversations = new Map<string, { role: 'user' | 'assistant'; content: string }[]>()
 
 const MAX_HISTORY = 20
+const MAX_SESSIONS = 500
+const MAX_MESSAGE_LENGTH = 2000
+
+// LRU eviction: delete oldest session when limit exceeded
+function evictIfNeeded() {
+  if (conversations.size > MAX_SESSIONS) {
+    const firstKey = conversations.keys().next().value
+    if (firstKey) conversations.delete(firstKey)
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
     const { sessionId, message, languageId, mode } = await req.json()
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json(
         { error: 'Сообщение обязательно' },
+        { status: 400 }
+      )
+    }
+
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { error: `Сообщение слишком длинное (макс. ${MAX_MESSAGE_LENGTH} символов)` },
         { status: 400 }
       )
     }
@@ -61,6 +84,7 @@ export async function POST(req: NextRequest) {
 
     // Add AI response to history
     history.push({ role: 'assistant', content: aiResponse })
+    evictIfNeeded()
     conversations.set(sessionKey, history)
 
     return NextResponse.json({
@@ -82,6 +106,11 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(req.url)
     const sessionId = searchParams.get('sessionId')
     const languageId = searchParams.get('languageId')

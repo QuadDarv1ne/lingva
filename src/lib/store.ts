@@ -300,14 +300,19 @@ export const ACHIEVEMENTS: Omit<Achievement, 'unlockedAt'>[] = [
 ]
 
 function todayStr(): string {
-  return new Date().toISOString().split('T')[0]
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 function isYesterday(dateStr: string | null): boolean {
   if (!dateStr) return false
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
-  return dateStr === yesterday.toISOString().split('T')[0]
+  return dateStr === todayStrForDate(yesterday)
+}
+
+function todayStrForDate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 // Helper to add XP and record it in xpHistory
@@ -568,7 +573,8 @@ export const useProgressStore = create<ProgressState>()(
         set((state) => {
           const today = todayStr()
           // If we already have today's challenges, do nothing
-          if (state.dailyChallenges.length > 0 && state.dailyChallenges[0].date === today) {
+          const allToday = state.dailyChallenges.length > 0 && state.dailyChallenges.every((c) => c.date === today)
+          if (allToday) {
             return state
           }
 
@@ -776,10 +782,10 @@ export const useProgressStore = create<ProgressState>()(
         const item = SHOP_ITEMS.find((i) => i.id === itemId)
         if (!item) return false
 
-        let updates: any = {}
+        let streakUpdate = state.streak
 
         if (item.type === 'streak_freeze') {
-          updates.streak = { ...state.streak, freezes: state.streak.freezes + 1 }
+          streakUpdate = { ...state.streak, freezes: state.streak.freezes + 1 }
         }
 
         // For consumable items, decrease quantity
@@ -796,7 +802,7 @@ export const useProgressStore = create<ProgressState>()(
           ownedItems = state.ownedItems
         }
 
-        set({ ...updates, ownedItems })
+        set({ streak: streakUpdate, ownedItems })
         return true
       },
       // Activity history

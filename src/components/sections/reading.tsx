@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import {
   BookOpen, Check, X, RotateCcw, Trophy, Volume2, Eye, EyeOff,
   ChevronDown, ChevronUp, Loader2,
