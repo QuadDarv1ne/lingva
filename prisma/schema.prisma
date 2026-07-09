@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String?
+  // passwordHash is nullable for OAuth-only users
+  passwordHash    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Reset password tokens (one active at a time per user)
+  resetToken      String?
+  resetTokenExp   DateTime?
+
+  // Email verification
+  emailVerified   Boolean  @default(false)
+  verifyToken     String?
+  verifyTokenExp  DateTime?
+
+  // 2FA (TOTP)
+  twoFactorSecret String?
+  twoFactorEnabled Boolean @default(false)
+  twoFactorBackupHash String?
+
+  // OAuth accounts (Google, GitHub, etc.)
+  accounts        Account[]
+
+  // User's progress data (JSON-encoded)
+  progressData    String?
+
+  // Public profile
+  bio             String?
+  avatar          String?
+  isPublic        Boolean  @default(true)
+
+  sessions        Session[]
+
+  // Social: friends
+  friendsReceived Friendship[] @relation("FriendshipReceiver")
+  friendsSent     Friendship[] @relation("FriendshipSender")
+
+  // Notifications
+  notifications   Notification[]
+
+  // Custom decks
+  customDecks     CustomDeck[]
+
+  // Tournaments
+  tournamentParticipations TournamentParticipant[]
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String   // "google", "github", "credentials"
+  providerAccountId String
+  accessToken       String?
+  refreshToken      String?
+  expiresAt         Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  // Metadata for security audit
+  userAgent String?
+  ip        String?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ip        String?
+  userAgent String?
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Friendship {
+  id          String   @id @default(cuid())
+  senderId    String
+  receiverId  String
+  status      String   @default("pending") // "pending" | "accepted" | "declined"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sender      User     @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver    User     @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId, status])
+  @@index([senderId, status])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   // recipient
+  type      String   // "friend_request" | "friend_accepted" | "achievement" | "daily_reminder" | "info" | "tournament"
+  title     String
+  message   String
+  data      String?  // JSON-encoded additional data
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([createdAt])
+}
+
+model CustomDeck {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  languageId  String   // which language this deck is for
+  isPublic    Boolean  @default(false)
+  cards       String   // JSON-encoded array of {front, back, transcription?}
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([languageId, isPublic])
+}
+
+model Tournament {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  type        String   // "weekly_xp" | "weekly_streak" | "language_challenge"
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  prize       String?  // description of prize
+  createdAt   DateTime @default(now())
+
+  participants TournamentParticipant[]
+
+  @@index([isActive, endDate])
+}
+
+model TournamentParticipant {
+  id           String   @id @default(cuid())
+  tournamentId String
+  userId       String
+  joinedAt     DateTime @default(now())
+  score        Int      @default(0)
+  // Snapshot of XP at join time, to calculate delta
+  xpSnapshot   Int      @default(0)
+
+  tournament   Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, userId])
+  @@index([tournamentId, score])
+}

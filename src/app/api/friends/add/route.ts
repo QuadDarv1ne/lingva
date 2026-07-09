@@ -1,0 +1,98 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { getCurrentUser } from '@/lib/auth'
+
+// POST - send friend request
+export async function POST(req: NextRequest) {
+  try {
+    const user = await getCurrentUser()
+    if (!user) {
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
+    const body = await req.json()
+    const { receiverId } = body
+
+    if (!receiverId || receiverId === user.id) {
+      return NextResponse.json({ error: 'Неверный ID пользователя' }, { status: 400 })
+    }
+
+    // Check if receiver exists
+    const receiver = await db.user.findUnique({
+      where: { id: receiverId },
+      select: { id: true, isPublic: true },
+    })
+    if (!receiver) {
+      return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 })
+    }
+
+    // Check existing friendship
+    const existing = await db.friendship.findFirst({
+      where: {
+        OR: [
+          { senderId: user.id, receiverId },
+          { senderId: receiverId, receiverId: user.id },
+        ],
+      },
+    })
+
+    if (existing) {
+      if (existing.status === 'accepted') {
+        return NextResponse.json({ error: 'Уже в друзьях' }, { status: 400 })
+      }
+      if (existing.status === 'pending') {
+        // If the other person sent us a request, auto-accept
+        if (existing.senderId === receiverId) {
+          await db.friendship.update({
+            where: { id: existing.id },
+            data: { status: 'accepted' },
+          })
+          // Create notification for the original sender
+          await db.notification.create({
+            data: {
+              userId: receiverId,
+              type: 'friend_accepted',
+              title: 'Заявка в друзья принята',
+              message: `${user.name || user.email} принял(а) вашу заявку в друзья`,
+              data: JSON.stringify({ senderId: user.id }),
+            },
+          })
+          return NextResponse.json({ success: true, autoAccepted: true })
+        }
+        return NextResponse.json({ error: 'Заявка уже отправлена' }, { status: 400 })
+      }
+      if (existing.status === 'declined') {
+        // Allow re-sending: update to pending
+        await db.friendship.update({
+          where: { id: existing.id },
+          data: { status: 'pending', senderId: user.id, receiverId },
+        })
+      }
+    } else {
+      // Create new friendship
+      await db.friendship.create({
+        data: {
+          senderId: user.id,
+          receiverId,
+          status: 'pending',
+        },
+      })
+    }
+
+    // Create notification for receiver
+    await db.notification.create({
+      data: {
+        userId: receiverId,
+        type: 'friend_request',
+        title: 'Новая заявка в друзья',
+        message: `${user.name || user.email} хочет добавить вас в друзья`,
+        data: JSON.stringify({ senderId: user.id }),
+      },
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Add friend error:', error)
+    return NextResponse.json({ error: 'Ошибка' }, { status: 500 })
+  }
+}

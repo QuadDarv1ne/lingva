@@ -1,0 +1,40 @@
+{
+  "name": "Лингва — Изучение 7 языков мира",
+  "short_name": "Лингва",
+  "description": "Интерактивная платформа для изучения русского, китайского, арамейского, английского, греческого, славянского и церковнославянского языков",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f43f5e",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Таблица лидеров",
+      "short_name": "Лидерборд",
+      "url": "/community/leaderboard",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Друзья",
+      "short_name": "Друзья",
+      "url": "/community/friends",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

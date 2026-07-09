@@ -1,0 +1,175 @@
+import { NextRequest, NextResponse } from 'next/server'
+import ZAI from 'z-ai-web-dev-sdk'
+import { languages } from '@/lib/languages-data'
+
+// Simple in-memory conversation store (per server instance)
+const conversations = new Map<string, { role: 'user' | 'assistant'; content: string }[]>()
+
+const MAX_HISTORY = 20
+
+export async function POST(req: NextRequest) {
+  try {
+    const { sessionId, message, languageId, mode } = await req.json()
+
+    if (!message || typeof message !== 'string') {
+      return NextResponse.json(
+        { error: 'Сообщение обязательно' },
+        { status: 400 }
+      )
+    }
+
+    const language = languages.find((l) => l.id === languageId)
+    if (!language) {
+      return NextResponse.json(
+        { error: 'Язык не найден' },
+        { status: 400 }
+      )
+    }
+
+    // Build system prompt based on language and mode
+    const systemPrompt = buildSystemPrompt(language, mode || 'tutor')
+
+    // Get or create conversation history
+    const sessionKey = `${sessionId}-${languageId}-${mode}`
+    let history = conversations.get(sessionKey) || []
+
+    // On first message of session, seed with system prompt
+    if (history.length === 0) {
+      history = [{ role: 'assistant' as const, content: systemPrompt }]
+    }
+
+    // Add user message
+    history.push({ role: 'user', content: message })
+
+    // Trim history if too long (keep system prompt at start)
+    if (history.length > MAX_HISTORY) {
+      history = [history[0], ...history.slice(-(MAX_HISTORY - 1))]
+    }
+
+    // Get AI response
+    const zai = await ZAI.create()
+    const completion = await zai.chat.completions.create({
+      messages: history,
+      thinking: { type: 'disabled' },
+    })
+
+    const aiResponse = completion.choices[0]?.message?.content
+
+    if (!aiResponse) {
+      throw new Error('Пустой ответ от ИИ')
+    }
+
+    // Add AI response to history
+    history.push({ role: 'assistant', content: aiResponse })
+    conversations.set(sessionKey, history)
+
+    return NextResponse.json({
+      success: true,
+      response: aiResponse,
+      messageCount: history.length - 1,
+    })
+  } catch (error) {
+    console.error('Chat API error:', error)
+    return NextResponse.json(
+      {
+        error: 'Ошибка при обращении к ИИ',
+        details: error instanceof Error ? error.message : 'Неизвестная ошибка',
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const sessionId = searchParams.get('sessionId')
+    const languageId = searchParams.get('languageId')
+    const mode = searchParams.get('mode')
+
+    if (!sessionId || !languageId) {
+      return NextResponse.json(
+        { error: 'sessionId и languageId обязательны' },
+        { status: 400 }
+      )
+    }
+
+    const sessionKey = `${sessionId}-${languageId}-${mode || 'tutor'}`
+    conversations.delete(sessionKey)
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Ошибка при очистке' },
+      { status: 500 }
+    )
+  }
+}
+
+function buildSystemPrompt(
+  language: (typeof languages)[0],
+  mode: string
+): string {
+  const baseContext = `Ты — опытный преподаватель языка ${language.name} (${language.nativeName}).
+Языковые факты:
+- Семья: ${language.family}
+- Письменность: ${language.script}
+- Эпоха: ${language.era}
+- Носителей: ${language.speakers}
+- Направление письма: ${language.direction === 'rtl' ? 'справа налево' : 'слева направо'}`
+
+  switch (mode) {
+    case 'tutor':
+      return `${baseContext}
+
+Твоя задача — помочь ученику изучать ${language.name} язык. Действуй так:
+
+1. Отвечай преимущественно на русском, но приводи примеры на изучаемом языке с транскрипцией и переводом.
+2. Когда ученик спрашивает о слове или фразе — давай: оригинал, транскрипцию, перевод, пример использования.
+3. Объясняй грамматику простыми словами с примерами.
+4. Хвали за правильные ответы и мягко исправляй ошибки.
+5. Если ученик ошибается — объясни, в чём ошибка, и приведи правильный вариант.
+6. Поддерживай дружелюбный и ободряющий тон.
+7. Если тема выходит за рамки языка — мягко возвращай к изучению.
+8. Используй эмодзи умеренно для создания тёплой атмосферы 📚✨
+
+Пример ответа:
+📚 Слово «${language.phrases[0]?.original || '—'}» (${language.phrases[0]?.transcription || '—'}) означает «${language.phrases[0]?.translation || '—'}». Это стандартное приветствие, которое можно использовать в любой ситуации.`
+
+    case 'native':
+      return `${baseContext}
+
+Сейчас ты — носитель языка ${language.name}. Действуй так:
+
+1. Общайся с учеником на изучаемом языке (примеры, фразы, реплики).
+2. Используй русский только для пояснений сложных моментов.
+3. Задавай простые вопросы на изучаемом языке и жди ответа.
+4. Реагируй на ответы ученика: «Отлично!» / «Почти правильно, обратите внимание на...».
+5. Постепенно усложняй диалог по мере прогресса.
+6. Предлагай темы для разговора: семья, путешествия, еда, работа, погода.
+7. Если ученик просит перевести — давай перевод с разбором.
+8. Поощряй попытки говорить, даже с ошибками.
+
+Цель — практика общения в живом диалоге.`
+
+    case 'quiz':
+      return `${baseContext}
+
+Ты — экзаменатор по языку ${language.name}. Действуй так:
+
+1. Задавай по одному вопросу за раз (не больше!).
+2. Вопросы должны быть разнообразными: перевод слова, завершение фразы, выбор правильной формы, вопросы о грамматике.
+3. Жди ответа ученика, не давай правильный ответ заранее.
+4. После ответа сообщай, правильно или нет, и объясняй.
+5. Подсчитывай счёт: «Счёт: X из Y».
+6. Адаптируй сложность: если ученик отвечает правильно, усложняй; если ошибается — упрощай.
+7. После 5 вопросов сообщай итог и предлагай новую тему.
+
+Формат вопроса:
+❓ Вопрос: [текст вопроса]
+Варианты: 1) ... 2) ... 3) ... 4) ...`
+
+    default:
+      return baseContext
+  }
+}
