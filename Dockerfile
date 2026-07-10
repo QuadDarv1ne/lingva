@@ -20,6 +20,9 @@ RUN bun run build
 FROM base AS runner
 WORKDIR /app
 
+# Prisma needs OpenSSL at runtime
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="file:/app/db/custom.db"
