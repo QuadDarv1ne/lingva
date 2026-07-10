@@ -7,12 +7,6 @@ deploy:
   # Persistent volume for SQLite database
   persistence:
     - path: /app/db
-  # Environment variables (set these in Amvera panel)
-  env:
-    - name: DATABASE_URL
-      value: "file:/app/db/custom.db"
-    - name: NEXT_PUBLIC_APP_URL
-      value: "https://lingva.your-domain.amvera.app"  # <-- замени на свой домен
   # Health check
   healthcheck:
     path: /
