@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.mimocode
+.env
+.env.local
+.env.*.local
+*.log
+test/
+prompt/
+local-*
+.vercel
+.idea/
+.vscode/
