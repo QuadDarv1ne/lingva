@@ -3,6 +3,9 @@ version: "1"
 build:
   dockerfile: Dockerfile
 
+run:
+  containerPort: 3000
+
 deploy:
   # Persistent volume for SQLite database
   persistence:
