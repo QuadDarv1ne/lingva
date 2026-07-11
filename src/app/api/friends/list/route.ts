@@ -23,7 +23,6 @@ export async function GET() {
             avatar: true,
             bio: true,
             isPublic: true,
-            progressData: true,
           },
         },
       },
@@ -40,7 +39,6 @@ export async function GET() {
             avatar: true,
             bio: true,
             isPublic: true,
-            progressData: true,
           },
         },
       },
@@ -50,6 +48,14 @@ export async function GET() {
       ...sentAccepted.map((f) => ({ ...f.receiver, friendshipId: f.id })),
       ...receivedAccepted.map((f) => ({ ...f.sender, friendshipId: f.id })),
     ]
+
+    // Fetch progressData separately to compute stats (not exposed to client)
+    const friendIds = friends.map((f) => f.id)
+    const friendProgress = await db.user.findMany({
+      where: { id: { in: friendIds } },
+      select: { id: true, progressData: true },
+    })
+    const progressMap = new Map(friendProgress.map((u) => [u.id, u.progressData]))
 
     // Pending requests received
     const pendingReceived = await db.friendship.findMany({
@@ -84,7 +90,10 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      friends: friends.map(parseUserProgress),
+      friends: friends.map((f) => {
+        const stats = computeStats(progressMap.get(f.id) ?? null)
+        return { ...f, stats }
+      }),
       pendingReceived: pendingReceived.map((f) => ({
         friendshipId: f.id,
         createdAt: f.createdAt,
@@ -102,16 +111,16 @@ export async function GET() {
   }
 }
 
-function parseUserProgress(user: any) {
+function computeStats(progressData: string | null) {
   let xp = 0
   let level = 1
   let streak = 0
   let achievementsCount = 0
   let languagesCount = 0
 
-  if (user.progressData) {
+  if (progressData) {
     try {
-      const data = JSON.parse(user.progressData)
+      const data = JSON.parse(progressData)
       xp = data.xp || 0
       level = getLevelFromXP(xp).level
       streak = data.streak?.current || 0
@@ -122,14 +131,5 @@ function parseUserProgress(user: any) {
     }
   }
 
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.isPublic ? user.email : null,
-    avatar: user.avatar,
-    bio: user.bio,
-    isPublic: user.isPublic,
-    friendshipId: user.friendshipId,
-    stats: { xp, level, streak, achievementsCount, languagesCount },
-  }
+  return { xp, level, streak, achievementsCount, languagesCount }
 }

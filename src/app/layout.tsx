@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   keywords: ["изучение языков", "русский", "китайский", "арамейский", "английский", "греческий", "славянский", "церковнославянский"],
   authors: [{ name: "Лингва" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/favicon.svg",
     apple: "/icon-192.png",
   },
   manifest: "/manifest.json",

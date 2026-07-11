@@ -110,9 +110,7 @@ export async function POST(req: NextRequest) {
           data: { twoFactorBackupHash: newHash },
         })
       } else {
-        // No 2FA code provided — create a short-lived session for the 2FA step
-        const token = await createSession(user.id, metadata, false)
-        await setSessionCookie(token, false)
+        // No 2FA code provided — require the client to re-submit with a 2FA token
         return NextResponse.json({
           requiresTwoFactor: true,
           message: 'Введите код из приложения аутентификатора',

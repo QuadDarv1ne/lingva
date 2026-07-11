@@ -62,10 +62,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Заявка уже отправлена' }, { status: 400 })
       }
       if (existing.status === 'declined') {
-        // Allow re-sending: update to pending
-        await db.friendship.update({
-          where: { id: existing.id },
-          data: { status: 'pending', senderId: user.id, receiverId },
+        // Delete the old declined request and create a fresh one
+        await db.friendship.delete({ where: { id: existing.id } })
+        await db.friendship.create({
+          data: { senderId: user.id, receiverId, status: 'pending' },
         })
       }
     } else {

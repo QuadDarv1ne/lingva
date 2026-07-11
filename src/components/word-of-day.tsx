@@ -16,7 +16,7 @@ function getDailyIndex(max: number): number {
   return seed % max
 }
 
-interface WordOfDay {
+interface WordOfDayData {
   languageId: string
   languageName: string
   languageEmoji: string
@@ -29,9 +29,9 @@ interface WordOfDay {
 }
 
 export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => void }) {
-  const wordOfDay = useMemo<WordOfDay | null>(() => {
+  const wordOfDay = useMemo<WordOfDayData | null>(() => {
     // Build pool of all phrases from all languages
-    const pool: WordOfDay[] = []
+    const pool: WordOfDayData[] = []
     for (const lang of languages) {
       for (const phrase of lang.phrases) {
         pool.push({

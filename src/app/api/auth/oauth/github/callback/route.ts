@@ -15,13 +15,13 @@ export async function GET(req: NextRequest) {
 
     // Verify state cookie
     const cookieStore = await cookies()
-    const storedState = cookieStore.get('oauth_state')?.value
+    const storedState = cookieStore.get('oauth_state_github')?.value
     if (!storedState || storedState !== state) {
       return NextResponse.redirect(new URL('/auth/login?error=invalid_state', req.url))
     }
 
     // Clear state cookie
-    cookieStore.delete('oauth_state')
+    cookieStore.delete('oauth_state_github')
 
     // Exchange code for user info
     const userInfo = await getOAuthUserInfo('github', code)

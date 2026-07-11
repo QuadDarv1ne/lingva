@@ -15,7 +15,7 @@ export async function GET() {
 
   // Store state in cookie for verification
   const cookieStore = await cookies()
-  cookieStore.set('oauth_state', state, {
+  cookieStore.set('oauth_state_github', state, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

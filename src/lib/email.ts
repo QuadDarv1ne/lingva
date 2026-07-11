@@ -64,13 +64,9 @@ export async function sendEmail(message: EmailMessage): Promise<SendResult> {
       return { success: true, messageId: info.messageId }
     } catch (error) {
       console.error('Email send failed:', error)
-      // Fallback to dev mode on error
-      devEmailStore.push(message)
       return {
-        success: true,
-        messageId: `dev-${randomBytes(8).toString('hex')}`,
-        devPreview: message,
-        error: 'SMTP failed, stored in dev mode',
+        success: false,
+        error: `SMTP delivery failed: ${error instanceof Error ? error.message : 'unknown error'}`,
       }
     }
   }

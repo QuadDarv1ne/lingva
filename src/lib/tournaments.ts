@@ -39,7 +39,7 @@ export async function getCurrentWeeklyTournament() {
   // Check if tournament exists for this week
   const existing = await db.tournament.findFirst({
     where: {
-      startDate: weekStart,
+      startDate: { gte: weekStart, lt: weekEnd },
       type: 'weekly_xp',
     },
   })

@@ -16,7 +16,5 @@ examples/
 mini-services/
 README.md
 components.json
-tailwind.config.ts
-postcss.config.mjs
 tsconfig.tsbuildinfo
 next-env.d.ts

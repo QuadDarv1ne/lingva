@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
+import { getLevelFromXP } from '@/lib/level'
 
 // GET - search users by name or email (for adding friends)
 export async function GET(req: NextRequest) {
@@ -31,10 +32,17 @@ export async function GET(req: NextRequest) {
         name: true,
         avatar: true,
         bio: true,
-        progressData: true,
       },
       take: 20,
     })
+
+    // Fetch progressData separately for stats computation
+    const userIds = users.map((u) => u.id)
+    const userProgress = await db.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, progressData: true },
+    })
+    const progressMap = new Map(userProgress.map((u) => [u.id, u.progressData]))
 
     // Get friendship status for each user
     const friendships = await db.friendship.findMany({
@@ -58,11 +66,12 @@ export async function GET(req: NextRequest) {
     const result = users.map((u) => {
       let xp = 0
       let level = 1
-      if (u.progressData) {
+      const progressData = progressMap.get(u.id)
+      if (progressData) {
         try {
-          const data = JSON.parse(u.progressData)
+          const data = JSON.parse(progressData)
           xp = data.xp || 0
-          level = Math.floor(Math.sqrt(xp / 100)) + 1
+          level = getLevelFromXP(xp).level
         } catch {
           // ignore
         }

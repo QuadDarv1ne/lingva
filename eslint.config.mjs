@@ -17,7 +17,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "@typescript-eslint/no-unused-disable-directive": "off",
     
     // React rules
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "warn",
     "react-hooks/purity": "off",
     "react/no-unescaped-entities": "off",
     "react/display-name": "off",
@@ -29,19 +29,19 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "@next/next/no-html-link-for-pages": "off",
     
     // General JavaScript rules
-    "prefer-const": "off",
+    "prefer-const": "warn",
     "no-unused-vars": "off",
     "no-console": "off",
-    "no-debugger": "off",
-    "no-empty": "off",
-    "no-irregular-whitespace": "off",
+    "no-debugger": "error",
+    "no-empty": "warn",
+    "no-irregular-whitespace": "error",
     "no-case-declarations": "off",
-    "no-fallthrough": "off",
-    "no-mixed-spaces-and-tabs": "off",
-    "no-redeclare": "off",
+    "no-fallthrough": "warn",
+    "no-mixed-spaces-and-tabs": "error",
+    "no-redeclare": "error",
     "no-undef": "off",
-    "no-unreachable": "off",
-    "no-useless-escape": "off",
+    "no-unreachable": "error",
+    "no-useless-escape": "warn",
   },
 }, {
   ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills"]
