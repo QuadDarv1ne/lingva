@@ -3,6 +3,20 @@ import { db } from '@/lib/db'
 import { generateResetToken, hashToken, validateEmail } from '@/lib/auth'
 import { sendEmail, renderResetPasswordEmail } from '@/lib/email'
 
+const resetRequests = new Map<string, { count: number; windowStart: number }>()
+function checkResetRateLimit(email: string): boolean {
+  const now = Date.now()
+  const key = `reset:${email.toLowerCase()}`
+  const entry = resetRequests.get(key)
+  if (!entry || now - entry.windowStart > 60_000) {
+    resetRequests.set(key, { count: 1, windowStart: now })
+    return true
+  }
+  if (entry.count >= 3) return false
+  entry.count++
+  return true
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -12,6 +26,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Некорректный email' },
         { status: 400 }
+      )
+    }
+
+    if (!checkResetRateLimit(email)) {
+      return NextResponse.json(
+        { error: 'Слишком много запросов. Попробуйте через минуту.' },
+        { status: 429 }
       )
     }
 

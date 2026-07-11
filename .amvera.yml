@@ -5,15 +5,4 @@ build:
 
 run:
   containerPort: 3000
-
-deploy:
-  # Persistent volume for SQLite database
-  persistence:
-    - path: /app/db
-  # Health check
-  healthcheck:
-    path: /
-    port: 3000
-    interval: 30
-    timeout: 5
-    retries: 3
+  persistenceMount: /app/db

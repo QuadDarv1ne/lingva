@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
+import { getLevelFromXP } from '@/lib/level'
 
 // GET - list user's friends (accepted) and pending requests
 export async function GET() {
@@ -112,7 +113,7 @@ function parseUserProgress(user: any) {
     try {
       const data = JSON.parse(user.progressData)
       xp = data.xp || 0
-      level = Math.floor(Math.sqrt(xp / 100)) + 1
+      level = getLevelFromXP(xp).level
       streak = data.streak?.current || 0
       achievementsCount = data.achievements?.length || 0
       languagesCount = Object.keys(data.progress || {}).length

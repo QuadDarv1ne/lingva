@@ -11,7 +11,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "z-cdn.chatglm.cn" },
     ],
   },
-  allowedDevOrigins: ["*.space-z.ai", "*.chatglm.cn"],
   headers: async () => [
     {
       source: "/(.*)",
