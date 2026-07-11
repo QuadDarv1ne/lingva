@@ -3,13 +3,13 @@ FROM oven/bun:1.2 AS base
 # Prisma needs OpenSSL at runtime
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# --- install dependencies ---
+# --- install dependencies (Bun for install, lock file is bun.lock) ---
 FROM base AS deps
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-# --- build (use Node.js to avoid Bun segfault in next build) ---
+# --- build (Node.js to avoid Bun segfault in next build) ---
 FROM node:22-slim AS builder
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
@@ -20,8 +20,9 @@ ENV DATABASE_URL="file:./db/custom.db"
 RUN npx prisma generate
 RUN npx next build
 
-# --- production ---
-FROM base AS runner
+# --- production (Node.js runtime, not Bun) ---
+FROM node:22-slim AS runner
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -44,6 +45,6 @@ USER nextjs
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD bun -e "fetch('http://localhost:3000/api').then(r => { process.exit(r.ok ? 0 : 1) }).catch(() => process.exit(1))"
+  CMD node -e "fetch('http://localhost:3000/api').then(r => { process.exit(r.ok ? 0 : 1) }).catch(() => process.exit(1))"
 
-CMD ["bun", "next", "start", "-p", "3000"]
+CMD ["npx", "next", "start", "-p", "3000"]
