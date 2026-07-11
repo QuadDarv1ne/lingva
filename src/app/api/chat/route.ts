@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
     // Build system prompt based on language and mode
     const systemPrompt = buildSystemPrompt(language, mode || 'tutor')
 
-    // Get or create conversation history
-    const sessionKey = `${sessionId}-${languageId}-${mode}`
+    // Get or create conversation history (keyed by authenticated user, not client session)
+    const sessionKey = `${user.id}-${languageId}-${mode}`
     let history = conversations.get(sessionKey) || []
 
     // On first message of session, seed with system prompt
@@ -95,10 +95,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Chat API error:', error)
     return NextResponse.json(
-      {
-        error: 'Ошибка при обращении к ИИ',
-        details: error instanceof Error ? error.message : 'Неизвестная ошибка',
-      },
+      { error: 'Ошибка при обращении к ИИ' },
       { status: 500 }
     )
   }
@@ -123,7 +120,7 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const sessionKey = `${sessionId}-${languageId}-${mode || 'tutor'}`
+    const sessionKey = `${user.id}-${languageId}-${mode || 'tutor'}`
     conversations.delete(sessionKey)
 
     return NextResponse.json({ success: true })

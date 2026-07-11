@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
+import { getLevelFromXP } from '@/lib/level'
 
 // GET - public profile of any user (with friendship status)
 export async function GET(req: NextRequest) {
@@ -50,7 +51,7 @@ export async function GET(req: NextRequest) {
       try {
         const data = JSON.parse(user.progressData)
         stats.xp = data.xp || 0
-        stats.level = Math.floor(Math.sqrt(stats.xp / 100)) + 1
+        stats.level = getLevelFromXP(stats.xp).level
         stats.streak = data.streak?.current || 0
         stats.longestStreak = data.streak?.longest || 0
         stats.achievementsCount = data.achievements?.length || 0

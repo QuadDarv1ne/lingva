@@ -19,7 +19,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
   const [requiresTwoFactor, setRequiresTwoFactor] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
   const [twoFactorToken, setTwoFactorToken] = useState('')
   const [backupCode, setBackupCode] = useState('')
   const [useBackupCode, setUseBackupCode] = useState(false)
@@ -30,7 +29,7 @@ export default function LoginPage() {
     e.preventDefault()
 
     // If 2FA required, handle TOTP/backup code submission
-    if (requiresTwoFactor && userId) {
+    if (requiresTwoFactor) {
       if (useBackupCode) {
         if (!backupCode) {
           toast({ title: 'Введите бэкап-код', variant: 'destructive' })
@@ -51,7 +50,6 @@ export default function LoginPage() {
           body: JSON.stringify({
             ...form,
             rememberMe,
-            userId,
             twoFactorToken: useBackupCode ? undefined : twoFactorToken,
             backupCode: useBackupCode ? backupCode : undefined,
           }),
@@ -96,7 +94,6 @@ export default function LoginPage() {
       // If 2FA required, switch to 2FA form
       if (data.requiresTwoFactor) {
         setRequiresTwoFactor(true)
-        setUserId(data.userId)
         setLoading(false)
         return
       }
@@ -136,7 +133,6 @@ export default function LoginPage() {
           <button
             onClick={() => {
               setRequiresTwoFactor(false)
-              setUserId(null)
               setTwoFactorToken('')
               setBackupCode('')
               setUseBackupCode(false)

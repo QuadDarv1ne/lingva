@@ -1,6 +1,6 @@
 FROM oven/bun:1.2 AS base
 
-# Prisma needs OpenSSL
+# Prisma needs OpenSSL at runtime
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # --- install dependencies ---
@@ -20,22 +20,23 @@ RUN bun run db:generate
 RUN bun run build
 
 # --- production ---
-FROM base AS runner
+FROM oven/bun:1.2-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_URL="file:./db/custom.db"
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy everything needed for next start (not standalone)
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+# Standalone output (self-contained server + minimal node_modules)
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Prisma engine binaries and generated client (needed at runtime)
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
 # Ensure db directory exists and is writable
 RUN mkdir -p /app/db && chown -R nextjs:nodejs /app/db
@@ -44,4 +45,4 @@ USER nextjs
 
 EXPOSE 3000
 
-CMD ["bun", "next", "start", "-p", "3000"]
+CMD ["node", "server.js"]

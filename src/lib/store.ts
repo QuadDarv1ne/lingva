@@ -1,6 +1,7 @@
 // Zustand store для отслеживания прогресса изучения языков
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getLevelFromXP } from './level'
 
 export interface LanguageProgress {
   visitedLessons: string[]
@@ -50,23 +51,7 @@ export const XP_REWARDS = {
 }
 
 // Levels: each level needs level^2 * 100 XP
-export function getLevelFromXP(xp: number): { level: number; current: number; needed: number; pct: number } {
-  let level = 1
-  let needed = 100
-  let total = 0
-  while (xp >= total + needed) {
-    total += needed
-    level++
-    needed = level * 100
-  }
-  const current = xp - total
-  return {
-    level,
-    current,
-    needed,
-    pct: Math.round((current / needed) * 100),
-  }
-}
+export { getLevelFromXP }
 
 export const LEVEL_TITLES = [
   'Новичок',       // 1

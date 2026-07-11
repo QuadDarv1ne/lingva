@@ -98,49 +98,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH - Verify and consume a backup code (used during login)
-export async function PATCH(req: NextRequest) {
-  try {
-    const body = await req.json()
-    const { code, userId } = body
 
-    if (!code || !userId) {
-      return NextResponse.json(
-        { error: 'Код и ID пользователя обязательны' },
-        { status: 400 }
-      )
-    }
-
-    const user = await db.user.findUnique({
-      where: { id: userId },
-    })
-    if (!user?.twoFactorEnabled || !user.twoFactorBackupHash) {
-      return NextResponse.json(
-        { error: '2FA не настроена' },
-        { status: 400 }
-      )
-    }
-
-    const { newHash, found } = consumeBackupCode(user.twoFactorBackupHash, code)
-    if (!found) {
-      return NextResponse.json(
-        { error: 'Неверный бэкап-код' },
-        { status: 401 }
-      )
-    }
-
-    // Update hash (remove used code)
-    await db.user.update({
-      where: { id: user.id },
-      data: { twoFactorBackupHash: newHash },
-    })
-
-    return NextResponse.json({
-      success: true,
-      remaining: newHash ? newHash.split('|').length : 0,
-    })
-  } catch (error) {
-    console.error('Backup code verify error:', error)
-    return NextResponse.json({ error: 'Ошибка' }, { status: 500 })
-  }
-}

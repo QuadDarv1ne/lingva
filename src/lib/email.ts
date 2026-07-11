@@ -2,7 +2,7 @@
 // In production: configure SMTP env vars (EMAIL_SERVER, EMAIL_FROM)
 // In development: stores emails in memory and returns preview URL
 
-import { createHash, randomBytes } from 'crypto'
+import { randomBytes } from 'crypto'
 import nodemailer from 'nodemailer'
 
 export interface EmailMessage {
