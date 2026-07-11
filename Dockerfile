@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:22-slim AS base
 
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
@@ -16,7 +17,7 @@ COPY . .
 
 ENV DATABASE_URL="file:./db/custom.db"
 RUN npx prisma generate
-RUN npx next build
+RUN --network=host npx next build
 
 # --- production ---
 FROM base AS runner
