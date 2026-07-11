@@ -1,17 +1,15 @@
-FROM oven/bun:1.2 AS base
+FROM node:22-slim AS base
 
-# Prisma needs OpenSSL at runtime
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# --- install dependencies (Bun for install, lock file is bun.lock) ---
+# --- install dependencies (Node.js for all stages — no Bun) ---
 FROM base AS deps
 WORKDIR /app
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# --- build (Node.js to avoid Bun segfault in next build) ---
-FROM node:22-slim AS builder
-RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+# --- build ---
+FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -20,9 +18,8 @@ ENV DATABASE_URL="file:./db/custom.db"
 RUN npx prisma generate
 RUN npx next build
 
-# --- production (Node.js runtime, not Bun) ---
-FROM node:22-slim AS runner
-RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+# --- production ---
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -37,7 +34,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-# Ensure db directory exists and is writable
 RUN mkdir -p /app/db && chown -R nextjs:nodejs /app/db
 
 USER nextjs
@@ -47,4 +43,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD node -e "fetch('http://localhost:3000/api').then(r => { process.exit(r.ok ? 0 : 1) }).catch(() => process.exit(1))"
 
-CMD ["npx", "next", "start", "-p", "3000"]
+CMD ["node", "node_modules/.bin/next", "start", "-p", "3000"]
