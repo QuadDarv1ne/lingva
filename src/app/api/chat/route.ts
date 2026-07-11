@@ -13,11 +13,12 @@ const MAX_MESSAGE_LENGTH = 2000
 // Per-user rate limiting
 const rateLimits = new Map<string, { count: number; windowStart: number }>()
 const MAX_MESSAGES_PER_MINUTE = 20
+const RATE_LIMIT_WINDOW_MS = 60_000
 
 function checkRateLimit(userId: string): boolean {
   const now = Date.now()
   const entry = rateLimits.get(userId)
-  if (!entry || now - entry.windowStart > 60000) {
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
     rateLimits.set(userId, { count: 1, windowStart: now })
     return true
   }
@@ -28,11 +29,26 @@ function checkRateLimit(userId: string): boolean {
   return true
 }
 
+// Periodic cleanup of stale rate-limit entries (runs on each request)
+let lastCleanup = 0
+const CLEANUP_INTERVAL_MS = 5 * 60_000
+function cleanupRateLimits() {
+  const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
+  lastCleanup = now
+  for (const [key, entry] of rateLimits) {
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+      rateLimits.delete(key)
+    }
+  }
+}
+
 // LRU eviction: delete oldest session when limit exceeded
 function evictIfNeeded() {
-  if (conversations.size > MAX_SESSIONS) {
+  while (conversations.size > MAX_SESSIONS) {
     const firstKey = conversations.keys().next().value
     if (firstKey) conversations.delete(firstKey)
+    else break
   }
 }
 
@@ -42,6 +58,8 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
+
+    cleanupRateLimits()
 
     if (!checkRateLimit(user.id)) {
       return NextResponse.json(

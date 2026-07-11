@@ -5,6 +5,15 @@
 import { randomBytes } from 'crypto'
 import nodemailer from 'nodemailer'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export interface EmailMessage {
   to: string
   subject: string
@@ -99,7 +108,9 @@ export interface ResetPasswordEmailData {
 }
 
 export function renderResetPasswordEmail(data: ResetPasswordEmailData): EmailMessage {
-  const greeting = data.name ? `Здравствуйте, ${data.name}!` : 'Здравствуйте!'
+  const name = data.name || ''
+  const greeting = name ? `Здравствуйте, ${name}!` : 'Здравствуйте!'
+  const greetingHtml = name ? `Здравствуйте, ${escapeHtml(name)}!` : 'Здравствуйте!'
   return {
     to: data.to,
     subject: 'Восстановление пароля — Лингва',
@@ -117,7 +128,7 @@ export function renderResetPasswordEmail(data: ResetPasswordEmailData): EmailMes
       <div style="display: inline-block; width: 48px; height: 48px; background: linear-gradient(135deg, #f43f5e, #f59e0b); border-radius: 12px; line-height: 48px; color: white; font-size: 24px; font-weight: bold;">L</div>
       <h1 style="color: #111827; font-size: 24px; margin: 16px 0 8px;">Лингва</h1>
     </div>
-    <p style="color: #374151; font-size: 16px; line-height: 1.5;">${greeting}</p>
+    <p style="color: #374151; font-size: 16px; line-height: 1.5;">${greetingHtml}</p>
     <p style="color: #374151; font-size: 16px; line-height: 1.5;">Вы запросили восстановление пароля на сайте Лингва. Нажмите кнопку ниже, чтобы установить новый пароль:</p>
     <div style="text-align: center; margin: 32px 0;">
       <a href="${data.resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Сбросить пароль</a>
@@ -142,7 +153,9 @@ export interface WelcomeEmailData {
 }
 
 export function renderWelcomeEmail(data: WelcomeEmailData): EmailMessage {
-  const greeting = data.name ? `Добро пожаловать, ${data.name}!` : 'Добро пожаловать!'
+  const name = data.name || ''
+  const greeting = name ? `Добро пожаловать, ${name}!` : 'Добро пожаловать!'
+  const greetingHtml = name ? `Добро пожаловать, ${escapeHtml(name)}!` : 'Добро пожаловать!'
   const verifySection = data.verifyUrl
     ? `
     <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin: 24px 0;">
@@ -163,7 +176,7 @@ export function renderWelcomeEmail(data: WelcomeEmailData): EmailMessage {
   <div style="background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <div style="text-align: center; margin-bottom: 24px;">
       <div style="display: inline-block; width: 64px; height: 64px; background: linear-gradient(135deg, #f43f5e, #f59e0b); border-radius: 16px; line-height: 64px; color: white; font-size: 32px; font-weight: bold;">L</div>
-      <h1 style="color: #111827; font-size: 28px; margin: 16px 0 8px;">${greeting}</h1>
+      <h1 style="color: #111827; font-size: 28px; margin: 16px 0 8px;">${greetingHtml}</h1>
       <p style="color: #6b7280; font-size: 16px;">Спасибо за регистрацию в Лингва!</p>
     </div>
     ${verifySection}
@@ -197,7 +210,9 @@ export interface VerifyEmailData {
 }
 
 export function renderVerifyEmail(data: VerifyEmailData): EmailMessage {
-  const greeting = data.name ? `Здравствуйте, ${data.name}!` : 'Здравствуйте!'
+  const name = data.name || ''
+  const greeting = name ? `Здравствуйте, ${name}!` : 'Здравствуйте!'
+  const greetingHtml = name ? `Здравствуйте, ${escapeHtml(name)}!` : 'Здравствуйте!'
   return {
     to: data.to,
     subject: 'Подтверждение email — Лингва',
@@ -211,7 +226,7 @@ export function renderVerifyEmail(data: VerifyEmailData): EmailMessage {
       <div style="display: inline-block; width: 48px; height: 48px; background: linear-gradient(135deg, #f43f5e, #f59e0b); border-radius: 12px; line-height: 48px; color: white; font-size: 24px; font-weight: bold;">L</div>
       <h1 style="color: #111827; font-size: 24px; margin: 16px 0 8px;">Лингва</h1>
     </div>
-    <p style="color: #374151; font-size: 16px; line-height: 1.5;">${greeting}</p>
+    <p style="color: #374151; font-size: 16px; line-height: 1.5;">${greetingHtml}</p>
     <p style="color: #374151; font-size: 16px; line-height: 1.5;">Подтвердите ваш email, чтобы активировать все возможности аккаунта:</p>
     <div style="text-align: center; margin: 32px 0;">
       <a href="${data.verifyUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Подтвердить email</a>

@@ -3,8 +3,8 @@ node_modules
 .git
 .mimocode
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 *.log
 test/
 prompt/
@@ -18,3 +18,5 @@ README.md
 components.json
 tsconfig.tsbuildinfo
 next-env.d.ts
+bun.lock
+bun.lockb
