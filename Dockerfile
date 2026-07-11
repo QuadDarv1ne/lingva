@@ -9,15 +9,16 @@ WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-# --- build ---
-FROM base AS builder
+# --- build (use Node.js to avoid Bun segfault in next build) ---
+FROM node:22-slim AS builder
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV DATABASE_URL="file:./db/custom.db"
-RUN bun run db:generate
-RUN bun run build
+RUN npx prisma generate
+RUN npx next build
 
 # --- production ---
 FROM base AS runner
