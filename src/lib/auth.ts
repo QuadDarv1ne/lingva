@@ -238,6 +238,12 @@ export function validatePassword(password: string): { valid: boolean; error?: st
   if (!/[a-zA-Zа-яА-Я]/.test(password)) {
     return { valid: false, error: 'Пароль должен содержать хотя бы одну букву' }
   }
+  if (!/[A-ZА-Я]/.test(password)) {
+    return { valid: false, error: 'Пароль должен содержать хотя бы одну заглавную букву' }
+  }
+  if (!/[a-zа-я]/.test(password)) {
+    return { valid: false, error: 'Пароль должен содержать хотя бы одну строчную букву' }
+  }
   if (!/[0-9]/.test(password)) {
     return { valid: false, error: 'Пароль должен содержать хотя бы одну цифру' }
   }

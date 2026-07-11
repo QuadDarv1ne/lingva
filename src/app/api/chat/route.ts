@@ -10,6 +10,24 @@ const MAX_HISTORY = 20
 const MAX_SESSIONS = 500
 const MAX_MESSAGE_LENGTH = 2000
 
+// Per-user rate limiting
+const rateLimits = new Map<string, { count: number; windowStart: number }>()
+const MAX_MESSAGES_PER_MINUTE = 20
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now()
+  const entry = rateLimits.get(userId)
+  if (!entry || now - entry.windowStart > 60000) {
+    rateLimits.set(userId, { count: 1, windowStart: now })
+    return true
+  }
+  if (entry.count >= MAX_MESSAGES_PER_MINUTE) {
+    return false
+  }
+  entry.count++
+  return true
+}
+
 // LRU eviction: delete oldest session when limit exceeded
 function evictIfNeeded() {
   if (conversations.size > MAX_SESSIONS) {
@@ -23,6 +41,13 @@ export async function POST(req: NextRequest) {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
+    if (!checkRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: 'Слишком много запросов. Пожалуйста, подождите минуту.' },
+        { status: 429 }
+      )
     }
 
     const { sessionId, message, languageId, mode } = await req.json()
