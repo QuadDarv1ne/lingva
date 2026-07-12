@@ -9,7 +9,7 @@ import {
   recordLoginAttempt,
   checkRateLimit,
 } from '@/lib/auth'
-import { verifyTwoFactorToken, sanitizeToken } from '@/lib/two-factor'
+import { verifyTwoFactorToken, sanitizeToken, consumeBackupCode } from '@/lib/two-factor'
 
 export async function POST(req: NextRequest) {
   try {
@@ -95,7 +95,6 @@ export async function POST(req: NextRequest) {
             { status: 400 }
           )
         }
-        const { consumeBackupCode } = await import('@/lib/two-factor')
         const { newHash, found } = consumeBackupCode(user.twoFactorBackupHash, backupCode)
         if (!found) {
           await recordLoginAttempt(normalizedEmail, false, metadata)

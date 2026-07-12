@@ -291,8 +291,8 @@ function todayStr(): string {
 
 function isYesterday(dateStr: string | null): boolean {
   if (!dateStr) return false
-  const yesterday = new Date()
-  yesterday.setDate(yesterday.getDate() - 1)
+  const now = Date.now()
+  const yesterday = new Date(now - 86400000)
   return dateStr === todayStrForDate(yesterday)
 }
 
@@ -729,7 +729,7 @@ export const useProgressStore = create<ProgressState>()(
         if (existing) {
           ownedItems = state.ownedItems.map((o) =>
             o.itemId === item.id
-              ? { ...o, quantity: o.quantity + 1, purchasedAt: new Date().toISOString() }
+              ? { ...o, quantity: o.quantity + 1 }
               : o
           )
         } else {

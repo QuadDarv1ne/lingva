@@ -12,16 +12,18 @@ export function useProgressSync(isAuthenticated: boolean) {
 
   // Load progress from server on mount if authenticated
   useEffect(() => {
-    if (!isAuthenticated || initialLoadRef.current) return
+    if (!isAuthenticated) {
+      initialLoadRef.current = false
+      return
+    }
+    if (initialLoadRef.current) return
     initialLoadRef.current = true
 
     fetch('/api/progress')
       .then((r) => r.json())
       .then((data) => {
         if (data.progress) {
-          // Replace local progress with server progress
           const currentState = useProgressStore.getState()
-          // Use persist's set to replace state
           useProgressStore.setState({
             ...currentState,
             ...data.progress,

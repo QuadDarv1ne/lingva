@@ -14,7 +14,7 @@ const totp = new TOTP({
 const TOTP_OPTIONS = {
   digits: 6,
   period: 30,
-  epochTolerance: 30, // allow ±30 sec drift
+  window: 1, // allow ±1 time step drift
 }
 
 /**

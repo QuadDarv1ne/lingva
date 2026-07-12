@@ -8,7 +8,7 @@ export function getLevelFromXP(xp: number): { level: number; current: number; ne
   while (xp >= total + needed) {
     total += needed
     level++
-    needed = level * 100
+    needed = level * level * 100
   }
   const current = xp - total
   return {
