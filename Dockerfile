@@ -7,7 +7,7 @@ FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
-RUN npm install --no-save lightningcss-linux-x64-gnu
+RUN npm install --no-save lightningcss-linux-x64-gnu @tailwindcss/oxide-linux-x64-gnu
 
 # --- build ---
 FROM base AS builder
