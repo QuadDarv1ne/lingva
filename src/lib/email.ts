@@ -53,7 +53,7 @@ export async function sendEmail(message: EmailMessage): Promise<SendResult> {
     try {
       const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_SERVER_HOST,
-        port: parseInt(process.env.EMAIL_SERVER_PORT || '587', 10),
+        port: parseInt(process.env.EMAIL_SERVER_PORT || '587', 10) || 587,
         secure: process.env.EMAIL_SERVER_SECURE === 'true',
         auth: process.env.EMAIL_SERVER_USER
           ? {
@@ -135,10 +135,10 @@ export function renderResetPasswordEmail(data: ResetPasswordEmailData): EmailMes
     <p style="color: #374151; font-size: 16px; line-height: 1.5;">${greetingHtml}</p>
     <p style="color: #374151; font-size: 16px; line-height: 1.5;">Вы запросили восстановление пароля на сайте Лингва. Нажмите кнопку ниже, чтобы установить новый пароль:</p>
     <div style="text-align: center; margin: 32px 0;">
-      <a href="${data.resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Сбросить пароль</a>
+      <a href="${escapeHtml(data.resetUrl)}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Сбросить пароль</a>
     </div>
     <p style="color: #6b7280; font-size: 14px; line-height: 1.5;">Или скопируйте эту ссылку в адресную строку браузера:</p>
-    <p style="background: #f3f4f6; padding: 12px; border-radius: 6px; word-break: break-all; font-size: 13px; color: #6b7280; font-family: monospace;">${data.resetUrl}</p>
+    <p style="background: #f3f4f6; padding: 12px; border-radius: 6px; word-break: break-all; font-size: 13px; color: #6b7280; font-family: monospace;">${escapeHtml(data.resetUrl)}</p>
     <p style="color: #6b7280; font-size: 14px; margin-top: 24px;">⏱️ Ссылка действительна ${data.expiresHours} час(ов).</p>
     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;">
     <p style="color: #9ca3af; font-size: 13px;">Если вы не запрашивали восстановление пароля, просто проигнорируйте это письмо. Ваш аккаунт в безопасности.</p>
@@ -165,7 +165,7 @@ export function renderWelcomeEmail(data: WelcomeEmailData): EmailMessage {
     <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin: 24px 0;">
       <p style="margin: 0 0 8px; color: #92400e; font-weight: 600;">📧 Подтвердите ваш email</p>
       <p style="margin: 0 0 12px; color: #78350f; font-size: 14px;">Нажмите кнопку, чтобы подтвердить адрес электронной почты:</p>
-      <a href="${data.verifyUrl}" style="display: inline-block; background: #f59e0b; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Подтвердить email</a>
+      <a href="${escapeHtml(data.verifyUrl)}" style="display: inline-block; background: #f59e0b; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;">Подтвердить email</a>
     </div>`
     : ''
   return {
@@ -233,9 +233,9 @@ export function renderVerifyEmail(data: VerifyEmailData): EmailMessage {
     <p style="color: #374151; font-size: 16px; line-height: 1.5;">${greetingHtml}</p>
     <p style="color: #374151; font-size: 16px; line-height: 1.5;">Подтвердите ваш email, чтобы активировать все возможности аккаунта:</p>
     <div style="text-align: center; margin: 32px 0;">
-      <a href="${data.verifyUrl}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Подтвердить email</a>
+      <a href="${escapeHtml(data.verifyUrl)}" style="display: inline-block; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">Подтвердить email</a>
     </div>
-    <p style="color: #6b7280; font-size: 14px;">Или скопируйте ссылку: <span style="font-family: monospace; word-break: break-all;">${data.verifyUrl}</span></p>
+    <p style="color: #6b7280; font-size: 14px;">Или скопируйте ссылку: <span style="font-family: monospace; word-break: break-all;">${escapeHtml(data.verifyUrl)}</span></p>
     <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;">
     <p style="color: #9ca3af; font-size: 13px;">Если вы не регистрировались, просто проигнорируйте это письмо.</p>
   </div>

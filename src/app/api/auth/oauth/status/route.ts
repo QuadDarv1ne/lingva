@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
 import { isOAuthConfigured } from '@/lib/oauth'
 
-// GET - return which OAuth providers are configured
+// GET - return whether OAuth is available
 export async function GET() {
   return NextResponse.json({
-    google: isOAuthConfigured('google'),
-    github: isOAuthConfigured('github'),
+    available: isOAuthConfigured('google') || isOAuthConfigured('github'),
   })
 }

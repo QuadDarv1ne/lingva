@@ -6,9 +6,15 @@ import { getOAuthUserInfo, findOrCreateOAuthUser, completeOAuthLogin } from '@/l
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
+    const error = searchParams.get('error')
     const code = searchParams.get('code')
     const state = searchParams.get('state')
     const cookieStore = await cookies()
+
+    if (error) {
+      cookieStore.delete('oauth_state_github')
+      return NextResponse.redirect(new URL(`/auth/login?error=${encodeURIComponent(error)}`, req.url))
+    }
 
     if (!code || !state) {
       cookieStore.delete('oauth_state_github')

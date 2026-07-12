@@ -39,7 +39,7 @@ export function useProgressSync(isAuthenticated: boolean) {
   useEffect(() => {
     if (!isAuthenticated || !initialLoadRef.current) return
 
-    const unsubscribe = useProgressStore.subscribe((_state) => {
+    const unsubscribe = useProgressStore.subscribe(() => {
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current)
       }

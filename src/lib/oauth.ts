@@ -71,13 +71,16 @@ export function buildGitHubAuthUrl(state: string): string {
 
 async function exchangeGoogleCode(code: string) {
   const { clientId, clientSecret, redirectUri } = getGoogleConfig()
+  if (!clientId || !clientSecret) {
+    throw new Error('Google OAuth is not configured')
+  }
   const res = await fetch(GOOGLE_TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
       code,
-      client_id: clientId || '',
-      client_secret: clientSecret || '',
+      client_id: clientId,
+      client_secret: clientSecret,
       redirect_uri: redirectUri,
       grant_type: 'authorization_code',
     }),
@@ -90,6 +93,9 @@ async function exchangeGoogleCode(code: string) {
 
 async function exchangeGitHubCode(code: string) {
   const { clientId, clientSecret, redirectUri } = getGitHubConfig()
+  if (!clientId || !clientSecret) {
+    throw new Error('GitHub OAuth is not configured')
+  }
   const res = await fetch(GITHUB_TOKEN_URL, {
     method: 'POST',
     headers: {

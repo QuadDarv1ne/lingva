@@ -114,10 +114,15 @@ export async function POST(req: NextRequest) {
 
     // Get AI response
     const zai = await ZAI.create()
-    const completion = await zai.chat.completions.create({
-      messages: history,
-      thinking: { type: 'disabled' },
-    })
+    const completion = await Promise.race([
+      zai.chat.completions.create({
+        messages: history,
+        thinking: { type: 'disabled' },
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('AI request timed out')), 30_000)
+      ),
+    ]) as { choices: { message?: { content?: string } }[] }
 
     const aiResponse = completion.choices[0]?.message?.content
 
