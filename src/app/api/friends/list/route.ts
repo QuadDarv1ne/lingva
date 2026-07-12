@@ -55,7 +55,7 @@ export async function GET() {
       where: { id: { in: friendIds } },
       select: { id: true, progressData: true },
     })
-    const progressMap = new Map(friendProgress.map((u) => [u.id, u.progressData]))
+    const progressMap = new Map<string, string | null>(friendProgress.map((u) => [u.id, u.progressData as string | null]))
 
     // Pending requests received
     const pendingReceived = await db.friendship.findMany({

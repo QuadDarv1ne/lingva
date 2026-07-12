@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
-  Mic, MicOff, Volume2, Loader2, Check, X, RefreshCw,
+  Mic, MicOff, Volume2, Loader2, Check, X,
   Activity, AlertCircle, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import { Language } from '@/lib/languages-data'

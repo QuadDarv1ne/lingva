@@ -23,8 +23,6 @@ export async function GET(req: NextRequest) {
         bio: true,
         isPublic: true,
         createdAt: true,
-        twoFactorEnabled: true,
-        emailVerified: true,
         // progressData fetched separately below for stats computation only
       },
     })
@@ -122,8 +120,6 @@ export async function GET(req: NextRequest) {
         isPublic: user.isPublic,
         createdAt: user.createdAt,
         stats,
-        twoFactorEnabled: user.twoFactorEnabled,
-        emailVerified: user.emailVerified,
       },
       isMe,
       friendship,

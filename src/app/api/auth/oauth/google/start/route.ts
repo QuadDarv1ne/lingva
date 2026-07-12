@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { isOAuthConfigured, buildGoogleAuthUrl, generateOAuthState } from '@/lib/oauth'
 import { cookies } from 'next/headers'
 

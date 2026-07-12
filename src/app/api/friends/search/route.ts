@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       where: { id: { in: userIds } },
       select: { id: true, progressData: true },
     })
-    const progressMap = new Map(userProgress.map((u) => [u.id, u.progressData]))
+    const progressMap = new Map<string, string | null>(userProgress.map((u) => [u.id, u.progressData as string | null]))
 
     // Get friendship status for each user
     const friendships = await db.friendship.findMany({

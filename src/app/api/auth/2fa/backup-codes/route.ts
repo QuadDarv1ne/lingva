@@ -4,7 +4,6 @@ import { getCurrentUser } from '@/lib/auth'
 import {
   generateBackupCodes,
   hashBackupCodes,
-  consumeBackupCode,
   sanitizeToken,
 } from '@/lib/two-factor'
 

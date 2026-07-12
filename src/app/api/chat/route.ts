@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { sessionId, message, languageId, mode } = await req.json()
+    const { message, languageId, mode } = await req.json()
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json(

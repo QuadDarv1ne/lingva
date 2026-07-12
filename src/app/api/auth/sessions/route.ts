@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getCurrentUser, getUserSessions, getSessionToken, destroySession, destroyAllUserSessions } from '@/lib/auth'
+import { getCurrentUser, getUserSessions, getSessionToken, destroySession } from '@/lib/auth'
 
 // GET - list all active sessions for current user
 export async function GET() {

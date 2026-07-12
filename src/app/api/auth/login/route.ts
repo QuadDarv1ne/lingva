@@ -111,10 +111,13 @@ export async function POST(req: NextRequest) {
         })
       } else {
         // No 2FA code provided — require the client to re-submit with a 2FA token
-        return NextResponse.json({
-          requiresTwoFactor: true,
-          message: 'Введите код из приложения аутентификатора',
-        })
+        return NextResponse.json(
+          {
+            requiresTwoFactor: true,
+            message: 'Введите код из приложения аутентификатора',
+          },
+          { status: 202 }
+        )
       }
     }
 

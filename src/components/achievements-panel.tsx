@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Trophy, Flame, Lock, CheckCircle2, X } from 'lucide-react'
+import { Trophy, Flame, CheckCircle2 } from 'lucide-react'
 import { ACHIEVEMENTS, useProgressStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 

@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Users, Globe, BookOpen, Calendar, Languages as LangIcon, History } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 

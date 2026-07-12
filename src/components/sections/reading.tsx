@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   BookOpen, Check, X, RotateCcw, Trophy, Volume2, Eye, EyeOff,
-  ChevronDown, ChevronUp, Loader2,
 } from 'lucide-react'
 import { Language, ReadingText } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'

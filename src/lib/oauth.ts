@@ -1,6 +1,6 @@
 // OAuth helpers for Google and GitHub
 import { db } from '@/lib/db'
-import { createSession, setSessionCookie, hashPassword, generateToken } from '@/lib/auth'
+import { createSession, setSessionCookie, generateToken } from '@/lib/auth'
 import { NextRequest, NextResponse } from 'next/server'
 
 export interface OAuthUserInfo {

@@ -4,6 +4,17 @@ import { generateResetToken, hashToken, validateEmail } from '@/lib/auth'
 import { sendEmail, renderResetPasswordEmail } from '@/lib/email'
 
 const resetRequests = new Map<string, { count: number; windowStart: number }>()
+
+// Clean up expired entries every 5 minutes
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, entry] of resetRequests) {
+    if (now - entry.windowStart > 60_000) {
+      resetRequests.delete(key)
+    }
+  }
+}, 5 * 60 * 1000)
+
 function checkResetRateLimit(email: string): boolean {
   const now = Date.now()
   const key = `reset:${email.toLowerCase()}`

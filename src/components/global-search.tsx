@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, X, BookOpen, Type, MessageSquare, GraduationCap,
-  Languages, Sparkles, Loader2, ArrowRight,
+  Languages, Sparkles, ArrowRight,
 } from 'lucide-react'
 import { languages, Language, AlphabetLetter, Phrase, Lesson } from '@/lib/languages-data'
 import { cn } from '@/lib/utils'
