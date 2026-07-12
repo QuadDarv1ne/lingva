@@ -80,17 +80,18 @@ export default function FriendsPage() {
   }, [])
 
   useEffect(() => {
-    loadData()
+    const timer = setTimeout(() => loadData(), 0)
+    return () => clearTimeout(timer)
   }, [loadData])
 
   // Debounced search
   useEffect(() => {
-    if (searchQuery.trim().length < 2) {
-      setSearchResults([])
-      return
-    }
-    setSearching(true)
     const timer = setTimeout(async () => {
+      if (searchQuery.trim().length < 2) {
+        setSearchResults([])
+        return
+      }
+      setSearching(true)
       try {
         const res = await fetch(`/api/friends/search?q=${encodeURIComponent(searchQuery)}`)
         const data = await res.json()

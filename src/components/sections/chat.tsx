@@ -81,7 +81,8 @@ export function ChatSection({ language }: { language: Language }) {
 
   // Reset messages when mode or language changes
   useEffect(() => {
-    setMessages([])
+    const timer = setTimeout(() => setMessages([]), 0)
+    return () => clearTimeout(timer)
   }, [mode, language.id])
 
   const sendMessage = async (text: string) => {
@@ -95,16 +96,12 @@ export function ChatSection({ language }: { language: Language }) {
     setMessages((prev) => [...prev, userMessage])
     setInput('')
     setLoading(true)
-    recordActivity()
-    incrementChatMessages(language.id)
-    updateDailyChallenge('chat', 1)
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sessionId,
           message: text.trim(),
           languageId: language.id,
           mode,
@@ -123,6 +120,10 @@ export function ChatSection({ language }: { language: Language }) {
         timestamp: Date.now(),
       }
       setMessages((prev) => [...prev, aiMessage])
+
+      recordActivity()
+      incrementChatMessages(language.id)
+      updateDailyChallenge('chat', 1)
     } catch (error) {
       const errorMessage: Message = {
         role: 'assistant',
@@ -139,7 +140,7 @@ export function ChatSection({ language }: { language: Language }) {
     setMessages([])
     try {
       await fetch(
-        `/api/chat?sessionId=${encodeURIComponent(sessionId)}&languageId=${encodeURIComponent(language.id)}&mode=${mode}`,
+        `/api/chat?languageId=${encodeURIComponent(language.id)}&mode=${mode}`,
         { method: 'DELETE' }
       )
     } catch {

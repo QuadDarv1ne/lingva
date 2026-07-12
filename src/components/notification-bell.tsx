@@ -48,10 +48,15 @@ export function NotificationBell() {
   }, [])
 
   useEffect(() => {
-    loadNotifications()
+    const timer = setTimeout(() => {
+      loadNotifications()
+    }, 0)
     // Poll every 30 seconds for new notifications
     const interval = setInterval(loadNotifications, 30000)
-    return () => clearInterval(interval)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
   }, [loadNotifications])
 
   // Close on outside click

@@ -70,3 +70,8 @@ local-*
 
 # Skills directory
 /skills/
+
+# SQLite database (generated from schema)
+/db/*.db
+/db/*.db-wal
+/db/*.db-shm

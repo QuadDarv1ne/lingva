@@ -78,7 +78,8 @@ export default function TournamentsPage() {
   }, [])
 
   useEffect(() => {
-    load()
+    const timer = setTimeout(() => load(), 0)
+    return () => clearTimeout(timer)
   }, [load])
 
   const handleJoin = async (tournamentId: string) => {

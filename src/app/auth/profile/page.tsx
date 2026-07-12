@@ -61,11 +61,13 @@ export default function ProfilePage() {
     }
   }, [authLoading, user, router])
 
-  // Pre-fill form
+  // Pre-fill form on mount
   useEffect(() => {
-    if (user) {
+    if (!user) return
+    const timer = setTimeout(() => {
       setProfileForm({ name: user.name || '', email: user.email })
-    }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [user])
 
   const loadSessions = useCallback(async () => {

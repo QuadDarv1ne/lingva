@@ -15,8 +15,8 @@ function VerifyEmailForm() {
   const { toast } = useToast()
   const token = searchParams.get('token')
 
-  const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'idle'>('idle')
-  const [error, setError] = useState<string | null>(null)
+  const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'idle'>(() => token ? 'idle' : 'error')
+  const [error, setError] = useState<string | null>(() => token ? null : 'Токен не найден в URL')
 
   const verifyEmail = useCallback(async (t: string) => {
     setStatus('loading')
@@ -42,12 +42,9 @@ function VerifyEmailForm() {
   }, [router, toast])
 
   useEffect(() => {
-    if (!token) {
-      setStatus('error')
-      setError('Токен не найден в URL')
-      return
-    }
-    verifyEmail(token)
+    if (!token) return
+    const timer = setTimeout(() => verifyEmail(token), 0)
+    return () => clearTimeout(timer)
   }, [token, verifyEmail])
 
   if (status === 'loading' || status === 'idle') {

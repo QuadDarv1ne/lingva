@@ -139,10 +139,13 @@ export function MatchingGame({ language }: { language: Language }) {
   const [completed, setCompleted] = useState(false)
 
   useEffect(() => {
-    setShuffledWords([...pairs].sort(() => Math.random() - 0.5))
-    setMatches({})
-    setFeedback({})
-    setCompleted(false)
+    const timer = setTimeout(() => {
+      setShuffledWords([...pairs].sort(() => Math.random() - 0.5))
+      setMatches({})
+      setFeedback({})
+      setCompleted(false)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [pairs])
 
   const sensors = useSensors(

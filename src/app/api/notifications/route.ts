@@ -48,6 +48,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { id, all } = body
 
+    if (!all && !id) {
+      return NextResponse.json(
+        { error: 'Укажите id или all' },
+        { status: 400 }
+      )
+    }
+
     if (all) {
       await db.notification.updateMany({
         where: { userId: user.id, read: false },

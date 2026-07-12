@@ -73,7 +73,8 @@ export default function DecksPage() {
   }, [])
 
   useEffect(() => {
-    loadDecks()
+    const timer = setTimeout(() => loadDecks(), 0)
+    return () => clearTimeout(timer)
   }, [loadDecks])
 
   const addCard = () => {

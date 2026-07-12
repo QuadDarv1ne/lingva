@@ -23,6 +23,7 @@ export interface EmailMessage {
 
 // In-memory store for dev mode (no SMTP configured)
 const devEmailStore: EmailMessage[] = []
+const MAX_DEV_EMAILS = 100
 
 export interface SendResult {
   success: boolean
@@ -80,7 +81,10 @@ export async function sendEmail(message: EmailMessage): Promise<SendResult> {
     }
   }
 
-  // Dev mode: store in memory and return preview
+  // Dev mode: store in memory and return preview (cap at MAX_DEV_EMAILS)
+  if (devEmailStore.length >= MAX_DEV_EMAILS) {
+    devEmailStore.shift()
+  }
   devEmailStore.push(message)
   return {
     success: true,

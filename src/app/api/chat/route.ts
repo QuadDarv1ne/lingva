@@ -152,13 +152,12 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url)
-    const sessionId = searchParams.get('sessionId')
     const languageId = searchParams.get('languageId')
     const mode = searchParams.get('mode')
 
-    if (!sessionId || !languageId) {
+    if (!languageId) {
       return NextResponse.json(
-        { error: 'sessionId и languageId обязательны' },
+        { error: 'languageId обязателен' },
         { status: 400 }
       )
     }
