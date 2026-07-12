@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   User,
   LogOut,
-  Settings,
   ChevronDown,
   Mail,
   Shield,
@@ -153,23 +152,15 @@ export function AuthButtons() {
                 className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
               >
                 <User className="w-4 h-4 text-muted-foreground" />
-                Профиль
+                Профиль и настройки
               </Link>
               <Link
-                href="/auth/profile"
+                href="/community/friends"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
               >
                 <Shield className="w-4 h-4 text-muted-foreground" />
-                Безопасность
-              </Link>
-              <Link
-                href="/auth/profile"
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
-              >
-                <Settings className="w-4 h-4 text-muted-foreground" />
-                Настройки
+                Сообщество
               </Link>
               <button
                 onClick={handleLogout}

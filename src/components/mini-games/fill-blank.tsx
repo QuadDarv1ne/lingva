@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Check, X, RotateCcw, Trophy, Volume2, Wand2 } from 'lucide-react'
+import { RotateCcw, Trophy, Volume2, Wand2 } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'

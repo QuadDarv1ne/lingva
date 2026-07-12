@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import {
   History, Search, Type, BookOpen, Trophy, Layers, Brush,
   Keyboard, Link2, Bot, Star, Plus, Target, ShoppingBag,
-  Users, Swords, Zap, Loader2, Calendar,
+  Users, Swords, Zap, Calendar,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProgressStore, ActivityEvent } from '@/lib/store'
@@ -67,7 +67,6 @@ export default function HistoryPage() {
     e.timestamp.startsWith(today)
   )
   const todayXP = todayEvents.reduce((s, e) => s + Math.max(0, e.xpGained), 0)
-  const totalXP = activityEvents.reduce((s, e) => s + Math.max(0, e.xpGained), 0)
 
   const availableTypes = Array.from(new Set(activityEvents.map((e) => e.type)))
 

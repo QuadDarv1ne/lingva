@@ -3,10 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
-  Bell, Check, X, Trash2, UserPlus, UserCheck, Trophy, Info, Loader2,
+  Bell, Check, Trash2, UserPlus, UserCheck, Trophy, Info, Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -51,11 +49,25 @@ export function NotificationBell() {
     const timer = setTimeout(() => {
       loadNotifications()
     }, 0)
-    // Poll every 30 seconds for new notifications
-    const interval = setInterval(loadNotifications, 30000)
+
+    // Only poll when page is visible
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadNotifications()
+      }
+    }, 30000)
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadNotifications()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+
     return () => {
       clearTimeout(timer)
       clearInterval(interval)
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [loadNotifications])
 

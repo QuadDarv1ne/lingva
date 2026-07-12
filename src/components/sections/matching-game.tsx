@@ -14,7 +14,6 @@ import {
 } from '@dnd-kit/core'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Link2, Check, RotateCcw, Trophy } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import {
   getCurrentUser,
+  getSessionToken,
+  destroySession,
   verifyPassword,
   deleteUserAccount,
   clearSessionCookie,
@@ -51,7 +53,11 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    // Delete account (cascades to sessions, accounts, etc.)
+    // Explicitly destroy current session before deleting user
+    const sessionToken = await getSessionToken()
+    if (sessionToken) {
+      await destroySession(sessionToken)
+    }
     await deleteUserAccount(user.id)
     await clearSessionCookie()
 

@@ -24,7 +24,19 @@ export async function PUT(req: NextRequest) {
 
     if (avatar !== undefined) {
       if (typeof avatar === 'string' && avatar.length <= 1000) {
+        // Validate URL format — only allow http/https URLs or null
+        if (avatar && !avatar.startsWith('http://') && !avatar.startsWith('https://')) {
+          return NextResponse.json(
+            { error: 'Аватар должен быть URL (http/https)' },
+            { status: 400 }
+          )
+        }
         updates.avatar = avatar || null
+      } else if (avatar !== null) {
+        return NextResponse.json(
+          { error: 'Аватар слишком длинный (макс. 1000 символов)' },
+          { status: 400 }
+        )
       }
     }
 

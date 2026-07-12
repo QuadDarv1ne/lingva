@@ -1,18 +1,18 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
-  Mic, MicOff, Volume2, Loader2, Check, X,
+  Mic, MicOff, Volume2, Check, X,
   Activity, AlertCircle, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'
-import { cn, speak as speakText } from '@/lib/utils'
+import { speak as speakText } from '@/lib/utils'
 
 interface PracticeWord {
   word: string
@@ -120,7 +120,7 @@ export function PronunciationSection({ language }: { language: Language }) {
           return t + 1
         })
       }, 1000)
-    } catch (error) {
+    } catch {
       setMicError('Не удалось получить доступ к микрофону. Проверьте разрешения браузера.')
     }
   }

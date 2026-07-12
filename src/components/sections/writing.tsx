@@ -1,14 +1,12 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Brush, Eraser, ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { useProgressStore } from '@/lib/store'
-import { cn } from '@/lib/utils'
 
 export function WritingSection({ language }: { language: Language }) {
   const { incrementWrittenCharacters, recordActivity, updateDailyChallenge } = useProgressStore()

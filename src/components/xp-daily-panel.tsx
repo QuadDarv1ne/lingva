@@ -37,12 +37,10 @@ export function XPDailyPanel() {
     generateDailyChallenges()
   }, [generateDailyChallenges])
 
-  // Check achievements periodically
+  // Check achievements on mount (no periodic polling — achievements are checked
+  // when relevant state changes via the store's checkAchievements action)
   useEffect(() => {
-    const interval = setInterval(() => {
-      checkAchievements()
-    }, 3000)
-    return () => clearInterval(interval)
+    checkAchievements()
   }, [checkAchievements])
 
   const { level, current, needed, pct } = getLevelFromXP(xp)

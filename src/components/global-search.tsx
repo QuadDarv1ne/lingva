@@ -7,8 +7,7 @@ import {
   Search, X, BookOpen, Type, MessageSquare, GraduationCap,
   Languages, Sparkles, ArrowRight,
 } from 'lucide-react'
-import { languages, Language, AlphabetLetter, Phrase, Lesson } from '@/lib/languages-data'
-import { cn } from '@/lib/utils'
+import { languages } from '@/lib/languages-data'
 
 interface SearchResult {
   type: 'language' | 'letter' | 'phrase' | 'lesson'

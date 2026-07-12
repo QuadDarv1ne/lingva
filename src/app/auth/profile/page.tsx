@@ -12,7 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { TwoFactorTab } from '@/components/two-factor-tab'
 import {
   Eye, EyeOff, Loader2, User, Lock, LogOut, Mail, Save,
-  AlertCircle, Shield, Monitor, Smartphone, Trash2, Send,
+  AlertCircle, Shield, Trash2, Send,
   CheckCircle2, Clock, Globe,
 } from 'lucide-react'
 import { AuthLayout } from '@/components/auth-layout'

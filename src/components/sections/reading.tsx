@@ -217,7 +217,6 @@ export function ReadingSection({ language }: { language: Language }) {
           {selectedText.questions.map((q, qIdx) => {
             const userAnswer = answers[qIdx]
             const isCorrect = submitted && userAnswer === q.correct
-            const isWrong = submitted && userAnswer !== undefined && userAnswer !== q.correct
             return (
               <div key={qIdx} className="space-y-2">
                 <div className="font-medium text-sm">

@@ -510,7 +510,6 @@ export const useProgressStore = create<ProgressState>()(
 
           let newStreak = state.streak.current
           let newFreezes = state.streak.freezes
-          let streakProtected = false
 
           if (!wasActiveToday) {
             if (wasActiveYesterday) {
@@ -528,7 +527,6 @@ export const useProgressStore = create<ProgressState>()(
               if (daysDiff === 2 && state.streak.freezes > 0) {
                 newStreak = state.streak.current + 1
                 newFreezes = state.streak.freezes - 1
-                streakProtected = true
               } else {
                 // Streak reset
                 newStreak = 1

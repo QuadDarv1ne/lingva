@@ -11,6 +11,8 @@ export async function GET(req: NextRequest) {
     const error = searchParams.get('error')
 
     if (error) {
+      const cookieStore = await cookies()
+      cookieStore.delete('oauth_state_google')
       return NextResponse.redirect(new URL(`/auth/login?error=${encodeURIComponent(error)}`, req.url))
     }
 
@@ -36,6 +38,8 @@ export async function GET(req: NextRequest) {
     return await completeOAuthLogin(user.id, req)
   } catch (error) {
     console.error('Google OAuth callback error:', error)
+    const cookieStore = await cookies()
+    cookieStore.delete('oauth_state_google')
     return NextResponse.redirect(new URL('/auth/login?error=oauth_failed', req.url))
   }
 }

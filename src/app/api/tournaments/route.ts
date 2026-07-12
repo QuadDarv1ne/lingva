@@ -54,7 +54,19 @@ export async function GET() {
     }))
 
     // Get user's participations if logged in
-    let myParticipations: any[] = []
+    let myParticipations: {
+      tournamentId: string
+      score: number
+      xpSnapshot: number
+      joinedAt: Date
+      tournament: {
+        id: string
+        title: string
+        type: string
+        endDate: Date
+        isActive: boolean
+      }
+    }[] = []
     if (user) {
       const parts = await db.tournamentParticipant.findMany({
         where: { userId: user.id },

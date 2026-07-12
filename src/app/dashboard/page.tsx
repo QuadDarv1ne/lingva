@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
 import {
   TrendingUp, Flame, Star, Zap, Target, Award, Calendar,
@@ -16,7 +16,7 @@ import {
   Download, Upload, Loader2, BarChart3, PieChart as PieIcon, Activity, Brain,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useProgressStore, getLevelFromXP, getLevelTitle } from '@/lib/store'
+import { useProgressStore, getLevelFromXP } from '@/lib/store'
 import { languages } from '@/lib/languages-data'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
@@ -32,7 +32,7 @@ export default function DashboardPage() {
   const { toast } = useToast()
   const [importing, setImporting] = useState(false)
 
-  const { level, current, needed, pct } = getLevelFromXP(xp)
+  const { level } = getLevelFromXP(xp)
 
   // Last 30 days XP data
   const last30Days = useMemo(() => {
@@ -115,11 +115,6 @@ export default function DashboardPage() {
   }, [activityLog])
 
   // Stats summary
-  const totalLetters = Object.values(progress).reduce((s, p) => s + p.learnedLetters.length, 0)
-  const totalLessons = Object.values(progress).reduce((s, p) => s + p.visitedLessons.length, 0)
-  const totalFlashcards = Object.values(progress).reduce((s, p) => s + p.flashcardsStudied, 0)
-  const totalQuizzes = Object.values(progress).reduce((s, p) => s + Object.keys(p.completedQuizzes).length, 0)
-
   const todayXP = xpHistory[new Date().toISOString().split('T')[0]] || 0
   const dailyGoalProgress = Math.min(100, Math.round((todayXP / settings.dailyGoalXP) * 100))
 

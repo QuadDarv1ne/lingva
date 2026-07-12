@@ -10,6 +10,7 @@ function createPrismaClient() {
   })
 
   client.$queryRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {})
+  client.$queryRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {})
 
   return client
 }

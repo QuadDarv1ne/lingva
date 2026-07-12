@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { getLevelFromXP } from '@/lib/level'
+import type { LanguageProgressData } from '@/lib/types'
 
 // GET - global leaderboard by XP
 // Reads XP from progressData JSON field
@@ -43,10 +44,10 @@ export async function GET(req: NextRequest) {
             level = getLevelFromXP(xp).level
             streak = data.streak?.current || 0
             achievementsCount = data.achievements?.length || 0
-            const progress = data.progress || {}
+            const progress: { [key: string]: LanguageProgressData } = data.progress || {}
             languagesCount = Object.keys(progress).length
             lessonsCount = Object.values(progress).reduce(
-              (sum: number, p: any) => sum + (p.visitedLessons?.length || 0),
+              (sum, p) => sum + (p.visitedLessons?.length || 0),
               0
             )
           } catch {

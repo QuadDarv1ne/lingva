@@ -1,19 +1,18 @@
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import {
-  Brain, RotateCcw, Check, X, Volume2, Loader2, Trophy,
-  Calendar, Clock, Zap, ChevronRight, AlertCircle,
+  Brain, RotateCcw, Check, Volume2, Trophy,
+  Calendar, Clock,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProgressStore, PersonalWord } from '@/lib/store'
 import { languages } from '@/lib/languages-data'
-import { useToast } from '@/hooks/use-toast'
 import { cn, speak as speakText } from '@/lib/utils'
 
 type ReviewQuality = 'again' | 'hard' | 'good' | 'easy'
@@ -50,7 +49,6 @@ interface PracticeSession {
 
 export default function PracticePage() {
   const { personalDictionary, reviewWordWithSRS } = useProgressStore()
-  const { toast } = useToast()
   const [session, setSession] = useState<PracticeSession | null>(null)
   const [filterLang, setFilterLang] = useState<string>('all')
 
@@ -458,11 +456,11 @@ export default function PracticePage() {
             <div className="space-y-2">
               {personalDictionary
                 .filter((w) => w.srs)
-                .sort((a, b) => new Date(a.srs!.dueDate).getTime() - new Date(b.srs!.dueDate).getTime())
+                .sort((a, b) => new Date(a.srs?.dueDate ?? '').getTime() - new Date(b.srs?.dueDate ?? '').getTime())
                 .slice(0, 5)
                 .map((w) => {
                   const lang = languages.find((l) => l.id === w.languageId)
-                  const due = new Date(w.srs!.dueDate)
+                  const due = new Date(w.srs?.dueDate ?? '')
                   const isPast = due < new Date()
                   return (
                     <div key={w.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50">

@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { ArrowRight, GitCompare } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
 import { cn } from '@/lib/utils'

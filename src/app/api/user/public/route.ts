@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { getLevelFromXP } from '@/lib/level'
+import type { LanguageProgressData } from '@/lib/types'
 
 // GET - public profile of any user (with friendship status)
 export async function GET(req: NextRequest) {
@@ -58,22 +59,22 @@ export async function GET(req: NextRequest) {
         stats.streak = data.streak?.current || 0
         stats.longestStreak = data.streak?.longest || 0
         stats.achievementsCount = data.achievements?.length || 0
-        const progress = data.progress || {}
+        const progress: { [key: string]: LanguageProgressData } = data.progress || {}
         stats.languagesCount = Object.keys(progress).length
         stats.lessonsCount = Object.values(progress).reduce(
-          (sum: number, p: any) => sum + (p.visitedLessons?.length || 0),
+          (sum, p) => sum + (p.visitedLessons?.length || 0),
           0
         )
         stats.lettersLearned = Object.values(progress).reduce(
-          (sum: number, p: any) => sum + (p.learnedLetters?.length || 0),
+          (sum, p) => sum + (p.learnedLetters?.length || 0),
           0
         )
         stats.flashcardsStudied = Object.values(progress).reduce(
-          (sum: number, p: any) => sum + (p.flashcardsStudied || 0),
+          (sum, p) => sum + (p.flashcardsStudied || 0),
           0
         )
         stats.quizzesPassed = Object.values(progress).reduce(
-          (sum: number, p: any) => sum + Object.keys(p.completedQuizzes || {}).length,
+          (sum, p) => sum + Object.keys(p.completedQuizzes || {}).length,
           0
         )
       } catch {
@@ -106,9 +107,9 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Hide email if not public and not self/friend
+    // Only show email to self and accepted friends (not to all public visitors)
     const isFriend = friendship?.status === 'accepted'
-    const showEmail = user.isPublic || isMe || isFriend
+    const showEmail = isMe || isFriend
 
     return NextResponse.json({
       user: {

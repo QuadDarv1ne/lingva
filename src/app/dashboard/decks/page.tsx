@@ -11,12 +11,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import {
   Layers, Plus, Trash2, Loader2, X, Globe, Lock, BookOpen,
-  ChevronDown, ChevronUp, Play, Edit,
+  ChevronDown, ChevronUp,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useToast } from '@/hooks/use-toast'
 import { languages } from '@/lib/languages-data'
-import { cn } from '@/lib/utils'
 
 interface CustomCard {
   front: string
@@ -333,7 +332,7 @@ export default function DecksPage() {
             </Card>
           ) : (
             <div className="grid sm:grid-cols-2 gap-3">
-              {myDecks.map((deck, i) => (
+              {myDecks.map((deck) => (
                 <DeckCard
                   key={deck.id}
                   deck={deck}

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useMemo, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,7 +38,6 @@ function scramble(text: string): string[] {
 export function WordScramble({ language }: { language: Language }) {
   const { recordActivity, updateDailyChallenge, incrementMatchedWords } = useProgressStore()
   const { toast } = useToast()
-  const isRtl = language.direction === 'rtl'
 
   // Build pool from vocabulary
   const pool: ScrambleWord[] = useMemo(() => {
@@ -150,7 +149,6 @@ export function WordScramble({ language }: { language: Language }) {
   }
 
   const progress = (currentIdx / pool.length) * 100
-  const currentAnswer = selected.map((i) => current.scrambled[i]).join('')
 
   return (
     <div className="space-y-4">

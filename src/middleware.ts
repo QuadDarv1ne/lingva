@@ -13,7 +13,7 @@ const guestRoutes = [
   '/auth/register',
 ]
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const sessionToken = request.cookies.get(SESSION_COOKIE)?.value
 

@@ -75,6 +75,9 @@ export async function POST(req: NextRequest) {
     if (!languageId) {
       return NextResponse.json({ error: 'Язык обязателен' }, { status: 400 })
     }
+    if (description && typeof description === 'string' && description.length > 500) {
+      return NextResponse.json({ error: 'Описание слишком длинное (макс. 500 символов)' }, { status: 400 })
+    }
     if (!Array.isArray(cards) || cards.length === 0) {
       return NextResponse.json({ error: 'Нужна хотя бы одна карточка' }, { status: 400 })
     }
@@ -83,9 +86,16 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate each card
+    const MAX_CARD_LENGTH = 500
     for (const card of cards) {
       if (!card.front || !card.back || typeof card.front !== 'string' || typeof card.back !== 'string') {
         return NextResponse.json({ error: 'Каждая карточка должна иметь front и back' }, { status: 400 })
+      }
+      if (card.front.length > MAX_CARD_LENGTH || card.back.length > MAX_CARD_LENGTH) {
+        return NextResponse.json(
+          { error: `Максимальная длина карточки — ${MAX_CARD_LENGTH} символов` },
+          { status: 400 }
+        )
       }
     }
 

@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { progress } = body
 
-    if (!progress || typeof progress !== 'object') {
+    if (!progress || typeof progress !== 'object' || Array.isArray(progress)) {
       return NextResponse.json({ error: 'Некорректные данные' }, { status: 400 })
     }
 

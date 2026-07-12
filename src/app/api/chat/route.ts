@@ -166,7 +166,7 @@ export async function DELETE(req: NextRequest) {
     conversations.delete(sessionKey)
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Ошибка при очистке' },
       { status: 500 }

@@ -10,6 +10,8 @@ export async function GET(req: NextRequest) {
     const state = searchParams.get('state')
 
     if (!code || !state) {
+      const cookieStore = await cookies()
+      cookieStore.delete('oauth_state_github')
       return NextResponse.redirect(new URL('/auth/login?error=missing_params', req.url))
     }
 
@@ -31,6 +33,8 @@ export async function GET(req: NextRequest) {
     return await completeOAuthLogin(user.id, req)
   } catch (error) {
     console.error('GitHub OAuth callback error:', error)
+    const cookieStore = await cookies()
+    cookieStore.delete('oauth_state_github')
     return NextResponse.redirect(new URL('/auth/login?error=oauth_failed', req.url))
   }
 }

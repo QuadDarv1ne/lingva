@@ -125,14 +125,15 @@ async function getGitHubUserInfo(accessToken: string) {
   return res.json()
 }
 
+type GitHubEmail = { email: string; primary: boolean; verified: boolean }
+
 async function getGitHubEmail(accessToken: string): Promise<string | null> {
   const res = await fetch('https://api.github.com/user/emails', {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
   if (!res.ok) return null
-  const emails = await res.json()
-  type GitHubEmail = { email: string; primary: boolean; verified: boolean }
-  const primary = (emails as GitHubEmail[]).find((e) => e.primary && e.verified)
+  const emails: GitHubEmail[] = await res.json()
+  const primary = emails.find((e) => e.primary && e.verified)
   return primary?.email || null
 }
 

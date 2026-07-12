@@ -6,9 +6,9 @@ import { useProgressStore } from '@/lib/store'
 // Hook to sync user progress with server when logged in
 // Loads progress on mount, saves on changes (debounced)
 export function useProgressSync(isAuthenticated: boolean) {
-  const { progress, favorites, achievements, streak, activityLog, xp, dailyChallenges, personalDictionary, ownedItems, settings } = useProgressStore()
   const initialLoadRef = useRef(false)
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const lastSaveRef = useRef<string>('')
 
   // Load progress from server on mount if authenticated
   useEffect(() => {
@@ -35,42 +35,50 @@ export function useProgressSync(isAuthenticated: boolean) {
       })
   }, [isAuthenticated])
 
-  // Save progress to server on changes (debounced 3s)
+  // Subscribe to store changes and save (debounced 5s)
   useEffect(() => {
     if (!isAuthenticated || !initialLoadRef.current) return
 
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current)
-    }
-
-    saveTimerRef.current = setTimeout(() => {
-      const state = useProgressStore.getState()
-      const payload = {
-        progress: state.progress,
-        favorites: state.favorites,
-        achievements: state.achievements,
-        streak: state.streak,
-        activityLog: state.activityLog,
-        xp: state.xp,
-        dailyChallenges: state.dailyChallenges,
-        personalDictionary: state.personalDictionary,
-        ownedItems: state.ownedItems,
-        settings: state.settings,
+    const unsubscribe = useProgressStore.subscribe((_state) => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current)
       }
 
-      fetch('/api/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ progress: payload }),
-      }).catch(() => {
-        // ignore - progress saved locally
-      })
-    }, 3000)
+      saveTimerRef.current = setTimeout(() => {
+        const currentState = useProgressStore.getState()
+        const payload = {
+          progress: currentState.progress,
+          favorites: currentState.favorites,
+          achievements: currentState.achievements,
+          streak: currentState.streak,
+          activityLog: currentState.activityLog,
+          xp: currentState.xp,
+          dailyChallenges: currentState.dailyChallenges,
+          personalDictionary: currentState.personalDictionary,
+          ownedItems: currentState.ownedItems,
+          settings: currentState.settings,
+        }
+
+        const serialized = JSON.stringify(payload)
+        // Skip save if nothing changed since last save
+        if (serialized === lastSaveRef.current) return
+        lastSaveRef.current = serialized
+
+        fetch('/api/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ progress: payload }),
+        }).catch(() => {
+          // ignore - progress saved locally
+        })
+      }, 5000)
+    })
 
     return () => {
+      unsubscribe()
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current)
       }
     }
-  }, [isAuthenticated, progress, favorites, achievements, streak, activityLog, xp, dailyChallenges, personalDictionary, ownedItems, settings])
+  }, [isAuthenticated])
 }

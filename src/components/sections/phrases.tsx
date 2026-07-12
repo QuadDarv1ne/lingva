@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Volume2, MessageSquare } from 'lucide-react'
 import { Language } from '@/lib/languages-data'
-import { cn, speak as speakText } from '@/lib/utils'
+import { speak as speakText } from '@/lib/utils'
 
 export function PhrasesSection({ language }: { language: Language }) {
   const isRtl = language.direction === 'rtl'

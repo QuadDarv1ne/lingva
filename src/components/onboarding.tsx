@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import {
   Languages, Brain, Trophy, Users, Mic, BookOpen,
-  ChevronRight, ChevronLeft, X, Sparkles, Zap, Check,
+  ChevronRight, ChevronLeft, X, Check,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -105,7 +105,7 @@ export function Onboarding() {
 
   const currentStep = steps[step]
   const Icon = currentStep.icon
-  const progress = ((step + 1) / steps.length) * 100
+  const _progress = ((step + 1) / steps.length) * 100
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

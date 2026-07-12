@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
 // Inline SVG icons for Google and GitHub
 const GoogleIcon = ({ className }: { className?: string }) => (

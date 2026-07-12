@@ -8,14 +8,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
-  BookOpen, Search, Trash2, Volume2, Plus, Loader2, X,
+  BookOpen, Search, Trash2, Volume2, Plus, X,
   Clock, CheckCircle2, BookMarked, Brain,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProgressStore, PersonalWord } from '@/lib/store'
 import { languages } from '@/lib/languages-data'
 import { useToast } from '@/hooks/use-toast'
-import { cn, speak as speakText } from '@/lib/utils'
+import { speak as speakText } from '@/lib/utils'
 
 export default function DictionaryPage() {
   const { personalDictionary, addWord, removeWord, reviewWord } = useProgressStore()
