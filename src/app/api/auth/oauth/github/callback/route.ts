@@ -8,15 +8,14 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const code = searchParams.get('code')
     const state = searchParams.get('state')
+    const cookieStore = await cookies()
 
     if (!code || !state) {
-      const cookieStore = await cookies()
       cookieStore.delete('oauth_state_github')
       return NextResponse.redirect(new URL('/auth/login?error=missing_params', req.url))
     }
 
     // Verify state cookie
-    const cookieStore = await cookies()
     const storedState = cookieStore.get('oauth_state_github')?.value
     if (!storedState || storedState !== state) {
       return NextResponse.redirect(new URL('/auth/login?error=invalid_state', req.url))

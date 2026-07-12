@@ -9,9 +9,9 @@ export async function GET(req: NextRequest) {
     const code = searchParams.get('code')
     const state = searchParams.get('state')
     const error = searchParams.get('error')
+    const cookieStore = await cookies()
 
     if (error) {
-      const cookieStore = await cookies()
       cookieStore.delete('oauth_state_google')
       return NextResponse.redirect(new URL(`/auth/login?error=${encodeURIComponent(error)}`, req.url))
     }
@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
     }
 
     // Verify state cookie
-    const cookieStore = await cookies()
     const storedState = cookieStore.get('oauth_state_google')?.value
     if (!storedState || storedState !== state) {
       return NextResponse.redirect(new URL('/auth/login?error=invalid_state', req.url))

@@ -187,4 +187,5 @@ model TournamentParticipant {
 
   @@unique([tournamentId, userId])
   @@index([tournamentId, score])
+  @@index([userId])
 }

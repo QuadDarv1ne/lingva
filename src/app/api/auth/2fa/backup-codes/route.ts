@@ -5,6 +5,7 @@ import {
   generateBackupCodes,
   hashBackupCodes,
   sanitizeToken,
+  verifyTwoFactorToken,
 } from '@/lib/two-factor'
 
 // GET - Check if backup codes are available (count remaining)
@@ -67,7 +68,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify TOTP
-    const { verifyTwoFactorToken } = await import('@/lib/two-factor')
     const sanitized = sanitizeToken(token)
     const valid = verifyTwoFactorToken(sanitized, fullUser.twoFactorSecret)
     if (!valid) {

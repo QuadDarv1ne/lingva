@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser, verifyPassword } from '@/lib/auth'
 import { verifyTwoFactorToken, sanitizeToken } from '@/lib/two-factor'
 
 // POST - Disable 2FA (requires password or valid TOTP)
@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
     }
 
     if (!verified && password && fullUser.passwordHash) {
-      const { verifyPassword } = await import('@/lib/auth')
       verified = await verifyPassword(password, fullUser.passwordHash)
     }
 

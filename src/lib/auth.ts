@@ -23,7 +23,7 @@ function toHex(buf: ArrayBuffer | Uint8Array): string {
 function fromHex(hex: string): Uint8Array {
   const arr = new Uint8Array(hex.length / 2)
   for (let i = 0; i < arr.length; i++) {
-    arr[i] = parseInt(hex.substr(i * 2, 2), 16)
+    arr[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16)
   }
   return arr
 }

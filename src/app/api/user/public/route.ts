@@ -24,19 +24,13 @@ export async function GET(req: NextRequest) {
         bio: true,
         isPublic: true,
         createdAt: true,
-        // progressData fetched separately below for stats computation only
+        progressData: true,
       },
     })
 
     if (!user) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 })
     }
-
-    // Fetch progressData separately to compute stats (not exposed to client)
-    const fullUser = await db.user.findUnique({
-      where: { id: userId },
-      select: { progressData: true },
-    })
 
     const stats = {
       xp: 0,
@@ -51,9 +45,9 @@ export async function GET(req: NextRequest) {
       quizzesPassed: 0,
     }
 
-    if (fullUser?.progressData) {
+    if (user.progressData) {
       try {
-        const data = JSON.parse(fullUser.progressData)
+        const data = JSON.parse(user.progressData)
         stats.xp = data.xp || 0
         stats.level = getLevelFromXP(stats.xp).level
         stats.streak = data.streak?.current || 0
