@@ -38,7 +38,7 @@ export function AuthButtons() {
         setUser(data.user || null)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch((err) => { console.error('Failed to fetch auth:', err); setLoading(false) })
   }, [])
 
   // Close menu on outside click
@@ -59,8 +59,8 @@ export function AuthButtons() {
       setMenuOpen(false)
       toast({ title: 'Вы вышли из аккаунта' })
       router.refresh()
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error('Logout error:', err)
     }
   }
 

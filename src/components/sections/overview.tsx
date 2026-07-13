@@ -60,7 +60,7 @@ export function OverviewSection({ language }: { language: Language }) {
         {stats.map((stat, i) => {
           const Icon = stat.icon
           return (
-            <Card key={i} className="p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+            <Card key={stat.label} className="p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
               <Icon className="w-5 h-5 text-muted-foreground" />
               <div className="text-xs text-muted-foreground uppercase tracking-wide">
                 {stat.label}
@@ -84,7 +84,7 @@ export function OverviewSection({ language }: { language: Language }) {
           </div>
           <div className="space-y-4">
             {language.history.map((event, i) => (
-              <div key={i} className="flex gap-4">
+              <div key={event} className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className="w-3 h-3 rounded-full bg-primary ring-4 ring-primary/20 shrink-0" />
                   {i < language.history.length - 1 && (

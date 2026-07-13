@@ -77,7 +77,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
     const derivedHex = toHex(derived)
     if (derivedHex.length !== hashHex.length) return false
     return timingSafeEqual(Buffer.from(derivedHex), Buffer.from(hashHex))
-  } catch {
+  } catch (err) {
     return false
   }
 }
@@ -121,7 +121,7 @@ export async function getSessionUser(token: string | undefined) {
   })
   if (!session) return null
   if (session.expiresAt < new Date()) {
-    await db.session.delete({ where: { id: session.id } }).catch(() => {})
+    await db.session.delete({ where: { id: session.id } }).catch((err) => { console.error('Failed to delete expired session:', err) })
     return null
   }
   return session.user
@@ -135,18 +135,18 @@ export async function getSessionWithMeta(token: string | undefined) {
   })
   if (!session) return null
   if (session.expiresAt < new Date()) {
-    await db.session.delete({ where: { id: session.id } }).catch(() => {})
+    await db.session.delete({ where: { id: session.id } }).catch((err) => { console.error('Failed to delete expired session:', err) })
     return null
   }
   return session
 }
 
 export async function destroySession(token: string): Promise<void> {
-  await db.session.deleteMany({ where: { token } }).catch(() => {})
+  await db.session.deleteMany({ where: { token } }).catch((err) => { console.error('Failed to destroy session:', err) })
 }
 
 export async function destroyAllUserSessions(userId: string): Promise<void> {
-  await db.session.deleteMany({ where: { userId } }).catch(() => {})
+  await db.session.deleteMany({ where: { userId } }).catch((err) => { console.error('Failed to destroy all sessions:', err) })
 }
 
 export async function getUserSessions(userId: string) {
@@ -275,7 +275,7 @@ export async function recordLoginAttempt(
         success,
       },
     })
-  } catch {
+  } catch (err) {
     // ignore logging errors
   }
 }

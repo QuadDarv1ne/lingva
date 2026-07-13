@@ -154,6 +154,7 @@ export function AlphabetSection({ language }: { language: Language }) {
                         variant="ghost"
                         onClick={() => speak(letter.example)}
                         className="h-8 w-8"
+                        aria-label="Прослушать пример"
                       >
                         <Volume2 className="w-4 h-4" />
                       </Button>

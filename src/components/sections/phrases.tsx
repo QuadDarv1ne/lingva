@@ -53,6 +53,7 @@ export function PhrasesSection({ language }: { language: Language }) {
                   variant="ghost"
                   onClick={() => speak(phrase.original)}
                   className="shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
+                  aria-label="Прослушать фразу"
                 >
                   <Volume2 className="w-4 h-4" />
                 </Button>

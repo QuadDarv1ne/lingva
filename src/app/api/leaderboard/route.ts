@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
-import { getLevelFromXP } from '@/lib/level'
-import type { LanguageProgressData } from '@/lib/types'
+import { parseProgressStats } from '@/lib/progress-stats'
 
 // GET - global leaderboard by XP
 // Reads XP from progressData JSON field
@@ -30,42 +29,13 @@ export async function GET(req: NextRequest) {
     // Parse XP from progressData and sort
     const ranked = users
       .map((u) => {
-        let xp = 0
-        let level = 1
-        let streak = 0
-        let achievementsCount = 0
-        let languagesCount = 0
-        let lessonsCount = 0
-
-        if (u.progressData) {
-          try {
-            const data = JSON.parse(u.progressData)
-            xp = data.xp || 0
-            level = getLevelFromXP(xp).level
-            streak = data.streak?.current || 0
-            achievementsCount = data.achievements?.length || 0
-            const progress: { [key: string]: LanguageProgressData } = data.progress || {}
-            languagesCount = Object.keys(progress).length
-            lessonsCount = Object.values(progress).reduce(
-              (sum, p) => sum + (p.visitedLessons?.length || 0),
-              0
-            )
-          } catch {
-            // ignore
-          }
-        }
-
+        const stats = parseProgressStats(u.progressData)
         return {
           id: u.id,
           name: u.name || 'Аноним',
           avatar: u.avatar,
           bio: u.bio,
-          xp,
-          level,
-          streak,
-          achievementsCount,
-          languagesCount,
-          lessonsCount,
+          ...stats,
         }
       })
       .filter((u) => u.xp > 0) // only show users with XP
@@ -103,15 +73,12 @@ export async function GET(req: NextRequest) {
                   return false
                 }
               }).length
+              const myStats = parseProgressStats(myFullUser.progressData)
               myRank = higherCount + 1
               myData = {
                 id: currentUser.id,
                 name: currentUser.name || 'Аноним',
-                xp: myXp,
-                level: getLevelFromXP(myXp).level,
-                streak: data.streak?.current || 0,
-                achievementsCount: data.achievements?.length || 0,
-                languagesCount: Object.keys(data.progress || {}).length,
+                ...myStats,
               }
             }
           } catch {

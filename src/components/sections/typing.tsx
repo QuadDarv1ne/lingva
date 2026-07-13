@@ -41,7 +41,7 @@ export function TypingSection({ language }: { language: Language }) {
         })
       })
     })
-    return items.sort(() => Math.random() - 0.5).slice(0, 15)
+    return [...items].sort(() => Math.random() - 0.5).slice(0, 15)
   }, [language])
 
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -52,6 +52,14 @@ export function TypingSection({ language }: { language: Language }) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const currentRound = rounds[currentIndex]
+
+  if (!currentRound) {
+    return (
+      <Card className="p-8 text-center">
+        <p className="text-muted-foreground">Нет слов для практики</p>
+      </Card>
+    )
+  }
 
   useEffect(() => {
     inputRef.current?.focus()

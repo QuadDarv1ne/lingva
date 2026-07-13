@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
-import { getLevelFromXP } from '@/lib/level'
+import { parseProgressStats } from '@/lib/progress-stats'
 import type { LanguageProgressData } from '@/lib/types'
 
 // GET - public profile of any user (with friendship status)
@@ -32,14 +32,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 })
     }
 
+    const progressStats = parseProgressStats(user.progressData)
     const stats = {
-      xp: 0,
-      level: 1,
-      streak: 0,
+      ...progressStats,
       longestStreak: 0,
-      achievementsCount: 0,
-      languagesCount: 0,
-      lessonsCount: 0,
       lettersLearned: 0,
       flashcardsStudied: 0,
       quizzesPassed: 0,
@@ -48,17 +44,8 @@ export async function GET(req: NextRequest) {
     if (user.progressData) {
       try {
         const data = JSON.parse(user.progressData)
-        stats.xp = data.xp || 0
-        stats.level = getLevelFromXP(stats.xp).level
-        stats.streak = data.streak?.current || 0
         stats.longestStreak = data.streak?.longest || 0
-        stats.achievementsCount = data.achievements?.length || 0
         const progress: { [key: string]: LanguageProgressData } = data.progress || {}
-        stats.languagesCount = Object.keys(progress).length
-        stats.lessonsCount = Object.values(progress).reduce(
-          (sum, p) => sum + (p.visitedLessons?.length || 0),
-          0
-        )
         stats.lettersLearned = Object.values(progress).reduce(
           (sum, p) => sum + (p.learnedLetters?.length || 0),
           0

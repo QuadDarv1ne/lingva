@@ -30,9 +30,7 @@ export function useProgressSync(isAuthenticated: boolean) {
           }, false)
         }
       })
-      .catch(() => {
-        // ignore - use local progress
-      })
+      .catch((err) => { console.error('Failed to load progress from server:', err) })
   }, [isAuthenticated])
 
   // Subscribe to store changes and save (debounced 5s)
@@ -68,9 +66,7 @@ export function useProgressSync(isAuthenticated: boolean) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ progress: payload }),
-        }).catch(() => {
-          // ignore - progress saved locally
-        })
+        }).catch((err) => { console.error('Failed to save progress to server:', err) })
       }, 5000)
     })
 

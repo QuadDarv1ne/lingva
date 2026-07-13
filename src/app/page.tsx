@@ -7,6 +7,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { languages } from '@/lib/languages-data'
 import { LanguageCard } from '@/components/language-card'
 import { LanguageDetail } from '@/components/language-detail'
@@ -27,6 +38,7 @@ export default function Home() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
   const [showXPDaily, setShowXPDaily] = useState(false)
+  const [showResetDialog, setShowResetDialog] = useState(false)
   const [authUser, setAuthUser] = useState<{ id: string } | null>(null)
   const {
     favorites,
@@ -49,7 +61,7 @@ export default function Home() {
       .then((data) => {
         if (data.user) setAuthUser(data.user)
       })
-      .catch(() => {})
+      .catch((err) => console.error('Failed to fetch auth user:', err))
   }, [])
 
   // Record activity once on mount (daily streak) + generate daily challenges
@@ -223,19 +235,32 @@ export default function Home() {
             <ThemeToggle />
             <AuthButtons />
             {(totalLearnedLetters > 0 || totalVisitedLessons > 0) && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  if (confirm('Сбросить весь прогресс изучения? Это действие необратимо.')) {
-                    resetProgress()
-                  }
-                }}
-                className="text-muted-foreground hover:text-destructive"
-                aria-label="Сбросить прогресс"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </Button>
+              <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label="Сбросить прогресс"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Сброс прогресса</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Сбросить весь прогресс изучения? Это действие необратимо.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => { resetProgress(); setShowResetDialog(false) }}>
+                      Сбросить
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         </div>

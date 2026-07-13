@@ -42,7 +42,7 @@ export function FlashcardsSection({ language }: { language: Language }) {
       })
     })
     // shuffle
-    return cards.sort(() => Math.random() - 0.5)
+    return [...cards].sort(() => Math.random() - 0.5)
   }, [language])
 
   const [current, setCurrent] = useState(0)
@@ -50,6 +50,15 @@ export function FlashcardsSection({ language }: { language: Language }) {
   const [knownCount, setKnownCount] = useState(0)
 
   const card = flashcards[current]
+
+  if (!card) {
+    return (
+      <Card className="p-8 text-center">
+        <p className="text-muted-foreground">Нет карточек для изучения</p>
+      </Card>
+    )
+  }
+
   const totalCount = flashcards.length
   const progressPct = Math.round(((current + 1) / totalCount) * 100)
 
@@ -144,6 +153,7 @@ export function FlashcardsSection({ language }: { language: Language }) {
                     speak(flipped ? card.back : card.front)
                   }}
                   className="text-white hover:bg-white/20"
+                  aria-label="Прослушать слово"
                 >
                   <Volume2 className="w-5 h-5" />
                 </Button>

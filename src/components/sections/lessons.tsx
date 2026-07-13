@@ -131,6 +131,7 @@ function LessonContent({
                   variant="ghost"
                   onClick={() => speak(word.word)}
                   className="h-6 w-6 opacity-50 group-hover:opacity-100"
+                  aria-label="Прослушать произношение"
                 >
                   <Volume2 className="w-3 h-3" />
                 </Button>

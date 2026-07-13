@@ -114,7 +114,11 @@ export function PronunciationSection({ language }: { language: Language }) {
       timerRef.current = setInterval(() => {
         setRecordingTime((t) => {
           if (t >= 10) {
-            stopRecording()
+            if (mediaRecorderRef.current && timerRef.current) {
+              mediaRecorderRef.current.stop()
+              setIsRecording(false)
+              clearInterval(timerRef.current)
+            }
             return t
           }
           return t + 1

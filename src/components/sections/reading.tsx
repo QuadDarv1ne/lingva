@@ -170,6 +170,7 @@ export function ReadingSection({ language }: { language: Language }) {
               variant="ghost"
               onClick={() => speak(selectedText.text)}
               className="h-8"
+              aria-label="Прослушать текст"
             >
               <Volume2 className="w-4 h-4 mr-1" />
               Слушать

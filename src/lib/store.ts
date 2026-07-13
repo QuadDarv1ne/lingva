@@ -909,6 +909,22 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: 'language-learning-progress-v4',
+      partialize: (state) => ({
+        progress: state.progress,
+        favorites: state.favorites,
+        achievements: state.achievements,
+        streak: state.streak,
+        activityLog: state.activityLog,
+        xpHistory: state.xpHistory,
+        xp: state.xp,
+        spentXP: state.spentXP,
+        dailyChallenges: state.dailyChallenges,
+        personalDictionary: state.personalDictionary,
+        settings: state.settings,
+        ownedItems: state.ownedItems,
+        activityEvents: state.activityEvents,
+        selectedLanguage: state.selectedLanguage,
+      }),
     }
   )
 )

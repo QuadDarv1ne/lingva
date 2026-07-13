@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
-import { getLevelFromXP } from '@/lib/level'
+import { parseXP } from '@/lib/progress-stats'
 
 // GET - search users by name or email (for adding friends)
 export async function GET(req: NextRequest) {
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       where: { id: { in: userIds } },
       select: { id: true, progressData: true },
     })
-    const progressMap = new Map<string, string | null>(userProgress.map((u) => [u.id, u.progressData as string | null]))
+    const progressMap = new Map<string, string | null>(userProgress.map((u) => [u.id, u.progressData]))
 
     // Get friendship status for each user
     const friendships = await db.friendship.findMany({
@@ -64,18 +64,7 @@ export async function GET(req: NextRequest) {
     })
 
     const result = users.map((u) => {
-      let xp = 0
-      let level = 1
-      const progressData = progressMap.get(u.id)
-      if (progressData) {
-        try {
-          const data = JSON.parse(progressData)
-          xp = data.xp || 0
-          level = getLevelFromXP(xp).level
-        } catch {
-          // ignore
-        }
-      }
+      const { xp, level } = parseXP(progressMap.get(u.id) ?? null)
       const friendship = friendshipMap.get(u.id)
       return {
         id: u.id,

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
-import { getLevelFromXP } from '@/lib/level'
+import { parseProgressStats } from '@/lib/progress-stats'
 
 // GET - list user's friends (accepted) and pending requests
 export async function GET() {
@@ -55,7 +55,7 @@ export async function GET() {
       where: { id: { in: friendIds } },
       select: { id: true, progressData: true },
     })
-    const progressMap = new Map<string, string | null>(friendProgress.map((u) => [u.id, u.progressData as string | null]))
+    const progressMap = new Map<string, string | null>(friendProgress.map((u) => [u.id, u.progressData]))
 
     // Pending requests received
     const pendingReceived = await db.friendship.findMany({
@@ -112,24 +112,5 @@ export async function GET() {
 }
 
 function computeStats(progressData: string | null) {
-  let xp = 0
-  let level = 1
-  let streak = 0
-  let achievementsCount = 0
-  let languagesCount = 0
-
-  if (progressData) {
-    try {
-      const data = JSON.parse(progressData)
-      xp = data.xp || 0
-      level = getLevelFromXP(xp).level
-      streak = data.streak?.current || 0
-      achievementsCount = data.achievements?.length || 0
-      languagesCount = Object.keys(data.progress || {}).length
-    } catch {
-      // ignore
-    }
-  }
-
-  return { xp, level, streak, achievementsCount, languagesCount }
+  return parseProgressStats(progressData)
 }
