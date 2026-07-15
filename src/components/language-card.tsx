@@ -65,7 +65,7 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
                 toggleFavorite(language.id)
               }}
               className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-colors backdrop-blur-sm"
-              aria-label="Toggle favorite"
+              aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
             >
               <Heart
                 className={cn(

@@ -53,6 +53,12 @@ export function TypingSection({ language }: { language: Language }) {
 
   const currentRound = rounds[currentIndex]
 
+  useEffect(() => {
+    if (currentRound) {
+      inputRef.current?.focus()
+    }
+  }, [currentIndex, currentRound])
+
   if (!currentRound) {
     return (
       <Card className="p-8 text-center">
@@ -60,10 +66,6 @@ export function TypingSection({ language }: { language: Language }) {
       </Card>
     )
   }
-
-  useEffect(() => {
-    inputRef.current?.focus()
-  }, [currentIndex])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

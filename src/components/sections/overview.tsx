@@ -57,7 +57,7 @@ export function OverviewSection({ language }: { language: Language }) {
         transition={{ delay: 0.15 }}
         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3"
       >
-        {stats.map((stat, i) => {
+        {stats.map((stat) => {
           const Icon = stat.icon
           return (
             <Card key={stat.label} className="p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">

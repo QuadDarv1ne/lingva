@@ -77,7 +77,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
     const derivedHex = toHex(derived)
     if (derivedHex.length !== hashHex.length) return false
     return timingSafeEqual(Buffer.from(derivedHex), Buffer.from(hashHex))
-  } catch (err) {
+  } catch {
     return false
   }
 }
@@ -275,7 +275,7 @@ export async function recordLoginAttempt(
         success,
       },
     })
-  } catch (err) {
+  } catch {
     // ignore logging errors
   }
 }

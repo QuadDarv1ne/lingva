@@ -4,6 +4,7 @@
 
 import { randomBytes } from 'crypto'
 import nodemailer from 'nodemailer'
+import type { Transporter } from 'nodemailer'
 
 function escapeHtml(str: string): string {
   return str
@@ -42,6 +43,25 @@ function isSmtpConfigured(): boolean {
   )
 }
 
+// Singleton transporter — reused across calls
+let cachedTransporter: Transporter | null = null
+
+function getTransporter(): Transporter {
+  if (cachedTransporter) return cachedTransporter
+  cachedTransporter = nodemailer.createTransport({
+    host: process.env.EMAIL_SERVER_HOST,
+    port: parseInt(process.env.EMAIL_SERVER_PORT || '587', 10) || 587,
+    secure: process.env.EMAIL_SERVER_SECURE === 'true',
+    auth: process.env.EMAIL_SERVER_USER
+      ? {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        }
+      : undefined,
+  })
+  return cachedTransporter
+}
+
 export async function sendEmail(message: EmailMessage): Promise<SendResult> {
   // Validate email format
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(message.to)) {
@@ -51,17 +71,7 @@ export async function sendEmail(message: EmailMessage): Promise<SendResult> {
   // If SMTP is configured, send real email
   if (isSmtpConfigured()) {
     try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_SERVER_HOST,
-        port: parseInt(process.env.EMAIL_SERVER_PORT || '587', 10) || 587,
-        secure: process.env.EMAIL_SERVER_SECURE === 'true',
-        auth: process.env.EMAIL_SERVER_USER
-          ? {
-              user: process.env.EMAIL_SERVER_USER,
-              pass: process.env.EMAIL_SERVER_PASSWORD,
-            }
-          : undefined,
-      })
+      const transporter = getTransporter()
 
       const info = await transporter.sendMail({
         from: process.env.EMAIL_FROM,

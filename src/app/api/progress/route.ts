@@ -46,6 +46,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Некорректные данные' }, { status: 400 })
     }
 
+    // Validate XP is a non-negative integer to prevent cheating
+    if (typeof progress.xp === 'number') {
+      if (!Number.isInteger(progress.xp) || progress.xp < 0) {
+        return NextResponse.json({ error: 'Некорректные данные XP' }, { status: 400 })
+      }
+      // Cap XP to a reasonable maximum (prevents injection of absurd values)
+      progress.xp = Math.min(progress.xp, 10_000_000)
+    }
+
+    // Validate streakDays is a non-negative integer
+    if (typeof progress.streakDays === 'number') {
+      if (!Number.isInteger(progress.streakDays) || progress.streakDays < 0) {
+        return NextResponse.json({ error: 'Некорректные данные streak' }, { status: 400 })
+      }
+      progress.streakDays = Math.min(progress.streakDays, 36500)
+    }
+
     const progressData = JSON.stringify(progress)
     // Limit size to prevent abuse
     if (progressData.length > 500_000) {
