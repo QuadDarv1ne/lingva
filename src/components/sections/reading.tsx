@@ -139,7 +139,7 @@ export function ReadingSection({ language }: { language: Language }) {
 
   // Reading + questions view
   const total = selectedText.questions.length
-  const accuracy = submitted ? Math.round((score / total) * 100) : 0
+  const accuracy = submitted && total > 0 ? Math.round((score / total) * 100) : 0
 
   return (
     <div className="space-y-4">

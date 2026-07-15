@@ -83,8 +83,8 @@ export function AuthButtons() {
     )
   }
 
-  const displayName = user.name || user.email.split('@')[0]
-  const initial = displayName[0].toUpperCase()
+  const displayName = user.name || user.email.split('@')[0] || '?'
+  const initial = (displayName[0] || '?').toUpperCase()
 
   return (
     <div className="relative" ref={menuRef}>

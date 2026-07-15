@@ -32,7 +32,7 @@ export function AlphabetSection({ language }: { language: Language }) {
   const letter = selected !== null ? language.alphabet[selected] : null
   const learnedCount = progress.learnedLetters.length
   const totalLetters = language.alphabet.length
-  const learnPct = Math.round((learnedCount / totalLetters) * 100)
+  const learnPct = totalLetters > 0 ? Math.round((learnedCount / totalLetters) * 100) : 0
 
   return (
     <div className="space-y-6">

@@ -175,7 +175,7 @@ export default function LeaderboardPage() {
                       leader.rank === 3 && 'border-orange-400'
                     )}>
                       <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white text-2xl font-bold">
-                        {leader.name[0]?.toUpperCase()}
+                        {(leader.name || '?')[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <h3 className="font-bold text-lg truncate">{leader.name}</h3>
@@ -235,7 +235,7 @@ export default function LeaderboardPage() {
                   </div>
                   <Avatar className="w-10 h-10">
                     <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white">
-                      {leader.name[0]?.toUpperCase()}
+                      {(leader.name || '?')[0]?.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">

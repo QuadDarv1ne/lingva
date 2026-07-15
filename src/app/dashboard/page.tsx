@@ -116,7 +116,7 @@ export default function DashboardPage() {
 
   // Stats summary
   const todayXP = xpHistory[new Date().toISOString().split('T')[0]] || 0
-  const dailyGoalProgress = Math.min(100, Math.round((todayXP / settings.dailyGoalXP) * 100))
+  const dailyGoalProgress = Math.min(100, Math.round((todayXP / (settings.dailyGoalXP || 1)) * 100))
 
   // Export handler
   const handleExport = () => {
@@ -151,6 +151,10 @@ export default function DashboardPage() {
       } finally {
         setImporting(false)
       }
+    }
+    reader.onerror = () => {
+      toast({ title: 'Ошибка чтения файла', variant: 'destructive' })
+      setImporting(false)
     }
     reader.readAsText(file)
   }
