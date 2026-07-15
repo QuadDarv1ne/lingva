@@ -18,7 +18,20 @@ const registerAttempts = new Map<string, { count: number; windowStart: number }>
 const MAX_REGISTERS_PER_HOUR = 5
 const RATE_WINDOW_MS = 60 * 60 * 1000
 
+let lastCleanup = 0
+function cleanupRegisterLimits() {
+  const now = Date.now()
+  if (now - lastCleanup < RATE_WINDOW_MS) return
+  lastCleanup = now
+  for (const [key, entry] of registerAttempts) {
+    if (now - entry.windowStart > RATE_WINDOW_MS) {
+      registerAttempts.delete(key)
+    }
+  }
+}
+
 function checkRegisterRateLimit(ip: string): boolean {
+  cleanupRegisterLimits()
   const now = Date.now()
   const entry = registerAttempts.get(ip)
   if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {

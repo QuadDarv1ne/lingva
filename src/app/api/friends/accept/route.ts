@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { friendshipId } = body
 
-    if (!friendshipId) {
+    if (!friendshipId || typeof friendshipId !== 'string') {
       return NextResponse.json({ error: 'friendshipId обязателен' }, { status: 400 })
     }
 

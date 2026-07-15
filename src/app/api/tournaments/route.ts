@@ -169,6 +169,17 @@ export async function POST(req: NextRequest) {
 // Rate-limited: max once per hour per user per tournament
 const lastScoreUpdate = new Map<string, number>()
 const SCORE_UPDATE_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
+let lastScoreCleanup = 0
+const SCORE_CLEANUP_INTERVAL_MS = 5 * 60_000
+
+function cleanupScoreLimits() {
+  const now = Date.now()
+  if (now - lastScoreCleanup < SCORE_CLEANUP_INTERVAL_MS) return
+  lastScoreCleanup = now
+  for (const [key, ts] of lastScoreUpdate) {
+    if (now - ts > SCORE_UPDATE_COOLDOWN_MS) lastScoreUpdate.delete(key)
+  }
+}
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -176,6 +187,8 @@ export async function PATCH(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
+
+    cleanupScoreLimits()
 
     const body = await req.json()
     const { tournamentId } = body

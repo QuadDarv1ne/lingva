@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { token, action } = body // action: 'enable' | 'login'
 
-    if (!token) {
+    if (!token || typeof token !== 'string') {
       return NextResponse.json(
         { error: 'Код обязателен' },
         { status: 400 }
@@ -24,8 +24,12 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Validate action against allowed values
+    const validActions = ['enable', 'login']
+    const resolvedAction = (typeof action === 'string' && validActions.includes(action)) ? action : 'enable'
+
     // For "enable" action, user is already logged in
-    if (action === 'enable' || !action) {
+    if (resolvedAction === 'enable') {
       const user = await getCurrentUser()
       if (!user) {
         return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })

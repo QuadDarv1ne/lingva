@@ -6,8 +6,20 @@ import { getCurrentUser } from '@/lib/auth'
 const friendRequestLimits = new Map<string, { count: number; windowStart: number }>()
 const MAX_FRIEND_REQUESTS_PER_HOUR = 20
 const RATE_WINDOW_MS = 60 * 60 * 1000
+let lastCleanup = 0
+const CLEANUP_INTERVAL_MS = 5 * 60_000
+
+function cleanupFriendLimits() {
+  const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
+  lastCleanup = now
+  for (const [key, entry] of friendRequestLimits) {
+    if (now - entry.windowStart > RATE_WINDOW_MS) friendRequestLimits.delete(key)
+  }
+}
 
 function checkFriendRequestRateLimit(userId: string): boolean {
+  cleanupFriendLimits()
   const now = Date.now()
   const entry = friendRequestLimits.get(userId)
   if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {

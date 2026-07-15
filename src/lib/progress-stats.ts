@@ -24,10 +24,12 @@ export function parseProgressStats(progressData: string | null): ProgressStats {
 
   try {
     const data = JSON.parse(progressData)
-    stats.xp = data.xp || 0
+    stats.xp = typeof data.xp === 'number' && data.xp >= 0
+      ? Math.min(Math.floor(data.xp), 10_000_000) : 0
     stats.level = getLevelFromXP(stats.xp).level
-    stats.streak = data.streak?.current || 0
-    stats.achievementsCount = data.achievements?.length || 0
+    stats.streak = typeof data.streak?.current === 'number'
+      ? Math.min(Math.floor(data.streak.current), 36500) : 0
+    stats.achievementsCount = Array.isArray(data.achievements) ? data.achievements.length : 0
 
     const progress: { [key: string]: LanguageProgressData } = data.progress || {}
     stats.languagesCount = Object.keys(progress).length
@@ -46,7 +48,8 @@ export function parseXP(progressData: string | null): { xp: number; level: numbe
   if (!progressData) return { xp: 0, level: 1 }
   try {
     const data = JSON.parse(progressData)
-    const xp = data.xp || 0
+    const xp = typeof data.xp === 'number' && data.xp >= 0
+      ? Math.min(Math.floor(data.xp), 10_000_000) : 0
     return { xp, level: getLevelFromXP(xp).level }
   } catch {
     return { xp: 0, level: 1 }

@@ -4,9 +4,13 @@ import { generateResetToken, hashToken, validateEmail } from '@/lib/auth'
 import { sendEmail, renderResetPasswordEmail } from '@/lib/email'
 
 const resetRequests = new Map<string, { count: number; windowStart: number }>()
+const CLEANUP_INTERVAL_MS = 5 * 60_000
 
+let lastCleanup = 0
 function cleanupResetRequests() {
   const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
+  lastCleanup = now
   for (const [key, entry] of resetRequests) {
     if (now - entry.windowStart > 60_000) {
       resetRequests.delete(key)

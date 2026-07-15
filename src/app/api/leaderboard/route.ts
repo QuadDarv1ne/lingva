@@ -63,13 +63,16 @@ export async function GET(req: NextRequest) {
         if (myFullUser?.progressData) {
           try {
             const data = JSON.parse(myFullUser.progressData)
-            const myXp = data.xp || 0
+            const myXp = typeof data.xp === 'number' && data.xp >= 0
+              ? Math.min(Math.floor(data.xp), 10_000_000) : 0
             if (myXp > 0) {
               const higherCount = users.filter((u) => {
                 if (!u.progressData) return false
                 try {
                   const d = JSON.parse(u.progressData)
-                  return (d.xp || 0) > myXp
+                  const uxp = typeof d.xp === 'number' && d.xp >= 0
+                    ? Math.min(Math.floor(d.xp), 10_000_000) : 0
+                  return uxp > myXp
                 } catch {
                   return false
                 }

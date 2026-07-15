@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { token } = body
 
-    if (!token) {
+    if (!token || typeof token !== 'string') {
       return NextResponse.json(
         { error: 'Введите TOTP код для подтверждения' },
         { status: 400 }

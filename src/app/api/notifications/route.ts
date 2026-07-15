@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { id, all } = body
 
-    if (!all && !id) {
+    if (!all && (!id || typeof id !== 'string')) {
       return NextResponse.json(
         { error: 'Укажите id или all' },
         { status: 400 }
@@ -85,7 +85,7 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
 
-    if (!id) {
+    if (!id || typeof id !== 'string') {
       return NextResponse.json({ error: 'ID обязателен' }, { status: 400 })
     }
 

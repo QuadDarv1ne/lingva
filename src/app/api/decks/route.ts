@@ -9,8 +9,20 @@ const VALID_LANGUAGE_IDS = new Set(languages.map((l) => l.id))
 const deckCreateLimits = new Map<string, { count: number; windowStart: number }>()
 const MAX_DECKS_PER_HOUR = 10
 const RATE_WINDOW_MS = 60 * 60 * 1000
+let lastCleanup = 0
+const CLEANUP_INTERVAL_MS = 5 * 60_000
+
+function cleanupDeckLimits() {
+  const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
+  lastCleanup = now
+  for (const [key, entry] of deckCreateLimits) {
+    if (now - entry.windowStart > RATE_WINDOW_MS) deckCreateLimits.delete(key)
+  }
+}
 
 function checkDeckCreateRateLimit(userId: string): boolean {
+  cleanupDeckLimits()
   const now = Date.now()
   const entry = deckCreateLimits.get(userId)
   if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {

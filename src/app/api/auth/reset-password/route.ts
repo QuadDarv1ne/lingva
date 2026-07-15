@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { token, password } = body
 
-    if (!token || !password) {
+    if (!token || typeof token !== 'string' || !password || typeof password !== 'string') {
       return NextResponse.json(
         { error: 'Токен и новый пароль обязательны' },
         { status: 400 }

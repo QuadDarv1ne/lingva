@@ -7,8 +7,20 @@ import { parseXP } from '@/lib/progress-stats'
 const searchLimits = new Map<string, { count: number; windowStart: number }>()
 const MAX_SEARCH_PER_MINUTE = 30
 const RATE_WINDOW_MS = 60_000
+let lastCleanup = 0
+const CLEANUP_INTERVAL_MS = 5 * 60_000
+
+function cleanupSearchLimits() {
+  const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
+  lastCleanup = now
+  for (const [key, entry] of searchLimits) {
+    if (now - entry.windowStart > RATE_WINDOW_MS) searchLimits.delete(key)
+  }
+}
 
 function checkSearchRateLimit(userId: string): boolean {
+  cleanupSearchLimits()
   const now = Date.now()
   const entry = searchLimits.get(userId)
   if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
