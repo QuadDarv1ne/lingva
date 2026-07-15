@@ -51,10 +51,14 @@ export async function DELETE(req: NextRequest) {
     if (all === 'true') {
       // Terminate all sessions except current
       const currentToken = await getSessionToken()
+      if (!currentToken) {
+        // No current session token — shouldn't happen, but don't delete everything
+        return NextResponse.json({ error: 'Не удалось определить текущую сессию' }, { status: 400 })
+      }
       await db.session.deleteMany({
         where: {
           userId: user.id,
-          NOT: currentToken ? { token: currentToken } : undefined,
+          NOT: { token: currentToken },
         },
       })
       return NextResponse.json({ success: true, terminated: 'all' })

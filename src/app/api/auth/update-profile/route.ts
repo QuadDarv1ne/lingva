@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getCurrentUser, validateName, validatePassword, hashPassword, verifyPassword } from '@/lib/auth'
+import { getCurrentUser, validateName, validatePassword, validateEmail, hashPassword, verifyPassword } from '@/lib/auth'
 
 export async function PUT(req: NextRequest) {
   try {
@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest) {
 
     if (email !== undefined) {
       const newEmail = email.toString().toLowerCase()
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      if (!validateEmail(newEmail)) {
         return NextResponse.json({ error: 'Некорректный email' }, { status: 400 })
       }
       // Check uniqueness

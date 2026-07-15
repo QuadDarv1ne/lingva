@@ -32,6 +32,29 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 })
     }
 
+    // Check if profile is private — only allow self and friends to view
+    if (!user.isPublic) {
+      const currentUser = await getCurrentUser()
+      if (!currentUser || currentUser.id !== user.id) {
+        // Check if they are accepted friends
+        if (currentUser) {
+          const friendship = await db.friendship.findFirst({
+            where: {
+              OR: [
+                { senderId: currentUser.id, receiverId: user.id, status: 'accepted' },
+                { senderId: user.id, receiverId: currentUser.id, status: 'accepted' },
+              ],
+            },
+          })
+          if (!friendship) {
+            return NextResponse.json({ error: 'Профиль приватный' }, { status: 403 })
+          }
+        } else {
+          return NextResponse.json({ error: 'Профиль приватный' }, { status: 403 })
+        }
+      }
+    }
+
     const progressStats = parseProgressStats(user.progressData)
     const stats = {
       ...progressStats,

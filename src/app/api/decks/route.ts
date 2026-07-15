@@ -5,6 +5,23 @@ import { languages } from '@/lib/languages-data'
 
 const VALID_LANGUAGE_IDS = new Set(languages.map((l) => l.id))
 
+// Per-user rate limiting for deck creation
+const deckCreateLimits = new Map<string, { count: number; windowStart: number }>()
+const MAX_DECKS_PER_HOUR = 10
+const RATE_WINDOW_MS = 60 * 60 * 1000
+
+function checkDeckCreateRateLimit(userId: string): boolean {
+  const now = Date.now()
+  const entry = deckCreateLimits.get(userId)
+  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
+    deckCreateLimits.set(userId, { count: 1, windowStart: now })
+    return true
+  }
+  if (entry.count >= MAX_DECKS_PER_HOUR) return false
+  entry.count++
+  return true
+}
+
 // GET - list user's custom decks + public decks
 export async function GET(req: NextRequest) {
   try {
@@ -64,6 +81,13 @@ export async function POST(req: NextRequest) {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
+    if (!checkDeckCreateRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: 'Слишком много колод. Попробуйте позже.' },
+        { status: 429 }
+      )
     }
 
     const body = await req.json()

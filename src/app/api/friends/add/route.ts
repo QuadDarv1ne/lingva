@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 
+// Per-user rate limiting for friend requests
+const friendRequestLimits = new Map<string, { count: number; windowStart: number }>()
+const MAX_FRIEND_REQUESTS_PER_HOUR = 20
+const RATE_WINDOW_MS = 60 * 60 * 1000
+
+function checkFriendRequestRateLimit(userId: string): boolean {
+  const now = Date.now()
+  const entry = friendRequestLimits.get(userId)
+  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
+    friendRequestLimits.set(userId, { count: 1, windowStart: now })
+    return true
+  }
+  if (entry.count >= MAX_FRIEND_REQUESTS_PER_HOUR) return false
+  entry.count++
+  return true
+}
+
 // POST - send friend request
 export async function POST(req: NextRequest) {
   try {
@@ -10,10 +27,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
+    if (!checkFriendRequestRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: 'Слишком много запросов. Попробуйте позже.' },
+        { status: 429 }
+      )
+    }
+
     const body = await req.json()
     const { receiverId } = body
 
-    if (!receiverId || receiverId === user.id) {
+    if (!receiverId || typeof receiverId !== 'string' || receiverId === user.id) {
       return NextResponse.json({ error: 'Неверный ID пользователя' }, { status: 400 })
     }
 

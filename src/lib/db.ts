@@ -9,8 +9,8 @@ function createPrismaClient() {
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   })
 
-  client.$queryRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {})
-  client.$queryRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {})
+  client.$executeRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {})
+  client.$executeRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {})
 
   return client
 }

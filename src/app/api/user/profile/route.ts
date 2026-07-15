@@ -25,11 +25,21 @@ export async function PUT(req: NextRequest) {
     if (avatar !== undefined) {
       if (typeof avatar === 'string' && avatar.length <= 1000) {
         // Validate URL format — only allow http/https URLs or null
-        if (avatar && !avatar.startsWith('http://') && !avatar.startsWith('https://')) {
-          return NextResponse.json(
-            { error: 'Аватар должен быть URL (http/https)' },
-            { status: 400 }
-          )
+        if (avatar) {
+          try {
+            const url = new URL(avatar)
+            if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+              return NextResponse.json(
+                { error: 'Аватар должен быть URL (http/https)' },
+                { status: 400 }
+              )
+            }
+          } catch {
+            return NextResponse.json(
+              { error: 'Некорректный URL аватара' },
+              { status: 400 }
+            )
+          }
         }
         updates.avatar = avatar || null
       } else if (avatar !== null) {

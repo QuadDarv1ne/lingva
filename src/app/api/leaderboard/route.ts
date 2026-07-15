@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '50', 10) || 50, 1), 100)
 
-    // Get all public users with progress data
+    // Get public users with progress data
+    // Fetch a broader pool (up to 500) then rank and slice to requested limit
     const users = await db.user.findMany({
       where: {
         isPublic: true,
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
         bio: true,
         progressData: true,
       },
-      take: 500, // limit to top 500 for performance
+      take: Math.max(limit, 500),
     })
 
     // Parse XP from progressData and sort

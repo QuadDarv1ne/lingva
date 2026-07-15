@@ -3,12 +3,36 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { parseXP } from '@/lib/progress-stats'
 
+// Per-user rate limiting for search
+const searchLimits = new Map<string, { count: number; windowStart: number }>()
+const MAX_SEARCH_PER_MINUTE = 30
+const RATE_WINDOW_MS = 60_000
+
+function checkSearchRateLimit(userId: string): boolean {
+  const now = Date.now()
+  const entry = searchLimits.get(userId)
+  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
+    searchLimits.set(userId, { count: 1, windowStart: now })
+    return true
+  }
+  if (entry.count >= MAX_SEARCH_PER_MINUTE) return false
+  entry.count++
+  return true
+}
+
 // GET - search users by name or email (for adding friends)
 export async function GET(req: NextRequest) {
   try {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
+    if (!checkSearchRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: 'Слишком много запросов. Подождите минуту.' },
+        { status: 429 }
+      )
     }
 
     const { searchParams } = new URL(req.url)

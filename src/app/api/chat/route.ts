@@ -9,6 +9,7 @@ const conversations = new Map<string, { role: 'user' | 'assistant'; content: str
 const MAX_HISTORY = 20
 const MAX_SESSIONS = 500
 const MAX_MESSAGE_LENGTH = 2000
+const ALLOWED_MODES = ['tutor', 'native', 'quiz']
 
 // Per-user rate limiting
 const rateLimits = new Map<string, { count: number; windowStart: number }>()
@@ -92,11 +93,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const resolvedMode = (typeof mode === 'string' && ALLOWED_MODES.includes(mode)) ? mode : 'tutor'
+
     // Build system prompt based on language and mode
-    const systemPrompt = buildSystemPrompt(language, mode || 'tutor')
+    const systemPrompt = buildSystemPrompt(language, resolvedMode)
 
     // Get or create conversation history (keyed by authenticated user, not client session)
-    const sessionKey = `${user.id}-${languageId}-${mode}`
+    const sessionKey = `${user.id}-${languageId}-${resolvedMode}`
     let history = conversations.get(sessionKey) || []
 
     // On first message of session, seed with system prompt
