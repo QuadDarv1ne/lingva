@@ -1,33 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
-  ShoppingBag, Zap, Loader2, Check, Coins, Snowflake, Lightbulb,
-  FastForward, Palette, Smile, X,
+  ShoppingBag, Zap, Loader2, Check, Coins, Snowflake, X,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProgressStore, SHOP_ITEMS, ShopItem, getLevelFromXP, getLevelTitle } from '@/lib/store'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 
-const _typeIcons: Record<string, typeof Zap> = {
-  streak_freeze: Snowflake,
-  hint: Lightbulb,
-  double_xp: Zap,
-  skip_lesson: FastForward,
-  custom_theme: Palette,
-  emoji_pack: Smile,
-}
-
 export default function ShopPage() {
   const { xp, spentXP, ownedItems, purchaseItem, consumeItem, streak } = useProgressStore()
   const { toast } = useToast()
   const [purchasing, setPurchasing] = useState<string | null>(null)
   const [using, setUsing] = useState<string | null>(null)
+  const useTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (useTimerRef.current) clearTimeout(useTimerRef.current)
+    }
+  }, [])
   const [showConfirm, setShowConfirm] = useState<ShopItem | null>(null)
 
   const availableXP = xp - spentXP
@@ -65,7 +62,8 @@ export default function ShopPage() {
     const item = SHOP_ITEMS.find((i) => i.id === itemId)
     if (!item) return
 
-    setTimeout(() => {
+    if (useTimerRef.current) clearTimeout(useTimerRef.current)
+    useTimerRef.current = setTimeout(() => {
       const success = consumeItem(itemId)
       if (success) {
         toast({

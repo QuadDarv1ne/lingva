@@ -22,6 +22,14 @@ export function QuizSection({ language }: { language: Language }) {
 
   const total = language.quiz.length
   const question = language.quiz[current]
+
+  if (total === 0 || !question) {
+    return (
+      <Card className="p-8 text-center">
+        <p className="text-muted-foreground">Нет вопросов для теста</p>
+      </Card>
+    )
+  }
   const quizId = `${language.id}-quiz-${total}`
   const bestScore = progress.completedQuizzes[quizId] || 0
 

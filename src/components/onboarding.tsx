@@ -105,7 +105,6 @@ export function Onboarding() {
 
   const currentStep = steps[step]
   const Icon = currentStep.icon
-  const _progress = ((step + 1) / steps.length) * 100
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

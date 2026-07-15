@@ -60,6 +60,7 @@ export default function FriendsPage() {
   const [pendingSent, setPendingSent] = useState<PendingRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchVersion, setSearchVersion] = useState(0)
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [searching, setSearching] = useState(false)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -102,7 +103,7 @@ export default function FriendsPage() {
       }
     }, 400)
     return () => clearTimeout(timer)
-  }, [searchQuery])
+  }, [searchQuery, searchVersion])
 
   const handleAddFriend = async (userId: string) => {
     setActionLoading(userId)
@@ -122,8 +123,7 @@ export default function FriendsPage() {
       loadData()
       // Refresh search results
       if (searchQuery) {
-        setSearchQuery(searchQuery + ' ') // trigger re-search
-        setSearchQuery(searchQuery)
+        setSearchVersion((v) => v + 1)
       }
     } catch (error) {
       toast({

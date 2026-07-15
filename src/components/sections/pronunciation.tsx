@@ -55,6 +55,7 @@ export function PronunciationSection({ language }: { language: Language }) {
   const chunksRef = useRef<Blob[]>([])
   const streamRef = useRef<MediaStream | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const audioUrlRef = useRef<string | null>(null)
   const [micError, setMicError] = useState<string | null>(null)
   const [micSupported] = useState(() => {
     if (typeof navigator === 'undefined') return true
@@ -70,6 +71,7 @@ export function PronunciationSection({ language }: { language: Language }) {
         streamRef.current.getTracks().forEach((t) => t.stop())
       }
       if (timerRef.current) clearInterval(timerRef.current)
+      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current)
     }
   }, [])
 
@@ -82,6 +84,8 @@ export function PronunciationSection({ language }: { language: Language }) {
 
   const startRecording = async () => {
     setMicError(null)
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current)
+    audioUrlRef.current = null
     setAudioUrl(null)
     setHasRecorded(false)
 
@@ -100,6 +104,7 @@ export function PronunciationSection({ language }: { language: Language }) {
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
         const url = URL.createObjectURL(blob)
+        audioUrlRef.current = url
         setAudioUrl(url)
         setHasRecorded(true)
         // Stop all tracks
@@ -143,6 +148,8 @@ export function PronunciationSection({ language }: { language: Language }) {
       incrementWrittenCharacters(language.id)
       recordActivity()
     }
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current)
+    audioUrlRef.current = null
     setAudioUrl(null)
     setHasRecorded(false)
     setRecordingTime(0)
@@ -150,6 +157,8 @@ export function PronunciationSection({ language }: { language: Language }) {
   }
 
   const handlePrev = () => {
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current)
+    audioUrlRef.current = null
     setAudioUrl(null)
     setHasRecorded(false)
     setRecordingTime(0)

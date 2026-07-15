@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   DndContext,
@@ -136,6 +136,14 @@ export function MatchingGame({ language }: { language: Language }) {
   const [matches, setMatches] = useState<{ [wordId: string]: string }>({})
   const [feedback, setFeedback] = useState<{ [slotId: string]: boolean | null }>({})
   const [completed, setCompleted] = useState(false)
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  useEffect(() => {
+    const timers = resetTimerRef.current
+    return () => {
+      timers.forEach(clearTimeout)
+    }
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -174,11 +182,12 @@ export function MatchingGame({ language }: { language: Language }) {
         ([wid, sid]) => wid === sid
       ).length
       if (correctCount === pairs.length) {
-        setTimeout(() => setCompleted(true), 500)
+        const t = setTimeout(() => setCompleted(true), 500)
+        resetTimerRef.current.push(t)
       }
     } else {
       // Reset after delay
-      setTimeout(() => {
+      const t = setTimeout(() => {
         setMatches((prev) => {
           const next = { ...prev }
           delete next[wordId]
@@ -186,6 +195,7 @@ export function MatchingGame({ language }: { language: Language }) {
         })
         setFeedback((prev) => ({ ...prev, [slotId]: null }))
       }, 800)
+      resetTimerRef.current.push(t)
     }
   }
 

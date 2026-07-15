@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -73,6 +73,13 @@ export function WordScramble({ language }: { language: Language }) {
   const [wrong, setWrong] = useState(0)
   const [finished, setFinished] = useState(false)
   const [showHint, setShowHint] = useState(false)
+  const wrongTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (wrongTimerRef.current) clearTimeout(wrongTimerRef.current)
+    }
+  }, [])
 
   const current = pool[currentIdx]
 
@@ -101,7 +108,8 @@ export function WordScramble({ language }: { language: Language }) {
     } else {
       setWrong((w) => w + 1)
       toast({ title: 'Неверно ❌', description: `Правильный ответ: ${current.original}`, variant: 'destructive' })
-      setTimeout(nextWord, 1500)
+      if (wrongTimerRef.current) clearTimeout(wrongTimerRef.current)
+      wrongTimerRef.current = setTimeout(nextWord, 1500)
     }
   }
 

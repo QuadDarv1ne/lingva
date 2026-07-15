@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -48,6 +48,13 @@ export function FlashcardsSection({ language }: { language: Language }) {
   const [current, setCurrent] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [knownCount, setKnownCount] = useState(0)
+  const flipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (flipTimerRef.current) clearTimeout(flipTimerRef.current)
+    }
+  }, [])
 
   const card = flashcards[current]
 
@@ -67,13 +74,15 @@ export function FlashcardsSection({ language }: { language: Language }) {
     recordActivity()
     updateDailyChallenge('flashcards', 1)
     setFlipped(false)
-    setTimeout(() => {
+    if (flipTimerRef.current) clearTimeout(flipTimerRef.current)
+    flipTimerRef.current = setTimeout(() => {
       setCurrent((c) => (c + 1) % totalCount)
     }, 150)
   }
   const handlePrev = () => {
     setFlipped(false)
-    setTimeout(() => {
+    if (flipTimerRef.current) clearTimeout(flipTimerRef.current)
+    flipTimerRef.current = setTimeout(() => {
       setCurrent((c) => (c - 1 + totalCount) % totalCount)
     }, 150)
   }

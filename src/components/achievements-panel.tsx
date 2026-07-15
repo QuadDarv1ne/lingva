@@ -13,17 +13,16 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
   const [newlyUnlocked, setNewlyUnlocked] = useState<string[]>([])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const unlocked = checkAchievements()
-      if (unlocked.length > 0) {
-        setNewlyUnlocked((prev) => [...prev, ...unlocked.map((a) => a.id)])
-        // Clear notifications after 5 seconds
-        setTimeout(() => {
-          setNewlyUnlocked((prev) => prev.filter((id) => !unlocked.some((u) => u.id === id)))
-        }, 5000)
+    const unlocked = checkAchievements()
+    if (unlocked.length > 0) {
+      const ids = unlocked.map((a) => a.id)
+      const showTimer = setTimeout(() => setNewlyUnlocked(ids), 0)
+      const hideTimer = setTimeout(() => setNewlyUnlocked([]), 5000)
+      return () => {
+        clearTimeout(showTimer)
+        clearTimeout(hideTimer)
       }
-    }, 5000)
-    return () => clearInterval(interval)
+    }
   }, [checkAchievements])
 
   const unlockedIds = new Set(achievements.map((a) => a.id))

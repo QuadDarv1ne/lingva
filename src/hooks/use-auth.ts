@@ -92,6 +92,16 @@ export function useAuth() {
     router.push('/')
   }, [router])
 
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/me')
+      const data = await res.json()
+      setState({ user: data.user || null, loading: false, error: null })
+    } catch {
+      // ignore
+    }
+  }, [])
+
   const updateProfile = useCallback(async (data: { name?: string; email?: string }) => {
     const res = await fetch('/api/auth/update-profile', {
       method: 'PUT',
@@ -120,6 +130,7 @@ export function useAuth() {
     register,
     login,
     logout,
+    refresh,
     updateProfile,
     changePassword,
   }

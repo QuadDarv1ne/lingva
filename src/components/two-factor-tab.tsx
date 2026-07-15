@@ -27,7 +27,7 @@ interface TwoFactorSetup {
 }
 
 export function TwoFactorTab() {
-  const { user } = useAuth()
+  const { user, refresh } = useAuth()
   const { toast } = useToast()
 
   const [setup, setSetup] = useState<TwoFactorSetup | null>(null)
@@ -109,8 +109,7 @@ export function TwoFactorTab() {
       })
       setSetup(null)
       setVerifyToken('')
-      // Reload user
-      window.location.reload()
+      refresh()
     } catch (error) {
       toast({
         title: 'Ошибка верификации',
@@ -140,7 +139,7 @@ export function TwoFactorTab() {
       toast({ title: '2FA отключена' })
       setDisableToken('')
       setDisablePassword('')
-      window.location.reload()
+      refresh()
     } catch (error) {
       toast({
         title: 'Ошибка',
