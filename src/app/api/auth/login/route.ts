@@ -10,6 +10,7 @@ import {
   checkRateLimit,
 } from '@/lib/auth'
 import { verifyTwoFactorToken, sanitizeToken, consumeBackupCode } from '@/lib/two-factor'
+import { randomBytes } from 'crypto'
 
 export async function POST(req: NextRequest) {
   try {
@@ -49,7 +50,9 @@ export async function POST(req: NextRequest) {
     })
 
     // Always run verifyPassword to mitigate timing attacks
-    const fakeHash = '$100000.0000000000000000000000000000000000000000000000000000000000000000'
+    // Generate a random fake hash per-request so the PBKDF2 path is always exercised
+    const fakeSalt = randomBytes(16).toString('hex')
+    const fakeHash = `100000.${fakeSalt}.0000000000000000000000000000000000000000000000000000000000000000`
     const valid = user?.passwordHash
       ? await verifyPassword(password, user.passwordHash)
       : await verifyPassword(password, fakeHash)

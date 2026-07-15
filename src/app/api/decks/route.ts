@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
+import { languages } from '@/lib/languages-data'
+
+const VALID_LANGUAGE_IDS = new Set(languages.map((l) => l.id))
 
 // GET - list user's custom decks + public decks
 export async function GET(req: NextRequest) {
@@ -72,8 +75,11 @@ export async function POST(req: NextRequest) {
     if (title.length > 100) {
       return NextResponse.json({ error: 'Название слишком длинное' }, { status: 400 })
     }
-    if (!languageId) {
+    if (!languageId || typeof languageId !== 'string') {
       return NextResponse.json({ error: 'Язык обязателен' }, { status: 400 })
+    }
+    if (!VALID_LANGUAGE_IDS.has(languageId.trim())) {
+      return NextResponse.json({ error: 'Неизвестный язык' }, { status: 400 })
     }
     if (description && typeof description === 'string' && description.length > 500) {
       return NextResponse.json({ error: 'Описание слишком длинное (макс. 500 символов)' }, { status: 400 })
@@ -104,7 +110,7 @@ export async function POST(req: NextRequest) {
         userId: user.id,
         title: title.trim(),
         description: description?.trim() || null,
-        languageId,
+        languageId: languageId.trim(),
         isPublic: !!isPublic,
         cards: JSON.stringify(cards),
       },

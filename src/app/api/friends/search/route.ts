@@ -17,6 +17,9 @@ export async function GET(req: NextRequest) {
     if (!q || q.length < 2) {
       return NextResponse.json({ users: [] })
     }
+    if (q.length > 100) {
+      return NextResponse.json({ users: [] })
+    }
 
     // Search by name only (email search disabled for privacy)
     const users = await db.user.findMany({

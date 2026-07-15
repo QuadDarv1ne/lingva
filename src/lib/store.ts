@@ -424,16 +424,18 @@ export const useProgressStore = create<ProgressState>()(
         }),
       incrementMatchedWords: (languageId, count) =>
         set((state) => {
+          const safeCount = Math.max(0, Math.min(Math.floor(count || 0), 20))
+          if (safeCount === 0) return state
           const current = state.progress[languageId] || emptyProgress
           return {
             progress: {
               ...state.progress,
               [languageId]: {
                 ...current,
-                matchedWords: current.matchedWords + count,
+                matchedWords: current.matchedWords + safeCount,
               },
             },
-            ...addXpWithHistory(state, XP_REWARDS.matchedWord * count),
+            ...addXpWithHistory(state, XP_REWARDS.matchedWord * safeCount),
           }
         }),
       incrementWrittenCharacters: (languageId) =>
@@ -885,21 +887,55 @@ export const useProgressStore = create<ProgressState>()(
       importData: (json) => {
         try {
           const data = JSON.parse(json)
-          if (!data || typeof data !== 'object') return false
+          if (!data || typeof data !== 'object' || Array.isArray(data)) return false
+
+          // Validate and sanitize numeric fields
+          const xp = typeof data.xp === 'number' && data.xp >= 0
+            ? Math.min(Math.floor(data.xp), 10_000_000) : 0
+          const spentXP = typeof data.spentXP === 'number' && data.spentXP >= 0
+            ? Math.min(Math.floor(data.spentXP), 10_000_000) : 0
+
+          // Validate arrays
+          const favorites = Array.isArray(data.favorites) ? data.favorites.slice(0, 100) : []
+          const achievements = Array.isArray(data.achievements) ? data.achievements.slice(0, 200) : []
+          const personalDictionary = Array.isArray(data.personalDictionary) ? data.personalDictionary.slice(0, 5000) : []
+          const ownedItems = Array.isArray(data.ownedItems) ? data.ownedItems.slice(0, 500) : []
+          const activityEvents = Array.isArray(data.activityEvents) ? data.activityEvents.slice(0, 1000) : []
+          const dailyChallenges = Array.isArray(data.dailyChallenges) ? data.dailyChallenges.slice(0, 100) : []
+
+          // Validate progress object
+          const progress = data.progress && typeof data.progress === 'object' && !Array.isArray(data.progress)
+            ? data.progress : {}
+
+          // Validate streak
+          const defaultStreak = { current: 0, longest: 0, lastActiveDate: null, freezes: 0 }
+          const streak = data.streak && typeof data.streak === 'object'
+            ? {
+                current: Math.min(Math.floor(data.streak.current || 0), 36500),
+                longest: Math.min(Math.floor(data.streak.longest || 0), 36500),
+                lastActiveDate: data.streak.lastActiveDate || null,
+                freezes: Math.min(Math.floor(data.streak.freezes || 0), 1000),
+              }
+            : defaultStreak
+
+          // Validate activityLog and xpHistory
+          const activityLog = data.activityLog && typeof data.activityLog === 'object' ? data.activityLog : {}
+          const xpHistory = data.xpHistory && typeof data.xpHistory === 'object' ? data.xpHistory : {}
+
           set({
-            progress: data.progress || {},
-            favorites: data.favorites || [],
-            achievements: data.achievements || [],
-            streak: data.streak || { current: 0, longest: 0, lastActiveDate: null, freezes: 0 },
-            activityLog: data.activityLog || {},
-            xpHistory: data.xpHistory || {},
-            xp: data.xp || 0,
-            spentXP: data.spentXP || 0,
-            dailyChallenges: data.dailyChallenges || [],
-            personalDictionary: data.personalDictionary || [],
-            settings: data.settings || get().settings,
-            ownedItems: data.ownedItems || [],
-            activityEvents: data.activityEvents || [],
+            progress,
+            favorites,
+            achievements,
+            streak,
+            activityLog,
+            xpHistory,
+            xp,
+            spentXP,
+            dailyChallenges,
+            personalDictionary,
+            settings: data.settings && typeof data.settings === 'object' ? data.settings : get().settings,
+            ownedItems,
+            activityEvents,
           })
           return true
         } catch {

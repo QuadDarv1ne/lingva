@@ -166,6 +166,10 @@ export async function POST(req: NextRequest) {
 }
 
 // PATCH - update participant's score (called periodically)
+// Rate-limited: max once per hour per user per tournament
+const lastScoreUpdate = new Map<string, number>()
+const SCORE_UPDATE_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
+
 export async function PATCH(req: NextRequest) {
   try {
     const user = await getCurrentUser()
@@ -176,8 +180,25 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json()
     const { tournamentId } = body
 
-    if (!tournamentId) {
+    if (!tournamentId || typeof tournamentId !== 'string') {
       return NextResponse.json({ error: 'tournamentId обязателен' }, { status: 400 })
+    }
+
+    // Rate limit: once per hour
+    const rateKey = `${user.id}:${tournamentId}`
+    const lastUpdate = lastScoreUpdate.get(rateKey)
+    if (lastUpdate && Date.now() - lastUpdate < SCORE_UPDATE_COOLDOWN_MS) {
+      return NextResponse.json({ error: 'Обновление раз в час' }, { status: 429 })
+    }
+
+    const tournament = await db.tournament.findUnique({
+      where: { id: tournamentId },
+    })
+    if (!tournament) {
+      return NextResponse.json({ error: 'Турнир не найден' }, { status: 404 })
+    }
+    if (!tournament.isActive || new Date(tournament.endDate) < new Date()) {
+      return NextResponse.json({ error: 'Турнир завершён' }, { status: 400 })
     }
 
     const participation = await db.tournamentParticipant.findUnique({
@@ -201,7 +222,7 @@ export async function PATCH(req: NextRequest) {
     if (fullUser?.progressData) {
       try {
         const data = JSON.parse(fullUser.progressData)
-        currentXp = data.xp || 0
+        currentXp = typeof data.xp === 'number' ? Math.max(0, Math.floor(data.xp)) : 0
       } catch {
         // ignore
       }
@@ -213,6 +234,8 @@ export async function PATCH(req: NextRequest) {
       where: { id: participation.id },
       data: { score },
     })
+
+    lastScoreUpdate.set(rateKey, Date.now())
 
     return NextResponse.json({ success: true, score })
   } catch (error) {
