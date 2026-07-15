@@ -69,12 +69,10 @@ export function consumeBackupCode(
  */
 export function verifyTwoFactorToken(token: string, secret: string): boolean {
   try {
-    // totp.verify() is async in otplib v13, but we need sync for request handling.
-    // The TOTP class exposes a sync verifySync method at runtime.
-    const totpInstance = totp as unknown as {
-      verifySync: (opts: { token: string; secret: string; digits: number; period: number; window: number }) => boolean
-    }
-    return totpInstance.verifySync({
+    // otplib v13+ TOTP class has verifySync at runtime
+    const maybeVerifySync = (totp as unknown as Record<string, unknown>)['verifySync']
+    if (typeof maybeVerifySync !== 'function') return false
+    return (maybeVerifySync as (opts: { token: string; secret: string; digits: number; period: number; window: number }) => boolean)({
       token: token.replace(/\s/g, ''),
       secret,
       ...TOTP_OPTIONS,

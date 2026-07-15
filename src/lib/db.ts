@@ -9,8 +9,12 @@ function createPrismaClient() {
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   })
 
-  client.$executeRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {})
-  client.$executeRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {})
+  client.$executeRawUnsafe('PRAGMA journal_mode=WAL').catch((err) => {
+    console.error('Failed to enable WAL mode:', err.message)
+  })
+  client.$executeRawUnsafe('PRAGMA foreign_keys=ON').catch((err) => {
+    console.error('Failed to enable foreign keys:', err.message)
+  })
 
   return client
 }

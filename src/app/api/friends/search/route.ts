@@ -75,23 +75,24 @@ export async function GET(req: NextRequest) {
       take: 20,
     })
 
-    // Fetch progressData separately for stats computation
+    // Fetch progressData and friendships in parallel
     const userIds = users.map((u) => u.id)
-    const userProgress = await db.user.findMany({
-      where: { id: { in: userIds } },
-      select: { id: true, progressData: true },
-    })
-    const progressMap = new Map<string, string | null>(userProgress.map((u) => [u.id, u.progressData]))
+    const [userProgress, friendships] = await Promise.all([
+      db.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, progressData: true },
+      }),
+      db.friendship.findMany({
+        where: {
+          OR: [
+            { senderId: user.id, receiverId: { in: userIds } },
+            { receiverId: user.id, senderId: { in: userIds } },
+          ],
+        },
+      }),
+    ])
 
-    // Get friendship status for each user
-    const friendships = await db.friendship.findMany({
-      where: {
-        OR: [
-          { senderId: user.id, receiverId: { in: users.map((u) => u.id) } },
-          { receiverId: user.id, senderId: { in: users.map((u) => u.id) } },
-        ],
-      },
-    })
+    const progressMap = new Map<string, string | null>(userProgress.map((u) => [u.id, u.progressData]))
 
     const friendshipMap = new Map<string, { status: string; direction: 'sent' | 'received' }>()
     friendships.forEach((f) => {
