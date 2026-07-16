@@ -85,15 +85,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check if user already exists
-    const existing = await db.user.findUnique({ where: { email: email.toLowerCase() } })
-    if (existing) {
-      return NextResponse.json(
-        { error: 'Пользователь с таким email уже существует' },
-        { status: 409 }
-      )
-    }
-
     const passwordHash = await hashPassword(password)
 
     // Generate email verification token
@@ -147,6 +138,18 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error('Register error:', error)
+    // Handle Prisma unique constraint violation (race condition)
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as Record<string, unknown>).code === 'P2002'
+    ) {
+      return NextResponse.json(
+        { error: 'Пользователь с таким email уже существует' },
+        { status: 409 }
+      )
+    }
     return NextResponse.json(
       { error: 'Ошибка при регистрации. Попробуйте ещё раз.' },
       { status: 500 }

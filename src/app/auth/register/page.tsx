@@ -32,7 +32,10 @@ export default function RegisterPage() {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Некорректный email'
     if (!form.password) e.password = 'Пароль обязателен'
     else if (form.password.length < 8) e.password = 'Минимум 8 символов'
+    else if (form.password.length > 128) e.password = 'Пароль слишком длинный (макс. 128 символов)'
     else if (!/[a-zA-Zа-яА-Я]/.test(form.password)) e.password = 'Нужна хотя бы одна буква'
+    else if (!/[A-ZА-Я]/.test(form.password)) e.password = 'Нужна хотя бы одна заглавная буква'
+    else if (!/[a-zа-я]/.test(form.password)) e.password = 'Нужна хотя бы одна строчная буква'
     else if (!/[0-9]/.test(form.password)) e.password = 'Нужна хотя бы одна цифра'
     if (form.password !== form.confirmPassword) e.confirmPassword = 'Пароли не совпадают'
     if (!agreeTerms) e.terms = 'Необходимо принять условия использования'
@@ -149,8 +152,12 @@ export default function RegisterPage() {
               Минимум 8 символов
             </div>
             <div className="flex items-center gap-1">
-              <CheckCircle2 className={`w-3 h-3 ${/[a-zA-Zа-яА-Я]/.test(form.password) ? 'text-emerald-500' : 'text-muted-foreground/50'}`} />
-              Хотя бы одна буква
+              <CheckCircle2 className={`w-3 h-3 ${/[A-ZА-Я]/.test(form.password) ? 'text-emerald-500' : 'text-muted-foreground/50'}`} />
+              Хотя бы одна заглавная буква
+            </div>
+            <div className="flex items-center gap-1">
+              <CheckCircle2 className={`w-3 h-3 ${/[a-zа-я]/.test(form.password) ? 'text-emerald-500' : 'text-muted-foreground/50'}`} />
+              Хотя бы одна строчная буква
             </div>
             <div className="flex items-center gap-1">
               <CheckCircle2 className={`w-3 h-3 ${/[0-9]/.test(form.password) ? 'text-emerald-500' : 'text-muted-foreground/50'}`} />

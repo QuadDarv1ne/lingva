@@ -18,7 +18,7 @@ function isValidToken(token: string): boolean {
   return token.length === TOKEN_HEX_LENGTH && /^[0-9a-f]+$/.test(token)
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const sessionToken = request.cookies.get(SESSION_COOKIE)?.value
   const hasValidSession = !!sessionToken && isValidToken(sessionToken)

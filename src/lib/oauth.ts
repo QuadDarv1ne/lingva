@@ -69,12 +69,25 @@ export function buildGitHubAuthUrl(state: string): string {
   return `${GITHUB_AUTH_URL}?${params.toString()}`
 }
 
+const OAUTH_FETCH_TIMEOUT = 10_000
+
+async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), OAUTH_FETCH_TIMEOUT)
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal })
+    return res
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
 async function exchangeGoogleCode(code: string) {
   const { clientId, clientSecret, redirectUri } = getGoogleConfig()
   if (!clientId || !clientSecret) {
     throw new Error('Google OAuth is not configured')
   }
-  const res = await fetch(GOOGLE_TOKEN_URL, {
+  const res = await fetchWithTimeout(GOOGLE_TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -86,7 +99,8 @@ async function exchangeGoogleCode(code: string) {
     }),
   })
   if (!res.ok) {
-    throw new Error('Failed to exchange Google code')
+    const body = await res.text().catch(() => '')
+    throw new Error(`Failed to exchange Google code: ${res.status} ${body}`)
   }
   return res.json()
 }
@@ -96,7 +110,7 @@ async function exchangeGitHubCode(code: string) {
   if (!clientId || !clientSecret) {
     throw new Error('GitHub OAuth is not configured')
   }
-  const res = await fetch(GITHUB_TOKEN_URL, {
+  const res = await fetchWithTimeout(GITHUB_TOKEN_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -110,13 +124,14 @@ async function exchangeGitHubCode(code: string) {
     }),
   })
   if (!res.ok) {
-    throw new Error('Failed to exchange GitHub code')
+    const body = await res.text().catch(() => '')
+    throw new Error(`Failed to exchange GitHub code: ${res.status} ${body}`)
   }
   return res.json()
 }
 
 async function getGoogleUserInfo(accessToken: string) {
-  const res = await fetch(GOOGLE_USERINFO_URL, {
+  const res = await fetchWithTimeout(GOOGLE_USERINFO_URL, {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
   if (!res.ok) throw new Error('Failed to fetch Google user info')
@@ -124,7 +139,7 @@ async function getGoogleUserInfo(accessToken: string) {
 }
 
 async function getGitHubUserInfo(accessToken: string) {
-  const res = await fetch(GITHUB_USERINFO_URL, {
+  const res = await fetchWithTimeout(GITHUB_USERINFO_URL, {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
   if (!res.ok) throw new Error('Failed to fetch GitHub user info')
@@ -134,7 +149,7 @@ async function getGitHubUserInfo(accessToken: string) {
 type GitHubEmail = { email: string; primary: boolean; verified: boolean }
 
 async function getGitHubEmail(accessToken: string): Promise<string | null> {
-  const res = await fetch('https://api.github.com/user/emails', {
+  const res = await fetchWithTimeout('https://api.github.com/user/emails', {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
   if (!res.ok) return null

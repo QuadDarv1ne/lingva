@@ -77,7 +77,7 @@ export default function LoginPage() {
 
     const err: Record<string, string> = {}
     if (!form.email.trim()) err.email = 'Email обязателен'
-    if (!form.password) err.password = 'Пароль обязателен'
+    if (!form.password.trim()) err.password = 'Пароль обязателен'
     setErrors(err)
     if (Object.keys(err).length > 0) return
 

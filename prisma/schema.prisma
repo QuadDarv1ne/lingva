@@ -170,6 +170,7 @@ model Tournament {
 
   participants TournamentParticipant[]
 
+  @@unique([startDate, type])
   @@index([isActive, endDate])
 }
 

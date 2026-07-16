@@ -17,7 +17,6 @@ export function useProgressSync(isAuthenticated: boolean) {
       return
     }
     if (initialLoadRef.current) return
-    initialLoadRef.current = true
 
     fetch('/api/progress')
       .then((r) => r.json())
@@ -31,6 +30,9 @@ export function useProgressSync(isAuthenticated: boolean) {
         }
       })
       .catch((err) => { console.error('Failed to load progress from server:', err) })
+      .finally(() => {
+        initialLoadRef.current = true // mark load complete AFTER fetch resolves
+      })
   }, [isAuthenticated])
 
   // Subscribe to store changes and save (debounced 5s)

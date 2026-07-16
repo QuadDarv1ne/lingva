@@ -46,11 +46,17 @@ export async function getCurrentWeeklyTournament() {
 
   if (existing) return existing
 
-  // Create new weekly tournament
+  // Create new weekly tournament (handle race condition with upsert)
   const weekNum = getWeekNumber(now)
   const config = TOURNAMENT_TYPES.weekly_xp
-  return db.tournament.create({
-    data: {
+  return db.tournament.upsert({
+    where: {
+      startDate_type: {
+        startDate: weekStart,
+        type: 'weekly_xp',
+      },
+    },
+    create: {
       title: `${config.title} #${weekNum}`,
       description: config.description,
       type: 'weekly_xp',
@@ -59,6 +65,7 @@ export async function getCurrentWeeklyTournament() {
       isActive: true,
       prize: config.prize,
     },
+    update: {},
   })
 }
 

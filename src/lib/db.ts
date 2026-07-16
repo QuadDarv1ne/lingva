@@ -9,12 +9,14 @@ function createPrismaClient() {
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   })
 
-  client.$executeRawUnsafe('PRAGMA journal_mode=WAL').catch((err) => {
-    console.error('Failed to enable WAL mode:', err.message)
-  })
-  client.$executeRawUnsafe('PRAGMA foreign_keys=ON').catch((err) => {
-    console.error('Failed to enable foreign keys:', err.message)
-  })
+  // Defer PRAGMA execution to avoid build-time DB connection errors
+  // SQLite PRAGMA statements are safe to run on every connection
+  client.$connect()
+    .then(() => Promise.all([
+      client.$executeRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {}),
+      client.$executeRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {}),
+    ]))
+    .catch(() => {})
 
   return client
 }

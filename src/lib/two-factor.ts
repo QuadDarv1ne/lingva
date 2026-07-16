@@ -1,27 +1,13 @@
 // 2FA TOTP utilities (Google Authenticator compatible)
-// Using otplib v13+ API (TOTP class)
-import { TOTP } from 'otplib'
-import { NobleCryptoPlugin, ScureBase32Plugin } from 'otplib'
+// Using otplib v13+ standalone functions
+import { generateSecret, verifySync } from 'otplib'
 import { createHash, randomBytes } from 'crypto'
-
-// Configure TOTP instance with crypto and base32 plugins
-const totp = new TOTP({
-  crypto: new NobleCryptoPlugin(),
-  base32: new ScureBase32Plugin(),
-})
-
-// TOTP options: 6 digits, 30-second period, 1 step drift tolerance
-const TOTP_OPTIONS = {
-  digits: 6,
-  period: 30,
-  window: 1, // allow ±1 time step drift
-}
 
 /**
  * Generate a new TOTP secret for a user (base32 encoded)
  */
 export function generateTwoFactorSecret(): string {
-  return totp.generateSecret()
+  return generateSecret()
 }
 
 /**
@@ -69,14 +55,14 @@ export function consumeBackupCode(
  */
 export function verifyTwoFactorToken(token: string, secret: string): boolean {
   try {
-    // otplib v13+ TOTP class has verifySync at runtime
-    const maybeVerifySync = (totp as unknown as Record<string, unknown>)['verifySync']
-    if (typeof maybeVerifySync !== 'function') return false
-    return (maybeVerifySync as (opts: { token: string; secret: string; digits: number; period: number; window: number }) => boolean)({
+    const result = verifySync({
       token: token.replace(/\s/g, ''),
       secret,
-      ...TOTP_OPTIONS,
+      digits: 6,
+      period: 30,
+      epochTolerance: 30, // allow ±1 time step drift (1 step = 30s)
     })
+    return result.valid
   } catch {
     return false
   }

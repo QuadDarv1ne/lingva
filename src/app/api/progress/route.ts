@@ -39,6 +39,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
+    // Reject oversized payloads before parsing
+    const contentLength = req.headers.get('content-length')
+    if (contentLength && parseInt(contentLength, 10) > 600_000) {
+      return NextResponse.json({ error: 'Данные слишком большие' }, { status: 400 })
+    }
+
     const body = await req.json()
     const { progress } = body
 

@@ -4,7 +4,7 @@ import { languages } from '@/lib/languages-data'
 import { getCurrentUser } from '@/lib/auth'
 
 // Simple in-memory conversation store (per server instance)
-const conversations = new Map<string, { role: 'user' | 'assistant'; content: string }[]>()
+const conversations = new Map<string, { role: 'system' | 'user' | 'assistant'; content: string }[]>()
 
 const MAX_HISTORY = 20
 const MAX_SESSIONS = 500
@@ -100,26 +100,30 @@ export async function POST(req: NextRequest) {
 
     // Get or create conversation history (keyed by authenticated user, not client session)
     const sessionKey = `${user.id}-${languageId}-${resolvedMode}`
-    let history = conversations.get(sessionKey) || []
 
     // On first message of session, seed with system prompt
-    if (history.length === 0) {
-      history = [{ role: 'assistant' as const, content: systemPrompt }]
+    if (!conversations.has(sessionKey)) {
+      conversations.set(sessionKey, [{ role: 'system' as const, content: systemPrompt }])
     }
 
-    // Add user message
-    history.push({ role: 'user', content: message })
+    // Add user message atomically
+    const updatedHistory = [
+      ...conversations.get(sessionKey)!,
+      { role: 'user' as const, content: message },
+    ]
 
     // Trim history if too long (keep system prompt at start)
-    if (history.length > MAX_HISTORY) {
-      history = [history[0], ...history.slice(-(MAX_HISTORY - 1))]
+    if (updatedHistory.length > MAX_HISTORY) {
+      updatedHistory.splice(0, updatedHistory.length - MAX_HISTORY + 1, updatedHistory[0])
     }
+
+    conversations.set(sessionKey, updatedHistory)
 
     // Get AI response
     const zai = await ZAI.create()
     const completion = await Promise.race([
       zai.chat.completions.create({
-        messages: history,
+        messages: updatedHistory,
         thinking: { type: 'disabled' },
       }),
       new Promise<never>((_, reject) =>
@@ -133,10 +137,9 @@ export async function POST(req: NextRequest) {
       throw new Error('Пустой ответ от ИИ')
     }
 
-    // Add AI response to history
-    history.push({ role: 'assistant', content: aiResponse })
+    // Add AI response to history atomically
+    conversations.set(sessionKey, [...conversations.get(sessionKey)!, { role: 'assistant', content: aiResponse }])
     evictIfNeeded()
-    conversations.set(sessionKey, history)
 
     return NextResponse.json({
       success: true,
@@ -157,6 +160,14 @@ export async function DELETE(req: NextRequest) {
     const user = await getCurrentUser()
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
+    }
+
+    cleanupRateLimits()
+    if (!checkRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: 'Слишком много запросов. Пожалуйста, подождите минуту.' },
+        { status: 429 }
+      )
     }
 
     const { searchParams } = new URL(req.url)

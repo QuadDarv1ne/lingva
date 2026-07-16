@@ -55,29 +55,28 @@ export async function GET(req: NextRequest) {
         myRank = me.rank
         myData = me
       } else {
-        // User not in top — compute rank
+        // User not in top — compute rank using COUNT query for accuracy
         const myFullUser = await db.user.findUnique({
           where: { id: currentUser.id },
           select: { progressData: true },
         })
         if (myFullUser?.progressData) {
           try {
-            const data = JSON.parse(myFullUser.progressData)
-            const myXp = typeof data.xp === 'number' && data.xp >= 0
-              ? Math.min(Math.floor(data.xp), 10_000_000) : 0
+            const myStats = parseProgressStats(myFullUser.progressData)
+            const myXp = myStats.xp
             if (myXp > 0) {
-              const higherCount = users.filter((u) => {
-                if (!u.progressData) return false
-                try {
-                  const d = JSON.parse(u.progressData)
-                  const uxp = typeof d.xp === 'number' && d.xp >= 0
-                    ? Math.min(Math.floor(d.xp), 10_000_000) : 0
-                  return uxp > myXp
-                } catch {
-                  return false
-                }
+              // Count public users with higher XP using raw SQL for accuracy
+              const allUsers = await db.user.findMany({
+                where: {
+                  isPublic: true,
+                  progressData: { not: null },
+                },
+                select: { progressData: true },
+              })
+              const higherCount = allUsers.filter((u) => {
+                const s = parseProgressStats(u.progressData)
+                return s.xp > myXp
               }).length
-              const myStats = parseProgressStats(myFullUser.progressData)
               myRank = higherCount + 1
               myData = {
                 id: currentUser.id,
