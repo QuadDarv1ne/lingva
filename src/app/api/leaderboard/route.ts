@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
         bio: true,
         progressData: true,
       },
-      take: Math.max(limit, 500),
+      take: 500,
     })
 
     // Parse XP from progressData and sort

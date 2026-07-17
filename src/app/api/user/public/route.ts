@@ -32,13 +32,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 })
     }
 
+    // Get current user once (for privacy check + friendship status)
+    const currentUser = await getCurrentUser()
+
     // Check if profile is private — only allow self and friends to view
     if (!user.isPublic) {
-      const currentUser = await getCurrentUser()
       if (!currentUser || currentUser.id !== user.id) {
-        // Check if they are accepted friends
         if (currentUser) {
-          const friendship = await db.friendship.findFirst({
+          const accessFriendship = await db.friendship.findFirst({
             where: {
               OR: [
                 { senderId: currentUser.id, receiverId: user.id, status: 'accepted' },
@@ -46,7 +47,7 @@ export async function GET(req: NextRequest) {
               ],
             },
           })
-          if (!friendship) {
+          if (!accessFriendship) {
             return NextResponse.json({ error: 'Профиль приватный' }, { status: 403 })
           }
         } else {
@@ -86,8 +87,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Get current user to check friendship status
-    const currentUser = await getCurrentUser()
+    // Check friendship status
     let friendship: { status: string; direction: 'sent' | 'received' | null } | null = null
     let isMe = false
 

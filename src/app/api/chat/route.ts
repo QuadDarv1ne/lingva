@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
 
     // Add user message atomically
     const updatedHistory = [
-      ...conversations.get(sessionKey)!,
+      ...(conversations.get(sessionKey) || []),
       { role: 'user' as const, content: message },
     ]
 
@@ -138,13 +138,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Add AI response to history atomically
-    conversations.set(sessionKey, [...conversations.get(sessionKey)!, { role: 'assistant', content: aiResponse }])
+    const currentHistory = conversations.get(sessionKey) || updatedHistory
+    conversations.set(sessionKey, [...currentHistory, { role: 'assistant', content: aiResponse }])
     evictIfNeeded()
 
     return NextResponse.json({
       success: true,
       response: aiResponse,
-      messageCount: history.length - 1,
+      messageCount: updatedHistory.length - 1,
     })
   } catch (error) {
     console.error('Chat API error:', error)
