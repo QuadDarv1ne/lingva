@@ -10,11 +10,11 @@ function createPrismaClient() {
   })
 
   // Defer PRAGMA execution to avoid build-time DB connection errors
-  // SQLite PRAGMA statements are safe to run on every connection
+  // PRAGMAs return results, so we must use $queryRawUnsafe, not $executeRawUnsafe
   client.$connect()
     .then(() => Promise.all([
-      client.$executeRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {}),
-      client.$executeRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {}),
+      client.$queryRawUnsafe('PRAGMA journal_mode=WAL').catch(() => {}),
+      client.$queryRawUnsafe('PRAGMA foreign_keys=ON').catch(() => {}),
     ]))
     .catch(() => {})
 
