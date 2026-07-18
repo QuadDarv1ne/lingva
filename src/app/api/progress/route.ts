@@ -57,16 +57,40 @@ export async function POST(req: NextRequest) {
       if (!Number.isInteger(progress.xp) || progress.xp < 0) {
         return NextResponse.json({ error: 'Некорректные данные XP' }, { status: 400 })
       }
-      // Cap XP to a reasonable maximum (prevents injection of absurd values)
       progress.xp = Math.min(progress.xp, 10_000_000)
     }
 
-    // Validate streakDays is a non-negative integer
-    if (typeof progress.streakDays === 'number') {
-      if (!Number.isInteger(progress.streakDays) || progress.streakDays < 0) {
-        return NextResponse.json({ error: 'Некорректные данные streak' }, { status: 400 })
+    // Validate spentXP is a non-negative integer
+    if (typeof progress.spentXP === 'number') {
+      if (!Number.isInteger(progress.spentXP) || progress.spentXP < 0) {
+        return NextResponse.json({ error: 'Некорректные данные spentXP' }, { status: 400 })
       }
-      progress.streakDays = Math.min(progress.streakDays, 36500)
+      progress.spentXP = Math.min(progress.spentXP, 10_000_000)
+    }
+
+    // Validate streak data
+    if (progress.streak && typeof progress.streak === 'object' && !Array.isArray(progress.streak)) {
+      const streak = progress.streak
+      if (typeof streak.current === 'number') {
+        if (!Number.isInteger(streak.current) || streak.current < 0) {
+          return NextResponse.json({ error: 'Некорректные данные streak' }, { status: 400 })
+        }
+        streak.current = Math.min(streak.current, 36500)
+      }
+      if (typeof streak.longest === 'number') {
+        if (!Number.isInteger(streak.longest) || streak.longest < 0) {
+          return NextResponse.json({ error: 'Некорректные данные streak' }, { status: 400 })
+        }
+        streak.longest = Math.min(streak.longest, 36500)
+      }
+    }
+
+    // Validate arrays have reasonable sizes
+    if (Array.isArray(progress.achievements) && progress.achievements.length > 200) {
+      progress.achievements = progress.achievements.slice(0, 200)
+    }
+    if (Array.isArray(progress.favorites) && progress.favorites.length > 100) {
+      progress.favorites = progress.favorites.slice(0, 100)
     }
 
     const progressData = JSON.stringify(progress)
