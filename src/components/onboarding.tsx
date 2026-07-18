@@ -122,6 +122,9 @@ export function Onboarding() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.3 }}
         className="relative z-10 w-full max-w-lg"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Онбординг"
       >
         <Card className="overflow-hidden">
           {/* Gradient header */}

@@ -137,6 +137,8 @@ export function NotificationBell() {
         }}
         className="relative p-2 rounded-full hover:bg-muted transition-colors"
         aria-label="Уведомления"
+        aria-expanded={open}
+        aria-haspopup="true"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
@@ -193,10 +195,21 @@ export function NotificationBell() {
                       key={n.id}
                       onClick={() => {
                         if (!n.read) handleMarkRead(n.id)
-                        // Navigate based on type
                         if (n.type === 'friend_request' || n.type === 'friend_accepted') {
                           router.push('/community/friends')
                           setOpen(false)
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          if (!n.read) handleMarkRead(n.id)
+                          if (n.type === 'friend_request' || n.type === 'friend_accepted') {
+                            router.push('/community/friends')
+                            setOpen(false)
+                          }
                         }
                       }}
                       className={cn(

@@ -147,6 +147,9 @@ export function FlashcardsSection({ language }: { language: Language }) {
                 'relative h-72 md:h-80 flex flex-col items-center justify-center cursor-pointer overflow-hidden border-2 hover:border-primary/50 transition-colors',
                 `bg-gradient-to-br ${language.gradient} text-white`
               )}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleFlip(); } }}
             >
               <div className="absolute top-4 right-4">
                 <Badge variant="secondary" className="bg-white/20 text-white border-white/30">

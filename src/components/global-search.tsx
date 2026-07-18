@@ -223,6 +223,9 @@ export function GlobalSearch({ onClose }: { onClose?: () => void }) {
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ duration: 0.15 }}
               className="fixed top-[10vh] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-2xl z-50"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Поиск"
             >
               <div className="bg-card rounded-xl border shadow-2xl overflow-hidden">
                 {/* Input */}
@@ -240,6 +243,7 @@ export function GlobalSearch({ onClose }: { onClose?: () => void }) {
                     <button
                       onClick={() => setQuery('')}
                       className="p-1 rounded hover:bg-muted text-muted-foreground"
+                      aria-label="Очистить поиск"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -247,6 +251,7 @@ export function GlobalSearch({ onClose }: { onClose?: () => void }) {
                   <button
                     onClick={() => setIsOpen(false)}
                     className="p-1 rounded hover:bg-muted text-muted-foreground"
+                    aria-label="Закрыть поиск"
                   >
                     <kbd className="px-1.5 py-0.5 rounded border bg-muted text-[10px] font-mono">
                       ESC

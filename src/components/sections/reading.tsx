@@ -109,6 +109,9 @@ export function ReadingSection({ language }: { language: Language }) {
               <Card
                 className="p-5 cursor-pointer hover:shadow-md transition-all hover:border-primary/40"
                 onClick={() => setSelectedText(text)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedText(text); } }}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">

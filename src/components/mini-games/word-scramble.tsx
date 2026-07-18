@@ -254,6 +254,7 @@ export function WordScramble({ language }: { language: Language }) {
           <Button
             variant="ghost"
             onClick={() => speak(current.original)}
+            aria-label="Прослушать слово"
           >
             <Volume2 className="w-4 h-4" />
           </Button>

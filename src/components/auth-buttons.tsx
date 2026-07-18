@@ -92,6 +92,8 @@ export function AuthButtons() {
         onClick={() => setMenuOpen((s) => !s)}
         className="flex items-center gap-2 p-1 rounded-full hover:bg-muted transition-colors"
         aria-label="Профиль"
+        aria-expanded={menuOpen}
+        aria-haspopup="true"
       >
         <Avatar className="w-8 h-8 border-2 border-primary/30 relative">
           <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white font-semibold text-sm">

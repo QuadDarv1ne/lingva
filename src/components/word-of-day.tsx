@@ -112,6 +112,7 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
                   variant="outline"
                   onClick={() => speakText(wordOfDay.word, wordOfDay.languageId)}
                   className="h-10 w-10"
+                  aria-label="Прослушать слово дня"
                 >
                   <Volume2 className="w-4 h-4" />
                 </Button>
@@ -120,6 +121,7 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
                   variant="default"
                   onClick={() => onOpenLanguage(wordOfDay.languageId)}
                   className="h-10 w-10"
+                  aria-label="Открыть язык"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </Button>

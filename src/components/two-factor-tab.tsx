@@ -221,6 +221,7 @@ export function TwoFactorTab() {
                 variant="outline"
                 size="icon"
                 onClick={() => copyToClipboard(setup.secret)}
+                aria-label={copiedCode === setup.secret ? 'Скопировано' : 'Скопировать секрет'}
               >
                 {copiedCode === setup.secret ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
               </Button>

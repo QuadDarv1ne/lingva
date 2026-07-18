@@ -263,6 +263,7 @@ export function PronunciationSection({ language }: { language: Language }) {
                 onClick={startRecording}
                 size="lg"
                 className="w-40 h-40 rounded-full bg-rose-500 hover:bg-rose-600"
+                aria-label="Начать запись голоса"
               >
                 <Mic className="w-12 h-12" />
               </Button>

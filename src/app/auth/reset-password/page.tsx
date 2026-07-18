@@ -144,6 +144,7 @@ function ResetPasswordForm() {
               onClick={() => setShowPassword((s) => !s)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               tabIndex={-1}
+              aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>

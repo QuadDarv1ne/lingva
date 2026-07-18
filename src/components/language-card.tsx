@@ -42,6 +42,9 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
       <Card
         className="group relative overflow-hidden h-full flex flex-col cursor-pointer border-2 hover:border-primary/40 transition-all"
         onClick={handleOpen}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleOpen(); } }}
       >
         {/* Gradient header */}
         <div className={cn('h-32 bg-gradient-to-br relative overflow-hidden', language.gradient)}>
