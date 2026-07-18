@@ -31,6 +31,7 @@ import { WordOfDay } from '@/components/word-of-day'
 import { Onboarding } from '@/components/onboarding'
 import { useProgressStore, getLevelFromXP, getLevelTitle } from '@/lib/store'
 import { useProgressSync } from '@/hooks/use-progress-sync'
+import { useAuthContext } from '@/hooks/auth-context'
 
 export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -39,7 +40,7 @@ export default function Home() {
   const [showAchievements, setShowAchievements] = useState(false)
   const [showXPDaily, setShowXPDaily] = useState(false)
   const [showResetDialog, setShowResetDialog] = useState(false)
-  const [authUser, setAuthUser] = useState<{ id: string } | null>(null)
+  const { user: authUser } = useAuthContext()
   const {
     favorites,
     resetProgress,
@@ -53,16 +54,6 @@ export default function Home() {
 
   // Sync progress with server when logged in
   useProgressSync(!!authUser)
-
-  // Fetch auth user on mount
-  useEffect(() => {
-    fetch('/api/auth/me')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.user) setAuthUser(data.user)
-      })
-      .catch((err) => console.error('Failed to fetch auth user:', err))
-  }, [])
 
   // Record activity once on mount (daily streak) + generate daily challenges
   useEffect(() => {

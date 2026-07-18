@@ -15,31 +15,14 @@ import {
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
-
-interface AuthUser {
-  id: string
-  email: string
-  name: string | null
-  emailVerified?: boolean
-}
+import { useAuthContext } from '@/hooks/auth-context'
 
 export function AuthButtons() {
   const router = useRouter()
   const { toast } = useToast()
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { user, loading, setUser } = useAuthContext()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    fetch('/api/auth/me')
-      .then((r) => r.json())
-      .then((data) => {
-        setUser(data.user || null)
-        setLoading(false)
-      })
-      .catch((err) => { console.error('Failed to fetch auth:', err); setLoading(false) })
-  }, [])
 
   // Close menu on outside click
   useEffect(() => {

@@ -3,6 +3,7 @@ import { GeistSans as geistSans, GeistMono as geistMono } from "geist/font";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/hooks/auth-context";
 
 export const metadata: Metadata = {
   title: "Лингва — Изучение 7 языков мира",
@@ -43,7 +44,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
           <Toaster />
         </ThemeProvider>
       </body>
