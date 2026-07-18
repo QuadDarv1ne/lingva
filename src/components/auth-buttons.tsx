@@ -42,8 +42,8 @@ export function AuthButtons() {
       setMenuOpen(false)
       toast({ title: 'Вы вышли из аккаунта' })
       router.refresh()
-    } catch (err) {
-      console.error('Logout error:', err)
+    } catch {
+      // silent
     }
   }
 

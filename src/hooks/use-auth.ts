@@ -34,9 +34,8 @@ export function useAuth() {
         if (!mounted) return
         setState({ user: data.user || null, loading: false, error: null })
       })
-      .catch((err) => {
+      .catch(() => {
         if (!mounted) return
-        console.error('Failed to fetch auth status:', err)
         setState({ user: null, loading: false, error: null })
       })
     return () => {
@@ -85,8 +84,8 @@ export function useAuth() {
   const logout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
-    } catch (err) {
-      console.error('Logout error:', err)
+    } catch {
+      // silent
     }
     setState({ user: null, loading: false, error: null })
     router.push('/')

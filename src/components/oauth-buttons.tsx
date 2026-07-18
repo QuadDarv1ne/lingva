@@ -46,7 +46,7 @@ export function OAuthButtons() {
         setProviders(data)
         setLoading(false)
       })
-      .catch((err) => { console.error('Failed to fetch OAuth status:', err); setLoading(false) })
+      .catch(() => { setLoading(false) })
   }, [])
 
   if (loading) {

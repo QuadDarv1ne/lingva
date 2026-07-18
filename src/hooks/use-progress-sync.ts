@@ -29,7 +29,7 @@ export function useProgressSync(isAuthenticated: boolean) {
           }, false)
         }
       })
-      .catch((err) => { console.error('Failed to load progress from server:', err) })
+      .catch(() => {})
       .finally(() => {
         initialLoadRef.current = true // mark load complete AFTER fetch resolves
       })
@@ -68,7 +68,7 @@ export function useProgressSync(isAuthenticated: boolean) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ progress: payload }),
-        }).catch((err) => { console.error('Failed to save progress to server:', err) })
+        }).catch(() => {})
       }, 5000)
     })
 
