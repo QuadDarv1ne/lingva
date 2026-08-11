@@ -3,34 +3,9 @@ import { db } from '@/lib/db'
 import { generateResetToken, hashToken, validateEmail } from '@/lib/auth'
 import { sendEmail, renderResetPasswordEmail } from '@/lib/email'
 
-const resetRequests = new Map<string, { count: number; windowStart: number }>()
-const CLEANUP_INTERVAL_MS = 5 * 60_000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-let lastCleanup = 0
-function cleanupResetRequests() {
-  const now = Date.now()
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
-  lastCleanup = now
-  for (const [key, entry] of resetRequests) {
-    if (now - entry.windowStart > 60_000) {
-      resetRequests.delete(key)
-    }
-  }
-}
-
-function checkResetRateLimit(email: string): boolean {
-  cleanupResetRequests()
-  const now = Date.now()
-  const key = `reset:${email.toLowerCase()}`
-  const entry = resetRequests.get(key)
-  if (!entry || now - entry.windowStart > 60_000) {
-    resetRequests.set(key, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= 3) return false
-  entry.count++
-  return true
-}
+const resetLimiter = createRateLimiter({ maxRequests: 3, windowMs: 60_000, keyPrefix: 'reset' })
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,7 +19,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (!checkResetRateLimit(email)) {
+    if (!resetLimiter.check(email.toLowerCase())) {
       return NextResponse.json(
         { error: 'Слишком много запросов. Попробуйте через минуту.' },
         { status: 429 }

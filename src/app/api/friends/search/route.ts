@@ -3,34 +3,9 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { parseXP } from '@/lib/progress-stats'
 
-// Per-user rate limiting for search
-const searchLimits = new Map<string, { count: number; windowStart: number }>()
-const MAX_SEARCH_PER_MINUTE = 30
-const RATE_WINDOW_MS = 60_000
-let lastCleanup = 0
-const CLEANUP_INTERVAL_MS = 5 * 60_000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-function cleanupSearchLimits() {
-  const now = Date.now()
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
-  lastCleanup = now
-  for (const [key, entry] of searchLimits) {
-    if (now - entry.windowStart > RATE_WINDOW_MS) searchLimits.delete(key)
-  }
-}
-
-function checkSearchRateLimit(userId: string): boolean {
-  cleanupSearchLimits()
-  const now = Date.now()
-  const entry = searchLimits.get(userId)
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    searchLimits.set(userId, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= MAX_SEARCH_PER_MINUTE) return false
-  entry.count++
-  return true
-}
+const searchLimiter = createRateLimiter({ maxRequests: 30, windowMs: 60_000, keyPrefix: 'search' })
 
 // GET - search users by name or email (for adding friends)
 export async function GET(req: NextRequest) {
@@ -40,7 +15,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
-    if (!checkSearchRateLimit(user.id)) {
+    if (!searchLimiter.check(user.id)) {
       return NextResponse.json(
         { error: 'Слишком много запросов. Подождите минуту.' },
         { status: 429 }

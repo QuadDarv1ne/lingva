@@ -743,7 +743,6 @@ export const useProgressStore = create<ProgressState>()(
           ]
         }
 
-        // Log activity
         const event: ActivityEvent = {
           id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
           type: 'shop_purchase',
@@ -773,7 +772,6 @@ export const useProgressStore = create<ProgressState>()(
           streakUpdate = { ...state.streak, freezes: state.streak.freezes + 1 }
         }
 
-        // For consumable items, decrease quantity
         let ownedItems: OwnedItem[]
         if (item.consumable) {
           ownedItems = state.ownedItems
@@ -933,7 +931,20 @@ export const useProgressStore = create<ProgressState>()(
             spentXP,
             dailyChallenges,
             personalDictionary,
-            settings: data.settings && typeof data.settings === 'object' ? data.settings : get().settings,
+            settings: data.settings && typeof data.settings === 'object' && !Array.isArray(data.settings)
+              ? {
+                  theme: ['light', 'dark', 'system'].includes(data.settings.theme) ? data.settings.theme : 'system',
+                  reduceMotion: !!data.settings.reduceMotion,
+                  soundEnabled: data.settings.soundEnabled !== false,
+                  autoSpeak: !!data.settings.autoSpeak,
+                  dailyGoalXP: Math.min(Math.max(Math.floor(data.settings.dailyGoalXP || 50), 10), 500),
+                  notifications: {
+                    friendRequests: data.settings.notifications?.friendRequests !== false,
+                    achievements: data.settings.notifications?.achievements !== false,
+                    dailyReminders: !!data.settings.notifications?.dailyReminders,
+                  },
+                }
+              : get().settings,
             ownedItems,
             activityEvents,
           })

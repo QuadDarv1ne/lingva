@@ -1,14 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-
-interface AuthUser {
-  id: string
-  email: string
-  name: string | null
-  emailVerified?: boolean
-  twoFactorEnabled?: boolean
-}
+import type { AuthUser } from '@/lib/types'
 
 interface AuthContextState {
   user: AuthUser | null

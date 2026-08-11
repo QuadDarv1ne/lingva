@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { getOAuthUserInfo, findOrCreateOAuthUser, completeOAuthLogin } from '@/lib/oauth'
+import { timingSafeEqual } from 'crypto'
 
 // GET /api/auth/oauth/github/callback?code=...&state=...
 export async function GET(req: NextRequest) {
@@ -23,7 +24,8 @@ export async function GET(req: NextRequest) {
 
     // Verify state cookie
     const storedState = cookieStore.get('oauth_state_github')?.value
-    if (!storedState || storedState !== state) {
+    if (!storedState || storedState.length !== state.length ||
+        !timingSafeEqual(Buffer.from(storedState), Buffer.from(state))) {
       return NextResponse.redirect(new URL('/auth/login?error=invalid_state', req.url))
     }
 

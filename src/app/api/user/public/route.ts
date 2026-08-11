@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getCurrentUser } from '@/lib/auth'
+import { getCurrentUser, getRequestMetadata } from '@/lib/auth'
 import { parseProgressStats } from '@/lib/progress-stats'
+import { createRateLimiter } from '@/lib/rate-limit'
 import type { LanguageProgressData } from '@/lib/types'
+
+const profileLimiter = createRateLimiter({ maxRequests: 60, windowMs: 60_000, keyPrefix: 'profile' })
 
 // GET - public profile of any user (with friendship status)
 export async function GET(req: NextRequest) {
@@ -12,6 +15,19 @@ export async function GET(req: NextRequest) {
 
     if (!userId) {
       return NextResponse.json({ error: 'ID обязателен' }, { status: 400 })
+    }
+    if (typeof userId !== 'string' || userId.length > 50) {
+      return NextResponse.json({ error: 'Некорректный ID' }, { status: 400 })
+    }
+
+    // Rate limit by IP, not userId, so viewing different profiles doesn't block each other
+    const metadata = getRequestMetadata(req)
+    const ip = metadata.ip || 'unknown'
+    if (!profileLimiter.check(ip)) {
+      return NextResponse.json(
+        { error: 'Слишком много запросов. Подождите минуту.' },
+        { status: 429 }
+      )
     }
 
     const user = await db.user.findUnique({
@@ -32,10 +48,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 })
     }
 
-    // Get current user once (for privacy check + friendship status)
     const currentUser = await getCurrentUser()
 
-    // Check if profile is private — only allow self and friends to view
     if (!user.isPublic) {
       if (!currentUser || currentUser.id !== user.id) {
         if (currentUser) {
@@ -56,9 +70,9 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const progressStats = parseProgressStats(user.progressData)
+    // Parse progressData once and extract all stats
     const stats = {
-      ...progressStats,
+      ...parseProgressStats(user.progressData),
       longestStreak: 0,
       lettersLearned: 0,
       flashcardsStudied: 0,

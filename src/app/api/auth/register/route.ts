@@ -13,35 +13,9 @@ import {
 } from '@/lib/auth'
 import { sendEmail, renderWelcomeEmail } from '@/lib/email'
 
-// Per-IP registration rate limiting
-const registerAttempts = new Map<string, { count: number; windowStart: number }>()
-const MAX_REGISTERS_PER_HOUR = 5
-const RATE_WINDOW_MS = 60 * 60 * 1000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-let lastCleanup = 0
-function cleanupRegisterLimits() {
-  const now = Date.now()
-  if (now - lastCleanup < RATE_WINDOW_MS) return
-  lastCleanup = now
-  for (const [key, entry] of registerAttempts) {
-    if (now - entry.windowStart > RATE_WINDOW_MS) {
-      registerAttempts.delete(key)
-    }
-  }
-}
-
-function checkRegisterRateLimit(ip: string): boolean {
-  cleanupRegisterLimits()
-  const now = Date.now()
-  const entry = registerAttempts.get(ip)
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    registerAttempts.set(ip, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= MAX_REGISTERS_PER_HOUR) return false
-  entry.count++
-  return true
-}
+const registerLimiter = createRateLimiter({ maxRequests: 5, windowMs: 60 * 60 * 1000, keyPrefix: 'register' })
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,7 +25,7 @@ export async function POST(req: NextRequest) {
     // Rate limit by IP
     const metadata = getRequestMetadata(req)
     const ip = metadata.ip || 'unknown'
-    if (!checkRegisterRateLimit(ip)) {
+    if (!registerLimiter.check(ip)) {
       return NextResponse.json(
         { error: 'Слишком много регистраций. Попробуйте позже.' },
         { status: 429 }

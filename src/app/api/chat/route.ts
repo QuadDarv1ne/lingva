@@ -11,38 +11,9 @@ const MAX_SESSIONS = 500
 const MAX_MESSAGE_LENGTH = 2000
 const ALLOWED_MODES = ['tutor', 'native', 'quiz']
 
-// Per-user rate limiting
-const rateLimits = new Map<string, { count: number; windowStart: number }>()
-const MAX_MESSAGES_PER_MINUTE = 20
-const RATE_LIMIT_WINDOW_MS = 60_000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now()
-  const entry = rateLimits.get(userId)
-  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-    rateLimits.set(userId, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= MAX_MESSAGES_PER_MINUTE) {
-    return false
-  }
-  entry.count++
-  return true
-}
-
-// Periodic cleanup of stale rate-limit entries (runs on each request)
-let lastCleanup = 0
-const CLEANUP_INTERVAL_MS = 5 * 60_000
-function cleanupRateLimits() {
-  const now = Date.now()
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
-  lastCleanup = now
-  for (const [key, entry] of rateLimits) {
-    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-      rateLimits.delete(key)
-    }
-  }
-}
+const chatLimiter = createRateLimiter({ maxRequests: 20, windowMs: 60_000, keyPrefix: 'chat' })
 
 // LRU eviction: delete oldest session when limit exceeded
 function evictIfNeeded() {
@@ -60,9 +31,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
-    cleanupRateLimits()
-
-    if (!checkRateLimit(user.id)) {
+    if (!chatLimiter.check(user.id)) {
       return NextResponse.json(
         { error: 'Слишком много запросов. Пожалуйста, подождите минуту.' },
         { status: 429 }
@@ -163,8 +132,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
-    cleanupRateLimits()
-    if (!checkRateLimit(user.id)) {
+    if (!chatLimiter.check(user.id)) {
       return NextResponse.json(
         { error: 'Слишком много запросов. Пожалуйста, подождите минуту.' },
         { status: 429 }

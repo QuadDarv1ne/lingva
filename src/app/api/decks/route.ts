@@ -5,34 +5,9 @@ import { languages } from '@/lib/languages-data'
 
 const VALID_LANGUAGE_IDS = new Set(languages.map((l) => l.id))
 
-// Per-user rate limiting for deck creation
-const deckCreateLimits = new Map<string, { count: number; windowStart: number }>()
-const MAX_DECKS_PER_HOUR = 10
-const RATE_WINDOW_MS = 60 * 60 * 1000
-let lastCleanup = 0
-const CLEANUP_INTERVAL_MS = 5 * 60_000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-function cleanupDeckLimits() {
-  const now = Date.now()
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
-  lastCleanup = now
-  for (const [key, entry] of deckCreateLimits) {
-    if (now - entry.windowStart > RATE_WINDOW_MS) deckCreateLimits.delete(key)
-  }
-}
-
-function checkDeckCreateRateLimit(userId: string): boolean {
-  cleanupDeckLimits()
-  const now = Date.now()
-  const entry = deckCreateLimits.get(userId)
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    deckCreateLimits.set(userId, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= MAX_DECKS_PER_HOUR) return false
-  entry.count++
-  return true
-}
+const deckLimiter = createRateLimiter({ maxRequests: 10, windowMs: 60 * 60 * 1000, keyPrefix: 'deck' })
 
 // GET - list user's custom decks + public decks
 export async function GET(req: NextRequest) {
@@ -95,7 +70,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
-    if (!checkDeckCreateRateLimit(user.id)) {
+    if (!deckLimiter.check(user.id)) {
       return NextResponse.json(
         { error: 'Слишком много колод. Попробуйте позже.' },
         { status: 429 }

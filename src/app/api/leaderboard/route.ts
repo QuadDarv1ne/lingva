@@ -10,8 +10,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '50', 10) || 50, 1), 100)
 
-    // Get public users with progress data
-    // Fetch a broader pool (up to 500) then rank and slice to requested limit
+    // Fetch top pool for leaderboard display
     const users = await db.user.findMany({
       where: {
         isPublic: true,
@@ -39,7 +38,7 @@ export async function GET(req: NextRequest) {
           ...stats,
         }
       })
-      .filter((u) => u.xp > 0) // only show users with XP
+      .filter((u) => u.xp > 0)
       .sort((a, b) => b.xp - a.xp)
       .slice(0, limit)
       .map((u, i) => ({ ...u, rank: i + 1 }))
@@ -55,7 +54,7 @@ export async function GET(req: NextRequest) {
         myRank = me.rank
         myData = me
       } else {
-        // User not in top — compute rank using COUNT query for accuracy
+        // User not in top — compute rank from extended pool (bounded to 1000)
         const myFullUser = await db.user.findUnique({
           where: { id: currentUser.id },
           select: { progressData: true },
@@ -65,15 +64,16 @@ export async function GET(req: NextRequest) {
             const myStats = parseProgressStats(myFullUser.progressData)
             const myXp = myStats.xp
             if (myXp > 0) {
-              // Count public users with higher XP using raw SQL for accuracy
-              const allUsers = await db.user.findMany({
+              // Fetch extended pool (up to 1000) and count users with higher XP
+              const extendedPool = await db.user.findMany({
                 where: {
                   isPublic: true,
                   progressData: { not: null },
                 },
                 select: { progressData: true },
+                take: 1000,
               })
-              const higherCount = allUsers.filter((u) => {
+              const higherCount = extendedPool.filter((u) => {
                 const s = parseProgressStats(u.progressData)
                 return s.xp > myXp
               }).length

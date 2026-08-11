@@ -2,34 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 
-// Per-user rate limiting for friend requests
-const friendRequestLimits = new Map<string, { count: number; windowStart: number }>()
-const MAX_FRIEND_REQUESTS_PER_HOUR = 20
-const RATE_WINDOW_MS = 60 * 60 * 1000
-let lastCleanup = 0
-const CLEANUP_INTERVAL_MS = 5 * 60_000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-function cleanupFriendLimits() {
-  const now = Date.now()
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
-  lastCleanup = now
-  for (const [key, entry] of friendRequestLimits) {
-    if (now - entry.windowStart > RATE_WINDOW_MS) friendRequestLimits.delete(key)
-  }
-}
-
-function checkFriendRequestRateLimit(userId: string): boolean {
-  cleanupFriendLimits()
-  const now = Date.now()
-  const entry = friendRequestLimits.get(userId)
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    friendRequestLimits.set(userId, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= MAX_FRIEND_REQUESTS_PER_HOUR) return false
-  entry.count++
-  return true
-}
+const friendLimiter = createRateLimiter({ maxRequests: 20, windowMs: 60 * 60 * 1000, keyPrefix: 'friend' })
 
 // POST - send friend request
 export async function POST(req: NextRequest) {
@@ -39,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
-    if (!checkFriendRequestRateLimit(user.id)) {
+    if (!friendLimiter.check(user.id)) {
       return NextResponse.json(
         { error: 'Слишком много запросов. Попробуйте позже.' },
         { status: 429 }
@@ -50,6 +25,9 @@ export async function POST(req: NextRequest) {
     const { receiverId } = body
 
     if (!receiverId || typeof receiverId !== 'string' || receiverId === user.id) {
+      return NextResponse.json({ error: 'Неверный ID пользователя' }, { status: 400 })
+    }
+    if (receiverId.length > 50) {
       return NextResponse.json({ error: 'Неверный ID пользователя' }, { status: 400 })
     }
 

@@ -29,9 +29,11 @@ export function useProgressSync(isAuthenticated: boolean) {
           }, false)
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        // Progress load failed — will retry on next mount
+      })
       .finally(() => {
-        initialLoadRef.current = true // mark load complete AFTER fetch resolves
+        initialLoadRef.current = true
       })
   }, [isAuthenticated])
 
@@ -68,7 +70,10 @@ export function useProgressSync(isAuthenticated: boolean) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ progress: payload }),
-        }).catch(() => {})
+        }).catch(() => {
+          // Save failed — dirty state remains for next sync attempt
+          lastSaveRef.current = ''
+        })
       }, 5000)
     })
 

@@ -23,9 +23,11 @@ export async function GET(req: NextRequest) {
       take: limit,
     })
 
-    const unreadCount = await db.notification.count({
-      where: { userId: user.id, read: false },
-    })
+    const unreadCount = unreadOnly
+      ? notifications.length
+      : await db.notification.count({
+          where: { userId: user.id, read: false },
+        })
 
     return NextResponse.json({
       notifications,
@@ -53,6 +55,9 @@ export async function POST(req: NextRequest) {
         { error: 'Укажите id или all' },
         { status: 400 }
       )
+    }
+    if (id && typeof id === 'string' && id.length > 50) {
+      return NextResponse.json({ error: 'Некорректный ID' }, { status: 400 })
     }
 
     if (all) {

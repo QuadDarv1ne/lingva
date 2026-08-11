@@ -2,14 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import type { AuthUser } from '@/lib/types'
 
-export interface AuthUser {
-  id: string
-  email: string
-  name: string | null
-  emailVerified?: boolean
-  twoFactorEnabled?: boolean
-}
+export type { AuthUser }
 
 interface AuthState {
   user: AuthUser | null

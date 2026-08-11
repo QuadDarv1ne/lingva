@@ -24,6 +24,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (email.length > 254) {
+      return NextResponse.json(
+        { error: 'Некорректный email' },
+        { status: 400 }
+      )
+    }
+
+    if (password.length > 128) {
+      return NextResponse.json(
+        { error: 'Неверный email или пароль' },
+        { status: 400 }
+      )
+    }
+
     if (!validateEmail(email)) {
       return NextResponse.json(
         { error: 'Некорректный email' },

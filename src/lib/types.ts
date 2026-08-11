@@ -1,5 +1,13 @@
 // Shared types for progress data stored in user.progressData JSON
 
+export interface AuthUser {
+  id: string
+  email: string
+  name: string | null
+  emailVerified?: boolean
+  twoFactorEnabled?: boolean
+}
+
 export interface LanguageProgressData {
   visitedLessons: string[]
   completedQuizzes: { [quizId: string]: number }

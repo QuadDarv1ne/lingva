@@ -3,34 +3,9 @@ import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { verifyTwoFactorToken, sanitizeToken } from '@/lib/two-factor'
 
-// Rate limiting for 2FA verification attempts (max 5 per 10 minutes per user)
-const verifyAttempts = new Map<string, { count: number; windowStart: number }>()
-const MAX_VERIFY_ATTEMPTS = 5
-const RATE_WINDOW_MS = 10 * 60 * 1000
-let lastCleanup = 0
-const CLEANUP_INTERVAL_MS = 15 * 60 * 1000
+import { createRateLimiter } from '@/lib/rate-limit'
 
-function cleanupVerifyLimits() {
-  const now = Date.now()
-  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
-  lastCleanup = now
-  for (const [key, entry] of verifyAttempts) {
-    if (now - entry.windowStart > RATE_WINDOW_MS) verifyAttempts.delete(key)
-  }
-}
-
-function checkVerifyRateLimit(userId: string): boolean {
-  cleanupVerifyLimits()
-  const now = Date.now()
-  const entry = verifyAttempts.get(userId)
-  if (!entry || now - entry.windowStart > RATE_WINDOW_MS) {
-    verifyAttempts.set(userId, { count: 1, windowStart: now })
-    return true
-  }
-  if (entry.count >= MAX_VERIFY_ATTEMPTS) return false
-  entry.count++
-  return true
-}
+const verifyLimiter = createRateLimiter({ maxRequests: 5, windowMs: 10 * 60 * 1000, cleanupIntervalMs: 15 * 60 * 1000, keyPrefix: '2fa-verify' })
 
 // POST - Verify TOTP token to enable 2FA (or login with 2FA)
 export async function POST(req: NextRequest) {
@@ -65,7 +40,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Rate limit 2FA verification attempts to prevent brute-force
-      if (!checkVerifyRateLimit(user.id)) {
+      if (!verifyLimiter.check(user.id)) {
         return NextResponse.json(
           { error: 'Слишком много попыток. Попробуйте через 10 минут.' },
           { status: 429 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { getCurrentWeeklyTournament } from '@/lib/tournaments'
+import { createRateLimiter } from '@/lib/rate-limit'
 
 // GET - list active tournaments + user's participations
 export async function GET() {
@@ -111,6 +112,9 @@ export async function POST(req: NextRequest) {
     if (!tournamentId) {
       return NextResponse.json({ error: 'tournamentId обязателен' }, { status: 400 })
     }
+    if (typeof tournamentId !== 'string' || tournamentId.length > 50) {
+      return NextResponse.json({ error: 'Некорректный tournamentId' }, { status: 400 })
+    }
 
     const tournament = await db.tournament.findUnique({
       where: { id: tournamentId },
@@ -167,19 +171,7 @@ export async function POST(req: NextRequest) {
 
 // PATCH - update participant's score (called periodically)
 // Rate-limited: max once per hour per user per tournament
-const lastScoreUpdate = new Map<string, number>()
-const SCORE_UPDATE_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
-let lastScoreCleanup = 0
-const SCORE_CLEANUP_INTERVAL_MS = 5 * 60_000
-
-function cleanupScoreLimits() {
-  const now = Date.now()
-  if (now - lastScoreCleanup < SCORE_CLEANUP_INTERVAL_MS) return
-  lastScoreCleanup = now
-  for (const [key, ts] of lastScoreUpdate) {
-    if (now - ts > SCORE_UPDATE_COOLDOWN_MS) lastScoreUpdate.delete(key)
-  }
-}
+const scoreLimiter = createRateLimiter({ maxRequests: 1, windowMs: 60 * 60 * 1000, keyPrefix: 'score' })
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -188,19 +180,19 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
 
-    cleanupScoreLimits()
-
     const body = await req.json()
     const { tournamentId } = body
 
     if (!tournamentId || typeof tournamentId !== 'string') {
       return NextResponse.json({ error: 'tournamentId обязателен' }, { status: 400 })
     }
+    if (tournamentId.length > 50) {
+      return NextResponse.json({ error: 'Некорректный tournamentId' }, { status: 400 })
+    }
 
     // Rate limit: once per hour
     const rateKey = `${user.id}:${tournamentId}`
-    const lastUpdate = lastScoreUpdate.get(rateKey)
-    if (lastUpdate && Date.now() - lastUpdate < SCORE_UPDATE_COOLDOWN_MS) {
+    if (!scoreLimiter.check(rateKey)) {
       return NextResponse.json({ error: 'Обновление раз в час' }, { status: 429 })
     }
 
@@ -247,8 +239,6 @@ export async function PATCH(req: NextRequest) {
       where: { id: participation.id },
       data: { score },
     })
-
-    lastScoreUpdate.set(rateKey, Date.now())
 
     return NextResponse.json({ success: true, score })
   } catch (error) {

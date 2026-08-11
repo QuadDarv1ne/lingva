@@ -233,9 +233,9 @@ export function ChatSection({ language }: { language: Language }) {
             </div>
           ) : (
             <AnimatePresence initial={false}>
-              {messages.map((msg, i) => (
+              {messages.map((msg) => (
                 <motion.div
-                  key={i}
+                  key={msg.timestamp}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(
