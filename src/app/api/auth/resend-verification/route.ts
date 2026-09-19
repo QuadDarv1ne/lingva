@@ -5,6 +5,17 @@ import { sendEmail, renderVerifyEmail } from '@/lib/email'
 
 const cooldowns = new Map<string, number>()
 const COOLDOWN_MS = 60_000
+let lastCleanup = 0
+const CLEANUP_INTERVAL_MS = 5 * 60_000
+
+function cleanupCooldowns() {
+  const now = Date.now()
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return
+  lastCleanup = now
+  for (const [key, ts] of cooldowns) {
+    if (now - ts > COOLDOWN_MS) cooldowns.delete(key)
+  }
+}
 
 export async function POST() {
   try {
@@ -12,6 +23,8 @@ export async function POST() {
     if (!user) {
       return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
+
+    cleanupCooldowns()
 
     const lastSent = cooldowns.get(user.id)
     if (lastSent && Date.now() - lastSent < COOLDOWN_MS) {

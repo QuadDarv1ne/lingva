@@ -112,12 +112,14 @@ export default function PracticePage() {
     })
 
     if (quality === 'again') {
-      // Move card to end of session for re-review
+      // Move card to end of session for re-review (avoid duplicates)
       setSession((prev) => {
         if (!prev) return prev
         const cards = [...prev.cards]
         const currentCard = cards[prev.currentIndex]
-        // Insert before last position so it comes up again
+        // Only add if not already queued at next position
+        const nextCard = cards[prev.currentIndex + 1]
+        if (nextCard && nextCard.id === currentCard.id) return prev
         cards.splice(prev.currentIndex + 1, 0, currentCard)
         return { ...prev, cards }
       })

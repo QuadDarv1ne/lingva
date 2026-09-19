@@ -219,7 +219,7 @@ export function ChatSection({ language }: { language: Language }) {
                 <div className="flex flex-wrap gap-2 justify-center mt-2 max-w-md">
                   {prompts.map((p, i) => (
                     <Button
-                      key={i}
+                      key={`${language.id}-${i}`}
                       variant="outline"
                       size="sm"
                       onClick={() => sendMessage(p)}
@@ -233,9 +233,9 @@ export function ChatSection({ language }: { language: Language }) {
             </div>
           ) : (
             <AnimatePresence initial={false}>
-              {messages.map((msg) => (
+              {messages.map((msg, i) => (
                 <motion.div
-                  key={msg.timestamp}
+                  key={`${msg.timestamp}-${i}`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(

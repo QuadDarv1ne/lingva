@@ -5,6 +5,9 @@ import {
   hashToken,
   validatePassword,
 } from '@/lib/auth'
+import { createRateLimiter } from '@/lib/rate-limit'
+
+const resetPwdLimiter = createRateLimiter({ maxRequests: 5, windowMs: 60_000, keyPrefix: 'reset-pwd' })
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +18,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Токен и новый пароль обязательны' },
         { status: 400 }
+      )
+    }
+
+    // Rate limit by token hash to prevent brute-force
+    const tokenHash = hashToken(token)
+    if (!resetPwdLimiter.check(tokenHash)) {
+      return NextResponse.json(
+        { error: 'Слишком много попыток. Подождите минуту.' },
+        { status: 429 }
       )
     }
 

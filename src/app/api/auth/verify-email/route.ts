@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { hashToken } from '@/lib/auth'
+import { createRateLimiter } from '@/lib/rate-limit'
+
+const verifyLimiter = createRateLimiter({ maxRequests: 10, windowMs: 60_000, keyPrefix: 'verify-email' })
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +14,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Токен обязателен' },
         { status: 400 }
+      )
+    }
+
+    // Rate limit by token hash to prevent brute-force
+    const tokenHash = hashToken(token)
+    if (!verifyLimiter.check(tokenHash)) {
+      return NextResponse.json(
+        { error: 'Слишком много попыток. Подождите минуту.' },
+        { status: 429 }
       )
     }
 

@@ -190,7 +190,7 @@ export function FillInTheBlank({ language }: { language: Language }) {
             const showWrong = showResult && isSelected && !isCorrect
             return (
               <button
-                key={i}
+                key={option + i}
                 onClick={() => handleSelect(option)}
                 disabled={showResult}
                 className={cn(

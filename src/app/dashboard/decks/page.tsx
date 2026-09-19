@@ -261,7 +261,7 @@ export default function DecksPage() {
                     </div>
                     <div className="space-y-2 max-h-96 overflow-y-auto">
                       {cards.map((card, i) => (
-                        <div key={i} className="flex gap-2 items-start p-2 rounded-lg border">
+                        <div key={`card-${i}`} className="flex gap-2 items-start p-2 rounded-lg border">
                           <div className="text-xs text-muted-foreground mt-2 shrink-0">#{i + 1}</div>
                           <div className="flex-1 grid grid-cols-3 gap-2">
                             <Input
@@ -459,7 +459,7 @@ function DeckCard({
             className="mt-3 pt-3 border-t space-y-1 max-h-60 overflow-y-auto"
           >
             {deck.cards.slice(0, 20).map((card, i) => (
-              <div key={i} className="flex items-center gap-2 p-2 rounded text-sm hover:bg-muted/50">
+              <div key={`deckcard-${i}`} className="flex items-center gap-2 p-2 rounded text-sm hover:bg-muted/50">
                 <span className="font-medium flex-1">{card.front}</span>
                 {card.transcription && (
                   <span className="text-xs text-muted-foreground italic">[{card.transcription}]</span>

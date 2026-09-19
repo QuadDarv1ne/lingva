@@ -136,6 +136,7 @@ export function MatchingGame({ language }: { language: Language }) {
   const [matches, setMatches] = useState<{ [wordId: string]: string }>({})
   const [feedback, setFeedback] = useState<{ [slotId: string]: boolean | null }>({})
   const [completed, setCompleted] = useState(false)
+  const [initialized, setInitialized] = useState(false)
   const resetTimerRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
   useEffect(() => {
@@ -146,14 +147,16 @@ export function MatchingGame({ language }: { language: Language }) {
   }, [])
 
   useEffect(() => {
+    if (initialized) return
     const timer = setTimeout(() => {
       setShuffledWords([...pairs].sort(() => Math.random() - 0.5))
       setMatches({})
       setFeedback({})
       setCompleted(false)
+      setInitialized(true)
     }, 0)
     return () => clearTimeout(timer)
-  }, [pairs])
+  }, [pairs, initialized])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),

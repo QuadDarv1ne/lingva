@@ -25,7 +25,7 @@ export function CultureSection({ language }: { language: Language }) {
       <div className="grid gap-4 md:grid-cols-2">
         {language.culture.map((fact, i) => (
           <motion.div
-            key={i}
+            key={fact.title + i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
@@ -54,7 +54,7 @@ export function CultureSection({ language }: { language: Language }) {
         <div className="space-y-3">
           {language.proverbs.map((proverb, i) => (
             <motion.div
-              key={i}
+              key={proverb.original + i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.08 }}

@@ -111,9 +111,12 @@ export function NotificationBell() {
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
+    const isUnread = notifications.some((n) => n.id === id && !n.read)
     await fetch(`/api/notifications?id=${id}`, { method: 'DELETE' })
     setNotifications((prev) => prev.filter((n) => n.id !== id))
-    setUnreadCount((c) => Math.max(0, c - 1))
+    if (isUnread) {
+      setUnreadCount((c) => Math.max(0, c - 1))
+    }
   }
 
   const formatTime = (date: string) => {

@@ -114,17 +114,8 @@ export async function createSession(
 }
 
 export async function getSessionUser(token: string | undefined) {
-  if (!token) return null
-  const session = await db.session.findUnique({
-    where: { token },
-    include: { user: true },
-  })
-  if (!session) return null
-  if (session.expiresAt < new Date()) {
-    await db.session.delete({ where: { id: session.id } }).catch((err) => { console.error('Failed to delete expired session:', err) })
-    return null
-  }
-  return session.user
+  const session = await getSessionWithMeta(token)
+  return session?.user ?? null
 }
 
 export async function getSessionWithMeta(token: string | undefined) {

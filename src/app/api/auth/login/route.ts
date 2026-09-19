@@ -10,7 +10,20 @@ import {
   checkRateLimit,
 } from '@/lib/auth'
 import { verifyTwoFactorToken, sanitizeToken, consumeBackupCode } from '@/lib/two-factor'
-import { randomBytes } from 'crypto'
+import { timingSafeEqual } from 'crypto'
+
+// Generate a random fake hash per-request to mitigate timing attacks
+// Uses Web Crypto API for Edge runtime compatibility
+async function generateFakeHash(): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16))
+  const saltHex = Array.from(salt)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+  const fakeDerived = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+  return `100000.${saltHex}.${fakeDerived}`
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -65,8 +78,7 @@ export async function POST(req: NextRequest) {
 
     // Always run verifyPassword to mitigate timing attacks
     // Generate a random fake hash per-request so the PBKDF2 path is always exercised
-    const fakeSalt = randomBytes(16).toString('hex')
-    const fakeHash = `100000.${fakeSalt}.0000000000000000000000000000000000000000000000000000000000000000`
+    const fakeHash = await generateFakeHash()
     const valid = user?.passwordHash
       ? await verifyPassword(password, user.passwordHash)
       : await verifyPassword(password, fakeHash)

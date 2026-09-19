@@ -101,7 +101,7 @@ export function ReadingSection({ language }: { language: Language }) {
         <div className="grid gap-4">
           {language.reading.map((text, i) => (
             <motion.div
-              key={i}
+              key={text.title + i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}

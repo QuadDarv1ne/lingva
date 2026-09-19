@@ -27,7 +27,7 @@ export function PhrasesSection({ language }: { language: Language }) {
       <div className="grid gap-3 md:grid-cols-2">
         {language.phrases.map((phrase, i) => (
           <motion.div
-            key={i}
+            key={phrase.original + i}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: Math.min(i * 0.05, 0.5) }}

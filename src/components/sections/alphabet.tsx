@@ -20,9 +20,9 @@ export function AlphabetSection({ language }: { language: Language }) {
     setSelected(i)
     const letter = language.alphabet[i].letter
     const wasLearned = progress.learnedLetters.includes(letter)
-    markLetterLearned(language.id, letter)
-    recordActivity()
     if (!wasLearned) {
+      markLetterLearned(language.id, letter)
+      recordActivity()
       updateDailyChallenge('letters', 1)
     }
   }

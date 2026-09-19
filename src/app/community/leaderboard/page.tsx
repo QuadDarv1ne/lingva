@@ -32,18 +32,24 @@ export default function LeaderboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
     Promise.all([
-      fetch('/api/leaderboard?limit=50').then((r) => r.json()),
-      fetch('/api/auth/me').then((r) => r.json()),
+      fetch('/api/leaderboard?limit=50').then((r) => r.json()).catch(() => null),
+      fetch('/api/auth/me').then((r) => r.json()).catch(() => null),
     ])
       .then(([data, authData]) => {
-        setLeaders(data.leaderboard || [])
-        setMyRank(data.myRank)
-        setMyData(data.myData)
-        setIsAuthenticated(!!authData.user)
+        if (cancelled) return
+        setLeaders(data?.leaderboard || [])
+        setMyRank(data?.myRank ?? null)
+        setMyData(data?.myData ?? null)
+        setIsAuthenticated(!!authData?.user)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => { cancelled = true }
   }, [])
 
   const getRankIcon = (rank: number) => {

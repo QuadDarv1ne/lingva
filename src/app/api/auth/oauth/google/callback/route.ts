@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (!code || !state) {
+      cookieStore.delete('oauth_state_google')
       return NextResponse.redirect(new URL('/auth/login?error=missing_params', req.url))
     }
 

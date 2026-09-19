@@ -195,7 +195,7 @@ export function WordScramble({ language }: { language: Language }) {
             const char = selected[i] !== undefined ? current.scrambled[selected[i]] : null
             return (
               <button
-                key={i}
+                key={i + '-' + char}
                 onClick={() => char && handleRemoveChar(i)}
                 className={cn(
                   'w-10 h-12 rounded-lg border-2 flex items-center justify-center text-xl font-bold transition-all',
@@ -217,7 +217,7 @@ export function WordScramble({ language }: { language: Language }) {
             const used = selected.includes(i)
             return (
               <button
-                key={i}
+                key={i + '-' + char + '-' + used}
                 onClick={() => handleSelectChar(i)}
                 disabled={used}
                 className={cn(

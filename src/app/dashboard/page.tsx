@@ -340,8 +340,8 @@ export default function DashboardPage() {
                         label={(entry) => `${entry.name}: ${entry.value}`}
                         labelLine={false}
                       >
-                        {activityBreakdown.map((entry, i) => (
-                          <Cell key={i} fill={entry.color} />
+                        {activityBreakdown.map((entry) => (
+                          <Cell key={entry.name} fill={entry.color} />
                         ))}
                       </Pie>
                       <Tooltip
@@ -383,7 +383,7 @@ export default function DashboardPage() {
               </p>
               <div className="overflow-x-auto">
                 <div className="inline-grid grid-flow-col grid-rows-7 gap-1">
-                  {heatmapData.map((day, i) => {
+                  {heatmapData.map((day) => {
                     const intensity = day.count === 0 ? 0
                       : day.count < 5 ? 1
                       : day.count < 15 ? 2
@@ -398,9 +398,9 @@ export default function DashboardPage() {
                     ]
                     return (
                       <div
-                        key={i}
-                        className={cn('w-3 h-3 rounded-sm', colors[intensity])}
-                        title={`${day.date}: ${day.count} действий`}
+                        key={day.date}
+                      className={cn('w-3 h-3 rounded-sm', colors[intensity])}
+                      title={`${day.date}: ${day.count} действий`}
                       />
                     )
                   })}
@@ -457,8 +457,8 @@ export default function DashboardPage() {
                         }}
                       />
                       <Bar dataKey="xp" radius={[0, 4, 4, 0]}>
-                        {languageStats.map((entry, i) => (
-                          <Cell key={i} fill={entry.color} />
+                        {languageStats.map((entry) => (
+                          <Cell key={entry.name} fill={entry.color} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -466,12 +466,12 @@ export default function DashboardPage() {
                 </Card>
 
                 <div className="grid sm:grid-cols-2 gap-4">
-                  {languageStats.map((lang, i) => (
+                  {languageStats.map((lang) => (
                     <motion.div
-                      key={i}
+                      key={lang.name}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
+                      transition={{ delay: lang.name === languageStats[0]?.name ? 0 : 0.05 * languageStats.indexOf(lang) }}
                     >
                       <Card className="p-4">
                         <div className="flex items-center gap-3 mb-3">

@@ -113,7 +113,7 @@ function LessonContent({
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {lesson.vocabulary.map((word, i) => (
             <motion.div
-              key={i}
+              key={word.word + i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
