@@ -15,14 +15,14 @@ export function AuthLayout({
   footer?: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 dark:from-rose-950/30 dark:via-amber-950/30 dark:to-yellow-950/30">
-      <div className="flex-1 flex items-center justify-center p-4">
+    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 dark:from-rose-950/30 dark:via-amber-950/30 dark:to-yellow-950/30 px-safe">
+      <div className="flex-1 flex items-center justify-center p-3 sm:p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md"
         >
-          <div className="bg-card rounded-2xl shadow-xl border p-8">
+          <div className="bg-card rounded-2xl shadow-xl border p-5 sm:p-8 max-h-[calc(100dvh-1.5rem)] overflow-y-auto">
             {/* Logo */}
             <div className="flex flex-col items-center mb-6">
               <a href="/" className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity">

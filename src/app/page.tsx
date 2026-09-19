@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Sparkles, Heart, Languages as LangIcon, TrendingUp, RotateCcw, Filter, Trophy, Zap, Users, BarChart3, Swords, Layers, ShoppingBag, History } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -130,29 +131,29 @@ export default function Home() {
       <Onboarding />
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
-        <div className="container mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white">
+        <div className="container mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center gap-2 min-w-0 shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white shrink-0">
               <LangIcon className="w-5 h-5" />
             </div>
-            <div>
-              <div className="font-bold text-lg leading-none">Лингва</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+            <div className="min-w-0 block">
+              <div className="font-bold text-lg leading-none truncate">Лингва</div>
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wider truncate">
                 7 языков · 1 платформа
               </div>
             </div>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="hidden md:block w-64">
+          </Link>
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none min-w-0">
+            <div className="hidden md:block w-64 shrink-0">
               <GlobalSearch />
             </div>
-            <Badge variant="outline" className="hidden sm:flex">
+            <Badge variant="outline" className="hidden lg:flex shrink-0">
               <Sparkles className="w-3 h-3 mr-1 text-amber-500" />
               {languages.length} языков
             </Badge>
             {/* Community links */}
             {authUser && (
-              <div className="flex items-center gap-1">
+              <div className="hidden md:flex items-center gap-1 shrink-0">
                 <Button asChild variant="ghost" size="icon" className="w-9 h-9" title="Аналитика">
                   <a href="/dashboard">
                     <BarChart3 className="w-4 h-4" />
@@ -273,7 +274,7 @@ export default function Home() {
               <Sparkles className="w-3 h-3" />
               Бесплатная платформа изучения языков
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-4">
+            <h1 className="text-[clamp(2.25rem,1.5rem+3vw,3.75rem)] font-bold tracking-tight leading-[1.15] mb-4">
               Изучайте языки мира —{' '}
               <span className="bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">
                 от древних до современных

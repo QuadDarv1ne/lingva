@@ -263,7 +263,7 @@ export default function DecksPage() {
                       {cards.map((card, i) => (
                         <div key={`card-${i}`} className="flex gap-2 items-start p-2 rounded-lg border">
                           <div className="text-xs text-muted-foreground mt-2 shrink-0">#{i + 1}</div>
-                          <div className="flex-1 grid grid-cols-3 gap-2">
+                          <div className="flex-1 grid grid-cols-1 min-[480px]:grid-cols-3 gap-2">
                             <Input
                               placeholder="Слово"
                               value={card.front}

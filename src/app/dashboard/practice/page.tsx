@@ -143,7 +143,7 @@ export default function PracticePage() {
     const seconds = duration % 60
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-dvh flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -203,7 +203,7 @@ export default function PracticePage() {
     const progress = ((session.currentIndex) / session.cards.length) * 100
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50/30 via-background to-background">
+      <div className="min-h-dvh bg-gradient-to-b from-purple-50/30 via-background to-background">
         <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
           <div className="container mx-auto max-w-2xl px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -232,7 +232,7 @@ export default function PracticePage() {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.2 }}
             >
-              <Card className="p-8 mb-6 min-h-[280px] flex flex-col items-center justify-center text-center relative">
+              <Card className="p-6 sm:p-8 mb-6 min-h-[280px] flex flex-col items-center justify-center text-center relative">
                 <div className="absolute top-4 left-4">
                   <Badge variant="outline" className="text-xs">
                     {lang?.emoji} {lang?.name}
@@ -259,7 +259,7 @@ export default function PracticePage() {
                 )}
 
                 <div
-                  className="text-5xl font-bold mb-3"
+                  className="text-[clamp(2rem,5vw+1rem,3rem)] font-bold mb-3 break-words px-2"
                   dir={isRtl ? 'rtl' : 'ltr'}
                 >
                   {card.word}
@@ -295,7 +295,7 @@ export default function PracticePage() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="grid grid-cols-4 gap-2"
+                  className="grid grid-cols-2 sm:grid-cols-4 gap-2"
                 >
                   {(['again', 'hard', 'good', 'easy'] as ReviewQuality[]).map((q) => (
                     <Button
@@ -324,7 +324,7 @@ export default function PracticePage() {
 
   // Session selection screen
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50/30 via-background to-background">
+    <div className="min-h-dvh bg-gradient-to-b from-purple-50/30 via-background to-background">
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">

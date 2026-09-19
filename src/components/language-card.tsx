@@ -49,13 +49,13 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
         {/* Gradient header */}
         <div className={cn('h-32 bg-gradient-to-br relative overflow-hidden', language.gradient)}>
           <div className="absolute inset-0 opacity-30 mix-blend-overlay">
-            <div className="absolute -right-4 -top-4 text-[8rem] leading-none opacity-50">
+            <div className="absolute -right-4 -top-4 text-[6rem] sm:text-[8rem] leading-none opacity-50">
               {language.emoji}
             </div>
           </div>
-          <div className="absolute inset-0 flex items-center justify-between p-5">
-            <div>
-              <div className="text-3xl font-bold text-white drop-shadow-lg tracking-tight">
+          <div className="absolute inset-0 flex items-center justify-between gap-3 p-5">
+            <div className="flex-1 min-w-0">
+              <div className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg tracking-tight break-words">
                 {language.nativeName}
               </div>
               <div className="text-white/80 text-sm mt-1 font-medium">

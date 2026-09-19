@@ -102,20 +102,20 @@ export default function DictionaryPage() {
               </div>
             </div>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none min-w-0">
             {personalDictionary.length > 0 && (
-              <Link href="/dashboard/practice">
+              <Link href="/dashboard/practice" className="shrink-0">
                 <Button variant="outline" size="sm">
                   <Brain className="w-4 h-4 mr-1" />
                   Практика
                 </Button>
               </Link>
             )}
-            <Button onClick={() => setShowAddForm((s) => !s)} size="sm">
+            <Button onClick={() => setShowAddForm((s) => !s)} size="sm" className="shrink-0">
               <Plus className="w-4 h-4 mr-1" />
               Добавить
             </Button>
-            <Link href="/dashboard">
+            <Link href="/dashboard" className="shrink-0">
               <Button variant="ghost" size="sm">← Назад</Button>
             </Link>
           </div>
@@ -208,7 +208,7 @@ export default function DictionaryPage() {
             <select
               value={filterLang}
               onChange={(e) => setFilterLang(e.target.value)}
-              className="px-3 py-2 rounded-lg border bg-background"
+              className="px-3 py-2 rounded-lg border bg-background w-full sm:w-auto"
             >
               <option value="all">Все языки</option>
               {languages.map((l) => (

@@ -85,10 +85,10 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
               </Badge>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex-1 min-w-0">
                 <div
-                  className="text-4xl font-bold mb-2"
+                  className="text-[clamp(1.75rem,1rem+2.5vw,2.25rem)] font-bold mb-2 break-words"
                   dir={wordOfDay.isRtl ? 'rtl' : 'ltr'}
                 >
                   {wordOfDay.word}
@@ -106,7 +106,7 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
                   </div>
                 )}
               </div>
-              <div className="flex flex-col gap-2 shrink-0">
+              <div className="flex flex-row sm:flex-col gap-2 shrink-0">
                 <Button
                   size="icon"
                   variant="outline"

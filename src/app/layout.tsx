@@ -1,9 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistSans as geistSans, GeistMono as geistMono } from "geist/font";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/hooks/auth-context";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Enable env(safe-area-inset-*) on iOS notch devices
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#252525" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "Лингва — Изучение 7 языков мира",

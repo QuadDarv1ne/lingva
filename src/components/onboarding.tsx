@@ -126,9 +126,9 @@ export function Onboarding() {
         aria-modal="true"
         aria-label="Онбординг"
       >
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden max-h-[calc(100dvh-2rem)] overflow-y-auto">
           {/* Gradient header */}
-          <div className={cn('bg-gradient-to-br p-8 text-center relative', currentStep.color)}>
+          <div className={cn('bg-gradient-to-br p-6 sm:p-8 text-center relative', currentStep.color)}>
             <button
               onClick={handleSkip}
               className="absolute top-3 right-3 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
@@ -145,7 +145,7 @@ export function Onboarding() {
                 exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="text-6xl mb-3">{currentStep.emoji}</div>
+                <div className="text-5xl sm:text-6xl mb-3">{currentStep.emoji}</div>
               </motion.div>
             </AnimatePresence>
 
@@ -156,7 +156,7 @@ export function Onboarding() {
           </div>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-5 sm:p-6">
             {/* Progress dots */}
             <div className="flex justify-center gap-1.5 mb-6">
               {steps.map((_, i) => (

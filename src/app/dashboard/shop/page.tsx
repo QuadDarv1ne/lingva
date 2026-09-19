@@ -326,12 +326,12 @@ export default function ShopPage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100%-2rem)] max-w-sm"
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100%-2rem)] max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto"
               role="dialog"
               aria-modal="true"
               aria-label="Подтверждение покупки"
             >
-              <Card className="p-6">
+              <Card className="p-5 sm:p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="text-4xl">{showConfirm.icon}</div>
                   <Button
