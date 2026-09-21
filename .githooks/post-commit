@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if git push; then
+  printf '%s\n' 'Auto-push completed.'
+else
+  printf '%s\n' 'Auto-push failed. The commit was created; push it manually when the remote is available.' >&2
+fi

@@ -17,6 +17,11 @@ foreach ($repo in $repos) {
     }
 
     try {
+        $safeDirs = git config --global --get-all safe.directory 2>$null
+        if (-not ($safeDirs -contains $repoPath)) {
+            git config --global --add safe.directory $repoPath
+        }
+
         Push-Location $repoPath
         $status = git status --short
 
