@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { execSync } = require('node:child_process')
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('node:path')
 
 const repoRoot = path.resolve(__dirname, '..')

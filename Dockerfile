@@ -6,7 +6,9 @@ RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --include-optional
+# Use npm install here instead of npm ci to avoid stale lockfile / transitive dependency drift,
+# which can leave Prisma without its required `effect` package during container startup.
+RUN npm install --include=optional --no-audit --no-fund
 
 # --- build ---
 FROM base AS builder

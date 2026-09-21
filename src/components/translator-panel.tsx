@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ArrowRightLeft, Clock3, Copy, Languages, Loader2, Sparkles, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -113,59 +113,68 @@ export function TranslatorPanel() {
     [targetLang]
   )
 
+  const saveHistoryEntry = useCallback(
+    (nextInput: string, nextOutput: string) => {
+      const entry: TranslationHistoryEntry = {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        input: nextInput,
+        output: nextOutput,
+        sourceLang,
+        targetLang,
+        detectedLanguage,
+        createdAt: new Date().toISOString(),
+      }
+
+      setHistory((previous) => [
+        entry,
+        ...previous.filter((item) => item.input !== nextInput || item.output !== nextOutput),
+      ].slice(0, 6))
+    },
+    [detectedLanguage, sourceLang, targetLang]
+  )
+
+  const runTranslation = useCallback(
+    async (manual = true) => {
+      const text = input.trim()
+      if (!text) {
+        setResult('')
+        setError(null)
+        setDetectedLanguage(null)
+        return
+      }
+
+      if (manual) {
+        setLoading(true)
+      }
+
+      try {
+        setError(null)
+        const data = await translateText(text, sourceLang, targetLang)
+        setResult(data.translated)
+        if (sourceLang === 'auto' && data.detected !== 'auto') {
+          setDetectedLanguage(data.detected)
+        } else {
+          setDetectedLanguage(null)
+        }
+
+        saveHistoryEntry(text, data.translated)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Ошибка перевода')
+        setResult('')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [input, saveHistoryEntry, sourceLang, targetLang]
+  )
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
       void runTranslation(false)
     }, 450)
 
     return () => window.clearTimeout(timer)
-  }, [input, sourceLang, targetLang])
-
-  const saveHistoryEntry = (nextInput: string, nextOutput: string) => {
-    const entry: TranslationHistoryEntry = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      input: nextInput,
-      output: nextOutput,
-      sourceLang,
-      targetLang,
-      detectedLanguage,
-      createdAt: new Date().toISOString(),
-    }
-
-    setHistory((previous) => [entry, ...previous.filter((item) => item.input !== nextInput || item.output !== nextOutput)].slice(0, 6))
-  }
-
-  const runTranslation = async (manual = true) => {
-    const text = input.trim()
-    if (!text) {
-      setResult('')
-      setError(null)
-      setDetectedLanguage(null)
-      return
-    }
-
-    if (manual) {
-      setLoading(true)
-    }
-
-    try {
-      setError(null)
-      const data = await translateText(text, sourceLang, targetLang)
-      setResult(data.translated)
-      if (sourceLang === 'auto' && data.detected !== 'auto') {
-        setDetectedLanguage(data.detected)
-      } else {
-        setDetectedLanguage(null)
-      }
-
-      saveHistoryEntry(text, data.translated)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка перевода')
-      setResult('')
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [input, runTranslation, sourceLang, targetLang])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {

@@ -10,7 +10,6 @@ import {
   checkRateLimit,
 } from '@/lib/auth'
 import { verifyTwoFactorToken, sanitizeToken, consumeBackupCode } from '@/lib/two-factor'
-import { timingSafeEqual } from 'crypto'
 
 // Generate a random fake hash per-request to mitigate timing attacks
 // Uses Web Crypto API for Edge runtime compatibility
