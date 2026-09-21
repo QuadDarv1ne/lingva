@@ -114,12 +114,12 @@ export default function TournamentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/30 via-background to-background">
+    <div className="min-h-screen bg-linear-to-b from-amber-50/30 via-background to-background">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-4xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
               <Trophy className="w-5 h-5" />
             </div>
             <div>
@@ -170,7 +170,7 @@ export default function TournamentsPage() {
               >
                 <Card className="overflow-hidden">
                   {/* Header gradient */}
-                  <div className="p-5 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-b">
+                  <div className="p-5 bg-linear-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-b">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex-1">
                         <h2 className="text-xl font-bold flex items-center gap-2">
@@ -242,7 +242,7 @@ export default function TournamentsPage() {
                               )}
                             </div>
                             <Avatar className="w-8 h-8">
-                              <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white text-xs">
+                              <AvatarFallback className="bg-linear-to-br from-amber-500 to-orange-500 text-white text-xs">
                                 {(user.name || '?')[0]?.toUpperCase()}
                               </AvatarFallback>
                             </Avatar>

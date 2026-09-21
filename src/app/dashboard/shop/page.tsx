@@ -84,12 +84,12 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/30 via-background to-background">
+    <div className="min-h-screen bg-linear-to-b from-amber-50/30 via-background to-background">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-5xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
@@ -107,10 +107,10 @@ export default function ShopPage() {
 
       <div className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
         {/* Balance card */}
-        <Card className="p-6 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-300 dark:border-amber-800">
+        <Card className="p-6 bg-linear-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-300 dark:border-amber-800">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
                 <Coins className="w-7 h-7 text-white" />
               </div>
               <div>

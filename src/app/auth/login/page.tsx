@@ -145,7 +145,7 @@ export default function LoginPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white">
+            <div className="w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white">
               <ShieldCheck className="w-8 h-8" />
             </div>
           </div>

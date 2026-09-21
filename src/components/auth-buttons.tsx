@@ -79,7 +79,7 @@ export function AuthButtons() {
         aria-haspopup="true"
       >
         <Avatar className="w-8 h-8 border-2 border-primary/30 relative">
-          <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white font-semibold text-sm">
+          <AvatarFallback className="bg-linear-to-br from-rose-500 to-amber-500 text-white font-semibold text-sm">
             {initial}
           </AvatarFallback>
           {!user.emailVerified && (
@@ -105,10 +105,10 @@ export function AuthButtons() {
             className="absolute right-0 mt-2 w-72 rounded-lg border bg-card shadow-xl overflow-hidden z-50"
           >
             {/* Header */}
-            <div className="p-4 border-b bg-gradient-to-br from-rose-50 to-amber-50 dark:from-rose-950/30 dark:to-amber-950/30">
+            <div className="p-4 border-b bg-linear-to-br from-rose-50 to-amber-50 dark:from-rose-950/30 dark:to-amber-950/30">
               <div className="flex items-center gap-3">
                 <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white font-semibold">
+                  <AvatarFallback className="bg-linear-to-br from-rose-500 to-amber-500 text-white font-semibold">
                     {initial}
                   </AvatarFallback>
                 </Avatar>

@@ -128,7 +128,7 @@ export function Onboarding() {
       >
         <Card className="overflow-hidden max-h-[calc(100dvh-2rem)] overflow-y-auto">
           {/* Gradient header */}
-          <div className={cn('bg-gradient-to-br p-6 sm:p-8 text-center relative', currentStep.color)}>
+          <div className={cn('bg-linear-to-br p-6 sm:p-8 text-center relative', currentStep.color)}>
             <button
               onClick={handleSkip}
               className="absolute top-3 right-3 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"

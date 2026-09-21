@@ -57,7 +57,7 @@ export function LessonsSection({ language }: { language: Language }) {
                 <div className="flex items-center gap-4 text-left flex-1">
                   <div className={cn(
                     'shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white',
-                    `bg-gradient-to-br ${language.gradient}`
+                    `bg-linear-to-br ${language.gradient}`
                   )}>
                     {i + 1}
                   </div>

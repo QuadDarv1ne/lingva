@@ -51,14 +51,14 @@ export function XPDailyPanel() {
     <div className="space-y-4">
       {/* XP & Level */}
       <Card className="p-5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-yellow-950/30" />
+        <div className="absolute inset-0 bg-linear-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-yellow-950/30" />
         <div className="relative z-10">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3">
               <motion.div
                 initial={{ scale: 0.8, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
-                className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg"
+                className="w-14 h-14 rounded-xl bg-linear-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg"
               >
                 <Star className="w-7 h-7 text-white fill-white" />
               </motion.div>
@@ -87,7 +87,7 @@ export function XPDailyPanel() {
             </div>
             <div className="h-3 bg-muted rounded-full overflow-hidden shadow-inner">
               <motion.div
-                className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-500"
+                className="h-full bg-linear-to-r from-amber-400 via-orange-500 to-yellow-500"
                 initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
                 transition={{ duration: 0.5 }}

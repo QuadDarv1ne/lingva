@@ -196,12 +196,12 @@ export default function FriendsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50/30 via-background to-background">
+    <div className="min-h-screen bg-linear-to-b from-blue-50/30 via-background to-background">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-4xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -251,7 +251,7 @@ export default function FriendsPage() {
                     className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
                   >
                     <Avatar className="w-10 h-10">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
+                      <AvatarFallback className="bg-linear-to-br from-blue-500 to-indigo-500 text-white">
                         {(user.name || user.email || '?')[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -371,7 +371,7 @@ export default function FriendsPage() {
                   <Card className="p-4">
                     <div className="flex items-center gap-4">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
+                        <AvatarFallback className="bg-linear-to-br from-blue-500 to-indigo-500 text-white">
                           {(friend.name || '?')[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -443,7 +443,7 @@ export default function FriendsPage() {
                   <Card className="p-4">
                     <div className="flex items-center gap-4">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                        <AvatarFallback className="bg-linear-to-br from-amber-500 to-orange-500 text-white">
                           {(req.user.name || '?')[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -509,7 +509,7 @@ export default function FriendsPage() {
                   <Card className="p-4">
                     <div className="flex items-center gap-4">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-gradient-to-br from-slate-400 to-slate-500 text-white">
+                        <AvatarFallback className="bg-linear-to-br from-slate-400 to-slate-500 text-white">
                           {(req.user.name || '?')[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>

@@ -21,7 +21,7 @@ export function OverviewSection({ language }: { language: Language }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${language.gradient} p-8 text-white`}
+        className={`relative overflow-hidden rounded-xl bg-linear-to-br ${language.gradient} p-8 text-white`}
       >
         <div className="absolute -right-8 -top-8 text-[12rem] leading-none opacity-20">
           {language.emoji}

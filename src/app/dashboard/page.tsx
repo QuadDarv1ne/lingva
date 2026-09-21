@@ -160,12 +160,12 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="min-h-screen bg-linear-to-b from-background via-background to-muted/30">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white">
               <BarChart3 className="w-5 h-5" />
             </div>
             <div>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
             <div className="text-xs text-muted-foreground">цель дня</div>
             <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-500"
+                className="h-full bg-linear-to-r from-emerald-500 to-teal-500"
                 style={{ width: `${dailyGoalProgress}%` }}
               />
             </div>

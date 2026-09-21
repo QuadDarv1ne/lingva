@@ -66,11 +66,11 @@ export function WordOfDay({ onOpenLanguage }: { onOpenLanguage: (id: string) => 
       transition={{ delay: 0.3 }}
     >
       <Card className="overflow-hidden border-2">
-        <div className={`bg-gradient-to-br ${wordOfDay.gradient} p-1`}>
+        <div className={`bg-linear-to-br ${wordOfDay.gradient} p-1`}>
           <div className="bg-card rounded-t-lg p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-linear-to-br from-amber-400 to-orange-500 flex items-center justify-center">
                   <Calendar className="w-4 h-4 text-white" />
                 </div>
                 <div>

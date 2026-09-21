@@ -71,12 +71,12 @@ export default function HistoryPage() {
   const availableTypes = Array.from(new Set(activityEvents.map((e) => e.type)))
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="min-h-screen bg-linear-to-b from-background via-background to-muted/30">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-500 to-slate-700 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-slate-500 to-slate-700 flex items-center justify-center text-white">
               <History className="w-5 h-5" />
             </div>
             <div>

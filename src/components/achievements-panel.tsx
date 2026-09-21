@@ -60,9 +60,9 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
               return (
                 <Card
                   key={id}
-                  className="p-4 flex items-center gap-3 shadow-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/40 pointer-events-auto"
+                  className="p-4 flex items-center gap-3 shadow-xl border-2 border-amber-300 bg-linear-to-r from-amber-50 to-yellow-50 dark:from-amber-950/40 dark:to-yellow-950/40 pointer-events-auto"
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-2xl shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-linear-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-2xl shrink-0">
                     {ach.icon}
                   </div>
                   <div>
@@ -82,7 +82,7 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
       <div className="space-y-4">
         {/* Streak & summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Card className="p-4 text-center bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 border-orange-200 dark:border-orange-900">
+          <Card className="p-4 text-center bg-linear-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 border-orange-200 dark:border-orange-900">
             <Flame className="w-6 h-6 mx-auto mb-1 text-orange-500" />
             <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
               {streak.current}
@@ -116,7 +116,7 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
             {last7Days.map((day, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1">
                 <motion.div
-                  className="w-full bg-gradient-to-t from-primary to-primary/60 rounded-t-sm min-h-[4px]"
+                  className="w-full bg-linear-to-t from-primary to-primary/60 rounded-t-sm min-h-[4px]"
                   initial={{ height: 0 }}
                   animate={{ height: `${(day.count / maxActivity) * 100}%` }}
                   transition={{ delay: i * 0.05 }}
@@ -147,7 +147,7 @@ export function AchievementsPanel({ compact = false }: { compact?: boolean }) {
                     className={cn(
                       'p-3 rounded-lg border text-center transition-all',
                       isUnlocked
-                        ? 'border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30'
+                        ? 'border-amber-300 bg-linear-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30'
                         : 'border-border opacity-50'
                     )}
                   >

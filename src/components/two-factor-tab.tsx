@@ -491,7 +491,7 @@ export function TwoFactorTab() {
   return (
     <div className="space-y-4">
       <Card className="p-6 text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white mb-4">
+        <div className="w-16 h-16 mx-auto rounded-full bg-linear-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white mb-4">
           <Shield className="w-8 h-8" />
         </div>
         <h3 className="font-semibold text-lg mb-2">Защитите свой аккаунт</h3>

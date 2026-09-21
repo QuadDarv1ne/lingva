@@ -78,12 +78,12 @@ export default function LeaderboardPage() {
   const rest = leaders.slice(3)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/30 via-background to-background">
+    <div className="min-h-screen bg-linear-to-b from-amber-50/30 via-background to-background">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-5xl px-4 py-3 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white">
               <Trophy className="w-5 h-5" />
             </div>
             <div>
@@ -116,9 +116,9 @@ export default function LeaderboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="p-5 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-300 dark:border-amber-800">
+            <Card className="p-5 bg-linear-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-300 dark:border-amber-800">
               <div className="flex items-center gap-4">
-                <div className="shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                <div className="shrink-0 w-12 h-12 rounded-full bg-linear-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-xl">
                   #{myRank}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -167,9 +167,9 @@ export default function LeaderboardPage() {
                 >
                   <Card className={cn(
                     'p-5 text-center relative overflow-hidden',
-                    leader.rank === 1 && 'bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-950/40 dark:to-yellow-950/40 border-amber-300 dark:border-amber-800',
-                    leader.rank === 2 && 'bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/40 dark:to-slate-800/40 border-slate-300 dark:border-slate-700',
-                    leader.rank === 3 && 'bg-gradient-to-br from-orange-50 to-amber-100 dark:from-orange-950/40 dark:to-amber-950/40 border-orange-300 dark:border-orange-800'
+                    leader.rank === 1 && 'bg-linear-to-br from-amber-50 to-yellow-100 dark:from-amber-950/40 dark:to-yellow-950/40 border-amber-300 dark:border-amber-800',
+                    leader.rank === 2 && 'bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900/40 dark:to-slate-800/40 border-slate-300 dark:border-slate-700',
+                    leader.rank === 3 && 'bg-linear-to-br from-orange-50 to-amber-100 dark:from-orange-950/40 dark:to-amber-950/40 border-orange-300 dark:border-orange-800'
                   )}>
                     <div className="absolute top-3 right-3">
                       {getRankIcon(leader.rank)}
@@ -180,7 +180,7 @@ export default function LeaderboardPage() {
                       leader.rank === 2 && 'border-slate-400',
                       leader.rank === 3 && 'border-orange-400'
                     )}>
-                      <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white text-2xl font-bold">
+                      <AvatarFallback className="bg-linear-to-br from-rose-500 to-amber-500 text-white text-2xl font-bold">
                         {(leader.name || '?')[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -240,7 +240,7 @@ export default function LeaderboardPage() {
                     {leader.rank}
                   </div>
                   <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-gradient-to-br from-rose-500 to-amber-500 text-white">
+                    <AvatarFallback className="bg-linear-to-br from-rose-500 to-amber-500 text-white">
                       {(leader.name || '?')[0]?.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

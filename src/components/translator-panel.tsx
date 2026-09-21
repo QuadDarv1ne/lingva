@@ -228,7 +228,7 @@ export function TranslatorPanel() {
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-            <div className="min-h-[160px] rounded-xl border bg-muted/30 p-4 text-sm leading-7 whitespace-pre-wrap">
+            <div className="min-h-40 rounded-xl border bg-muted/30 p-4 text-sm leading-7 whitespace-pre-wrap">
               {error ? (
                 <span className="text-destructive">{error}</span>
               ) : result ? (

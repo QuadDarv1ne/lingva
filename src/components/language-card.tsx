@@ -47,7 +47,7 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleOpen(); } }}
       >
         {/* Gradient header */}
-        <div className={cn('h-32 bg-gradient-to-br relative overflow-hidden', language.gradient)}>
+        <div className={cn('h-32 bg-linear-to-br relative overflow-hidden', language.gradient)}>
           <div className="absolute inset-0 opacity-30 mix-blend-overlay">
             <div className="absolute -right-4 -top-4 text-[6rem] sm:text-[8rem] leading-none opacity-50">
               {language.emoji}
@@ -116,7 +116,7 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
             </div>
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
               <motion.div
-                className={cn('h-full bg-gradient-to-r', language.gradient)}
+                className={cn('h-full bg-linear-to-r', language.gradient)}
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPct}%` }}
                 transition={{ duration: 0.5, delay: 0.2 }}

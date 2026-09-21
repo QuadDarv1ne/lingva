@@ -265,7 +265,7 @@ export default function ProfilePage() {
       }
     >
       <div className="mb-6 flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white text-2xl font-bold">
+        <div className="w-16 h-16 rounded-full bg-linear-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white text-2xl font-bold">
           {(user.name || user.email || '?')[0].toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">

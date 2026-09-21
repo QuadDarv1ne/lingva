@@ -205,7 +205,7 @@ export function ChatSection({ language }: { language: Language }) {
         {/* Messages */}
         <div
           ref={scrollRef}
-          className="h-[400px] md:h-[500px] overflow-y-auto p-4 space-y-3 bg-muted/20"
+          className="h-100 md:h-125 overflow-y-auto p-4 space-y-3 bg-muted/20"
         >
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center gap-3 p-6">

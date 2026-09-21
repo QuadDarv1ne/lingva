@@ -15,7 +15,7 @@ export function AuthLayout({
   footer?: React.ReactNode
 }) {
   return (
-    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 dark:from-rose-950/30 dark:via-amber-950/30 dark:to-yellow-950/30 px-safe">
+    <div className="min-h-dvh flex flex-col bg-linear-to-br from-rose-50 via-amber-50 to-yellow-50 dark:from-rose-950/30 dark:via-amber-950/30 dark:to-yellow-950/30 px-safe">
       <div className="flex-1 flex items-center justify-center p-3 sm:p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -26,7 +26,7 @@ export function AuthLayout({
             {/* Logo */}
             <div className="flex flex-col items-center mb-6">
               <a href="/" className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white">
                   <LangIcon className="w-6 h-6" />
                 </div>
               </a>

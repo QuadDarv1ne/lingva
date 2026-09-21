@@ -51,7 +51,7 @@ export function AlphabetSection({ language }: { language: Language }) {
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
             <motion.div
-              className={cn('h-full bg-gradient-to-r', language.gradient)}
+              className={cn('h-full bg-linear-to-r', language.gradient)}
               animate={{ width: `${learnPct}%` }}
               transition={{ duration: 0.4 }}
             />
@@ -119,7 +119,7 @@ export function AlphabetSection({ language }: { language: Language }) {
                 {/* Big letter */}
                 <div className={cn(
                   'shrink-0 w-32 h-32 rounded-xl flex items-center justify-center text-white',
-                  `bg-gradient-to-br ${language.gradient}`
+                  `bg-linear-to-br ${language.gradient}`
                 )}>
                   <span
                     className="text-7xl font-bold"

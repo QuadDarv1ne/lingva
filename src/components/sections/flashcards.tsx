@@ -145,7 +145,7 @@ export function FlashcardsSection({ language }: { language: Language }) {
               onClick={handleFlip}
               className={cn(
                 'relative h-72 md:h-80 flex flex-col items-center justify-center cursor-pointer overflow-hidden border-2 hover:border-primary/50 transition-colors',
-                `bg-gradient-to-br ${language.gradient} text-white`
+                `bg-linear-to-br ${language.gradient} text-white`
               )}
               role="button"
               tabIndex={0}

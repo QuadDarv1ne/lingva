@@ -238,8 +238,8 @@ export function MatchingGame({ language }: { language: Language }) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card className="p-8 text-center max-w-md mx-auto bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-emerald-300 dark:border-emerald-800">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 mx-auto mb-4 flex items-center justify-center text-white">
+          <Card className="p-8 text-center max-w-md mx-auto bg-linear-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-emerald-300 dark:border-emerald-800">
+            <div className="w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-500 mx-auto mb-4 flex items-center justify-center text-white">
               <Trophy className="w-8 h-8" />
             </div>
             <h3 className="text-2xl font-bold mb-2">Отлично!</h3>
