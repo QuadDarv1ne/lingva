@@ -387,6 +387,14 @@ export default function Home() {
         <TranslatorPanel />
       </section>
 
+      <div className="container mx-auto max-w-6xl px-4 pb-4">
+        <div className="flex justify-end">
+          <Button asChild variant="secondary" size="sm" className="gap-2">
+            <Link href="/translator">Открыть полный переводчик</Link>
+          </Button>
+        </div>
+      </div>
+
       {/* Word of the Day */}
       <section className="container mx-auto max-w-6xl px-4 pb-2">
         <WordOfDay onOpenLanguage={(id) => setSelectedId(id)} />

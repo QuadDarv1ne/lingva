@@ -40,25 +40,25 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
       className="h-full"
     >
       <Card
-        className="group relative overflow-hidden h-full flex flex-col cursor-pointer border-2 hover:border-primary/40 transition-all"
+        className="group relative overflow-hidden h-full flex flex-col cursor-pointer border-2 border-border/80 bg-card/80 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
         onClick={handleOpen}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleOpen(); } }}
       >
         {/* Gradient header */}
-        <div className={cn('h-32 bg-linear-to-br relative overflow-hidden', language.gradient)}>
+        <div className={cn('h-32 sm:h-36 bg-linear-to-br relative overflow-hidden', language.gradient)}>
           <div className="absolute inset-0 opacity-30 mix-blend-overlay">
             <div className="absolute -right-4 -top-4 text-[6rem] sm:text-[8rem] leading-none opacity-50">
               {language.emoji}
             </div>
           </div>
-          <div className="absolute inset-0 flex items-center justify-between gap-3 p-5">
+          <div className="absolute inset-0 flex items-center justify-between gap-3 p-4 sm:p-5">
             <div className="flex-1 min-w-0">
-              <div className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg tracking-tight break-words">
+              <div className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg tracking-tight break-words">
                 {language.nativeName}
               </div>
-              <div className="text-white/80 text-sm mt-1 font-medium">
+              <div className="text-white/80 text-xs sm:text-sm mt-1 font-medium">
                 {language.name}
               </div>
             </div>
@@ -81,16 +81,16 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
         </div>
 
         {/* Body */}
-        <div className="flex flex-col flex-1 p-5 gap-3">
-          <p className="text-sm text-muted-foreground italic">
+        <div className="flex flex-col flex-1 p-4 sm:p-5 gap-3">
+          <p className="text-sm text-muted-foreground italic leading-relaxed">
             «{language.tagline}»
           </p>
-          <p className="text-sm text-foreground/80 line-clamp-3 flex-1">
+          <p className="text-sm text-foreground/80 leading-6 line-clamp-3 flex-1">
             {language.description}
           </p>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Users className="w-3.5 h-3.5" />
               <span>{language.speakers}</span>
@@ -99,9 +99,9 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
               <Globe className="w-3.5 h-3.5" />
               <span className="truncate">{language.script}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-muted-foreground min-w-0">
               <BookOpen className="w-3.5 h-3.5" />
-              <span>{language.alphabet.length} букв · {language.lessons.length} уроков</span>
+              <span className="truncate">{language.alphabet.length} букв · {language.lessons.length} уроков</span>
             </div>
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <span className="text-[10px] uppercase tracking-wide">{language.era}</span>
@@ -125,11 +125,11 @@ export function LanguageCard({ language, onOpen, index }: LanguageCardProps) {
           </div>
 
           {/* CTA */}
-          <div className="flex items-center justify-between pt-2 mt-auto">
+          <div className="flex items-center justify-between pt-2 mt-auto gap-2">
             <Badge variant="outline" className="text-xs">
               {learnedLetters}/{totalLetters} букв
             </Badge>
-            <div className="flex items-center gap-1 text-sm font-medium text-primary group-hover:gap-2 transition-all">
+            <div className="flex items-center gap-1 text-sm font-medium text-primary group-hover:gap-2 transition-all whitespace-nowrap">
               Изучать
               <ArrowRight className="w-4 h-4" />
             </div>
