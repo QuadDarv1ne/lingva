@@ -227,7 +227,7 @@ export function TranslatorPanel() {
   }
 
   return (
-    <Card className="overflow-hidden border-0 bg-gradient-to-br from-background via-background to-muted/40 shadow-lg shadow-primary/5">
+    <Card className="overflow-hidden border-0 bg-linear-to-br from-background via-background to-muted/40 shadow-lg shadow-primary/5">
       <div className="border-b bg-muted/30 px-5 py-4 md:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -308,11 +308,11 @@ export function TranslatorPanel() {
               onKeyDown={handleKeyDown}
               rows={7}
               placeholder="Введите текст для перевода..."
-              className="min-h-[170px] resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0"
+              className="min-h-42.5 resize-none border-0 bg-transparent p-0 shadow-none focus-visible:ring-0"
             />
 
             <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <Button onClick={() => void runTranslation(true)} disabled={loading || !input.trim()} className="min-w-[150px]">
+              <Button onClick={() => void runTranslation(true)} disabled={loading || !input.trim()} className="min-w-37.5">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -332,7 +332,7 @@ export function TranslatorPanel() {
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-2xl border bg-gradient-to-br from-rose-500/5 via-background to-amber-500/5 p-3 shadow-sm">
+          <div className="rounded-2xl border bg-linear-to-br from-rose-500/5 via-background to-amber-500/5 p-3 shadow-sm">
             <div className="mb-2 flex items-center justify-between gap-2 text-xs text-muted-foreground">
               <span>{targetLabel}</span>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => void copyResult()} disabled={!result} aria-label="Копировать результат">
@@ -340,7 +340,7 @@ export function TranslatorPanel() {
               </Button>
             </div>
 
-            <div className="min-h-[170px] rounded-xl border bg-background/80 p-4 text-sm leading-7 whitespace-pre-wrap shadow-inner">
+            <div className="min-h-42.5 rounded-xl border bg-background/80 p-4 text-sm leading-7 whitespace-pre-wrap shadow-inner">
               {error ? (
                 <span className="text-destructive">{error}</span>
               ) : result ? (
