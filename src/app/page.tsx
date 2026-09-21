@@ -30,6 +30,7 @@ import { NotificationBell } from '@/components/notification-bell'
 import { GlobalSearch } from '@/components/global-search'
 import { WordOfDay } from '@/components/word-of-day'
 import { Onboarding } from '@/components/onboarding'
+import { TranslatorPanel } from '@/components/translator-panel'
 import { useProgressStore, getLevelFromXP, getLevelTitle } from '@/lib/store'
 import { useProgressSync } from '@/hooks/use-progress-sync'
 import { useAuthContext } from '@/hooks/auth-context'
@@ -127,13 +128,13 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background via-background to-muted/30">
+    <div className="min-h-screen flex flex-col bg-linear-to-b from-background via-background to-muted/30">
       <Onboarding />
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-20">
         <div className="container mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 min-w-0 shrink-0">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-linear-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white shrink-0">
               <LangIcon className="w-5 h-5" />
             </div>
             <div className="min-w-0 block">
@@ -260,7 +261,7 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-amber-500/5 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-br from-rose-500/10 via-amber-500/5 to-transparent" />
         <div className="absolute -top-20 -right-20 text-[20rem] opacity-5 select-none pointer-events-none">
           🌍
         </div>
@@ -276,7 +277,7 @@ export default function Home() {
             </div>
             <h1 className="text-[clamp(2.25rem,1.5rem+3vw,3.75rem)] font-bold tracking-tight leading-[1.15] mb-4">
               Изучайте языки мира —{' '}
-              <span className="bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">
                 от древних до современных
               </span>
             </h1>
@@ -381,6 +382,11 @@ export default function Home() {
         </section>
       )}
 
+      {/* Translator */}
+      <section className="container mx-auto max-w-6xl px-4 pb-2">
+        <TranslatorPanel />
+      </section>
+
       {/* Word of the Day */}
       <section className="container mx-auto max-w-6xl px-4 pb-2">
         <WordOfDay onOpenLanguage={(id) => setSelectedId(id)} />
@@ -446,7 +452,7 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl px-4 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-gradient-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white">
+              <div className="w-6 h-6 rounded bg-linear-to-br from-rose-500 to-amber-500 flex items-center justify-center text-white">
                 <LangIcon className="w-3.5 h-3.5" />
               </div>
               <span>Лингва · Изучение языков</span>

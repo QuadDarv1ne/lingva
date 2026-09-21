@@ -209,7 +209,7 @@ export function ChatSection({ language }: { language: Language }) {
         >
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center gap-3 p-6">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                 <Bot className="w-8 h-8 text-primary" />
               </div>
               <div>
@@ -250,7 +250,7 @@ export function ChatSection({ language }: { language: Language }) {
                     'shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white',
                     msg.role === 'user'
                       ? 'bg-blue-500'
-                      : 'bg-gradient-to-br from-primary to-primary/70'
+                      : 'bg-linear-to-br from-primary to-primary/70'
                   )}>
                     {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                   </div>
@@ -272,7 +272,7 @@ export function ChatSection({ language }: { language: Language }) {
                   animate={{ opacity: 1 }}
                   className="flex gap-3"
                 >
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white">
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-linear-to-br from-primary to-primary/70 flex items-center justify-center text-white">
                     <Bot className="w-4 h-4" />
                   </div>
                   <div className="bg-card border shadow-sm rounded-2xl p-3 flex items-center gap-2">
@@ -292,7 +292,7 @@ export function ChatSection({ language }: { language: Language }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Напишите на русском или ${language.name.toLowerCase()}...`}
-            className="resize-none min-h-[44px] max-h-32 flex-1"
+            className="resize-none min-h-11 max-h-32 flex-1"
             rows={1}
             disabled={loading}
           />
