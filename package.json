@@ -10,7 +10,9 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "auto:commit": "node scripts/auto-commit.js",
+    "auto:commit:check": "node scripts/auto-commit.js --check-only"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

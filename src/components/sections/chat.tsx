@@ -148,7 +148,10 @@ export function ChatSection({ language }: { language: Language }) {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    const shouldSubmit = e.key === 'Enter' && !e.shiftKey
+    const shouldSubmitWithModifier = e.key === 'Enter' && (e.ctrlKey || e.metaKey)
+
+    if (shouldSubmit || shouldSubmitWithModifier) {
       e.preventDefault()
       sendMessage(input)
     }
