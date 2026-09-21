@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRightLeft, Copy, Languages, Loader2, Sparkles } from 'lucide-react'
+import { ArrowRightLeft, Copy, Languages, Loader2, Sparkles, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/hooks/use-toast'
 
 const languageOptions = [
   { code: 'auto', label: 'Авто', native: 'Auto detect' },
@@ -51,6 +52,7 @@ async function translateText(text: string, source: string, target: string) {
 }
 
 export function TranslatorPanel() {
+  const { toast } = useToast()
   const [input, setInput] = useState('Hello world')
   const [sourceLang, setSourceLang] = useState(defaultSource)
   const [targetLang, setTargetLang] = useState(defaultTarget)
@@ -116,7 +118,27 @@ export function TranslatorPanel() {
 
   const copyResult = async () => {
     if (!result) return
-    await navigator.clipboard.writeText(result)
+
+    try {
+      await navigator.clipboard.writeText(result)
+      toast({
+        title: 'Готово',
+        description: 'Перевод скопирован в буфер обмена',
+      })
+    } catch {
+      toast({
+        title: 'Ошибка копирования',
+        description: 'Не удалось скопировать текст',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  const clearText = () => {
+    setInput('')
+    setResult('')
+    setError(null)
+    setDetectedLanguage(null)
   }
 
   const swapLanguages = () => {
@@ -205,7 +227,7 @@ export function TranslatorPanel() {
               className="resize-none"
             />
             <div className="flex items-center justify-between gap-3">
-              <Button onClick={() => void runTranslation(true)} disabled={loading || !input.trim()}>
+              <Button onClick={() => void runTranslation(true)} disabled={loading || !input.trim()} className="min-w-32">
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -215,7 +237,8 @@ export function TranslatorPanel() {
                   'Перевести'
                 )}
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => setInput('')}>
+              <Button variant="outline" size="sm" onClick={clearText} className="gap-2">
+                <Trash2 className="h-4 w-4" />
                 Очистить
               </Button>
             </div>
@@ -224,7 +247,7 @@ export function TranslatorPanel() {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>{targetLabel}</span>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={copyResult} disabled={!result} aria-label="Копировать результат">
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => void copyResult()} disabled={!result} aria-label="Копировать результат">
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
