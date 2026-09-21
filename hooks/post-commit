@@ -1,10 +1,22 @@
 #!/bin/sh
-# Auto-push the current branch to every configured remote after each commit.
-# Enabled via: git config core.hooksPath hooks
+
 branch=$(git rev-parse --abbrev-ref HEAD)
+failed=0
+
 for remote in $(git remote); do
-  echo "post-commit: pushing $branch -> $remote"
+  printf '%s\n' "post-commit: pushing $branch -> $remote"
   if ! git push "$remote" "$branch"; then
-    echo "post-commit: push to $remote failed (push manually later with: git push-all)" >&2
+    printf '%s\n' "post-commit: push to $remote failed" >&2
+    failed=1
+  fi
+
+  if [ "$remote" = "amvera" ] && [ "$branch" = "main" ]; then
+    printf '%s\n' 'post-commit: synchronizing main -> amvera/master'
+    if ! git push "$remote" main:master; then
+      printf '%s\n' 'post-commit: push to amvera/master failed' >&2
+      failed=1
+    fi
   fi
 done
+
+exit "$failed"
