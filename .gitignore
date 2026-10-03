@@ -65,6 +65,11 @@ test/
 prompt/
 local-*
 
+# scratch extraction dumps (regenerable, not source)
+_pdf_text.txt
+_extract*.ps1
+_pdf_tool.ps1
+
 # Claude Code
 .claude/
 
