@@ -30,26 +30,43 @@
 
 ## Быстрый старт
 
+Проект поддерживает **два менеджера пакетов**: `bun` (быстрее всего, для локальной разработки) и `npm` (используется в `Dockerfile` и скрипте `ci:check`). Выберите любой — команды эквивалентны.
+
 ```bash
-# Клонируйте репозиторий
+# 1. Клонируйте репозиторий
 git clone https://github.com/QuadDarv1ne/lingva.git
 cd lingva
 
-# Установите зависимости
-bun install
+# 2. Установите зависимости (один из вариантов)
+bun install          # Bun
+npm install          # npm — совпадает с Docker/CI
 
-# Скопируйте .env.example в .env и настройте переменные
+# 3. Скопируйте .env.example в .env и настройте переменные
 cp .env.example .env
 
-# Инициализируйте базу данных
-bunx prisma generate
-bunx prisma db push
+# 4. Инициализируйте базу данных
+bunx prisma generate && bunx prisma db push    # Bun
+npx prisma generate && npx prisma db push      # npm
 
-# Запустите dev-сервер
-bun run dev
+# 5. Запустите dev-сервер
+bun run dev          # Bun
+npm run dev          # npm
 ```
 
 Приложение будет доступно на `http://localhost:3000`
+
+### Проверка перед коммитом
+
+```bash
+npm run ci:check      # линт + prisma generate + db push + build (npm)
+bun run ci:check:bun  # то же самое через Bun
+```
+
+### Лок-файлы
+
+В репозитории отслеживаются **оба** лок-файла: `package-lock.json` (npm — канон для Docker/CI) и `bun.lock` (Bun — локальная разработка). Оба разрешаются из одинаковых диапазонов версий в `package.json`, а `Dockerfile` использует `npm install` (не `npm ci`), поэтому продакшн всегда резолвит зависимости из `package.json`.
+
+> При изменении зависимостей обновляйте **оба** лок-файла (`bun install` и `npm install`), чтобы избежать расхождения версий между локальной разработкой на Bun и сборкой на npm.
 
 ## Структура проекта
 

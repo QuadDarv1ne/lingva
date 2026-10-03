@@ -8,6 +8,7 @@
     "start": "next start -p 3000",
     "lint": "eslint .",
     "ci:check": "npm run lint && npx prisma generate && npx prisma db push --skip-generate --accept-data-loss && npm run build",
+    "ci:check:bun": "bun run lint && bunx prisma generate && bunx prisma db push --skip-generate --accept-data-loss && bun run build",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
