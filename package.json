@@ -2,7 +2,7 @@
   "name": "lingva",
   "version": "0.2.0",
   "private": true,
-  "license": "CC-BY-SA-4.0",
+  "license": "UNLICENSED",
   "packageManager": "bun@1.3.11",
   "engines": {
     "node": ">=20.0.0",

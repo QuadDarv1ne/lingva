@@ -1,5 +1,10 @@
 # Лингва (Lingva)
 
+[![CI](https://github.com/QuadDarv1ne/lingva/actions/workflows/ci.yml/badge.svg)](https://github.com/QuadDarv1ne/lingva/actions/workflows/ci.yml)
+![Node](https://img.shields.io/badge/node-%E2%89%A520.0.0-brightgreen)
+![Bun](https://img.shields.io/badge/bun-%E2%89%A51.1.0-black)
+![License](https://img.shields.io/badge/license-proprietary-red)
+
 **Интерактивная платформа для изучения 7 языков мира:** русского, китайского, арамейского, английского, греческого, славянского и церковнославянского.
 
 ## Возможности
@@ -86,3 +91,9 @@ src/
 prisma/             # Prisma schema
 db/                 # SQLite база данных
 ```
+
+## Лицензия и безопасность
+
+- **Пользовательский контент** платформы распространяется под лицензией [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) — подробности в [LICENSE](LICENSE).
+- **Исходный код и программное обеспечение** платформы является собственностью Maestro7IT и не распространяется под CC BY-SA.
+- О уязвимостях безопасности сообщайте приватно — см. [SECURITY.md](SECURITY.md).

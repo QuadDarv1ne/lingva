@@ -13,7 +13,7 @@
 Способы связи (в порядке предпочтения):
 
 1. **GitHub Security Advisory** — на странице репозитория: вкладка *Security* → *Report a vulnerability* ([QuadDarv1ne/lingva](https://github.com/QuadDarv1ne/lingva/security/advisories/new)). Это приватный канал обсуждения.
-2. **Прямой контакт владельца** — если GitHub Advisory недоступен (см. профиль [QuadDarv1ne](https://github.com/QuadDarv1ne)).
+2. **Email владельца** — `maksimqwe42@mail.ru` (указан в LICENSE проекта), если GitHub Advisory недоступен.
 
 В обращении укажите:
 
