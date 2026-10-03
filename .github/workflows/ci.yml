@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint + Typecheck + Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Push schema (SQLite)
+        run: npx prisma db push --skip-generate --accept-data-loss
+
+      - name: Build
+        run: npm run build
